@@ -1,0 +1,6 @@
+# # custom builder script before compilation (set to "no" to disable)
+BUILDER=builder
+# directory of the webapp relative to the app root
+WWW_DIR=brunch/build/web/
+# final phonegap library path in the android app assets
+PHONEGAP_PATH=js/
