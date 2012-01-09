@@ -4632,6 +4632,19 @@ PhoneGap.addConstructor(function() {
 	}
 });
 }
+var Downloader = function() {};
+
+Downloader.prototype.downloadPack = function(params, success, fail) {
+	var self = this;
+
+	return PhoneGap.exec(success, function(error) {
+		fail(error);
+	}, 'Downloader', 'downloadPack', []);
+};
+
+PhoneGap.addConstructor(function() {
+	PhoneGap.addPlugin('Downloader', new Downloader());
+});
 (function (con) {
     // the dummy function
     function dummy() {};
@@ -6713,16 +6726,32 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
 
   HomeView = require('views/home_view').HomeView;
 
-  $(document).ready(function() {
-    app.initialize = function() {
-      app.routers.main = new MainRouter();
-      app.views.home = new HomeView();
-      if (Backbone.history.getFragment() === '') {
-        return app.routers.main.navigate('home', true);
-      }
-    };
-    app.initialize();
-    return Backbone.history.start();
+  app.onDeviceReady = function() {
+    return $(document).ready(function() {
+      console.log("onDeviceReady");
+      return app.initialize();
+    });
+  };
+
+  app.initialize = function() {
+    app.routers.main = new MainRouter();
+    app.views.home = new HomeView();
+    Backbone.history.start();
+    if (Backbone.history.getFragment() === '') {
+      return app.routers.main.navigate('home', true);
+    }
+  };
+
+  $(window).load(function() {
+    if ((typeof PhoneGap !== "undefined" && PhoneGap !== null) && (PhoneGap.onDeviceReady != null) && PhoneGap.onDeviceReady.fired === true) {
+      console.log("device ready already fired");
+      return app.initialize();
+    } else {
+      console.log("waiting for device response");
+      return document.addEventListener("deviceready", function() {
+        return app.onDeviceReady();
+      }, false);
+    }
   });
 
 }).call(this);
@@ -6791,7 +6820,7 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
   (function() {
     (function() {
     
-      __out.push('<!-- START you can remove this -->\n<div id="content">\n  <span id="props">with coffee</span>\n  <h1>brunch</h1>\n  <h2>Welcome!</h2>\n  <ul>\n    <li><a href="http://brunchwithcoffee.com/#documentation">Documentation</a></li>\n    <li><a href="https://github.com/brunch/brunch/issues">Github Issues</a></li>\n    <li><a href="https://github.com/brunch/example-todos">Todos Example App</a></li>\n  </ul>\n</div>\n<!-- END you can remove this -->\n');
+    
     
     }).call(this);
     
@@ -6816,8 +6845,17 @@ f.event={add:function(a,c,d,e,g){var h,i,j,k,l,m,n,o,p,q,r,s;if(!(a.nodeType===3
     HomeView.prototype.id = 'home-view';
 
     HomeView.prototype.render = function() {
-      $(this.el).html(homeTemplate());
-      return this;
+      var self;
+      self = this;
+      $(self.el).html(homeTemplate());
+      window.plugins.Downloader.downloadPack({
+        pack: 1
+      }, function(response) {
+        return $(self.el).append('<img src="' + response.path + '" />');
+      }, function(error) {
+        return alert("error");
+      });
+      return self;
     };
 
     return HomeView;
