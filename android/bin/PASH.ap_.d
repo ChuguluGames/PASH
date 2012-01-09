@@ -1,0 +1,20 @@
+/Users/davidbillamboz/Projects/PASH/android/bin/PASH.ap_ \
+ : /Users/davidbillamboz/Projects/PASH/android/res/drawable/icon.png \
+/Users/davidbillamboz/Projects/PASH/android/res/drawable-hdpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/res/drawable-ldpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/res/drawable-mdpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/res/layout/main.xml \
+/Users/davidbillamboz/Projects/PASH/android/res/values/strings.xml \
+/Users/davidbillamboz/Projects/PASH/android/res/xml/phonegap.xml \
+/Users/davidbillamboz/Projects/PASH/android/res/xml/plugins.xml \
+/Users/davidbillamboz/Projects/PASH/android/bin/res/drawable/icon.png \
+/Users/davidbillamboz/Projects/PASH/android/bin/res/drawable-hdpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/bin/res/drawable-ldpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/bin/res/drawable-mdpi/ic_launcher.png \
+/Users/davidbillamboz/Projects/PASH/android/assets/www \
+/Users/davidbillamboz/Projects/PASH/android/assets/www/css \
+/Users/davidbillamboz/Projects/PASH/android/assets/www/index.html \
+/Users/davidbillamboz/Projects/PASH/android/assets/www/js \
+/Users/davidbillamboz/Projects/PASH/android/assets/www/css/main.css \
+/Users/davidbillamboz/Projects/PASH/android/assets/www/js/app.js \
+/Users/davidbillamboz/Projects/PASH/android/AndroidManifest.xml \
