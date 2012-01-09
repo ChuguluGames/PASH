@@ -1,3 +1,8 @@
+# Dependencies #
+
+* brunch
+* PGT
+
 # Installation #
 
 Adapt the android/.phonegap/config file.<br>
