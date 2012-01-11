@@ -1,6 +1,9 @@
 class exports.MainRouter extends Backbone.Router
-  routes :
-    "home": "home"
+	routes:
+		":page": "dispatch"
 
-  home: ->
-    $('body').html app.views.home.render().el
+	dispatch: (page) ->
+		if app.views[page]?
+			$('body').html app.views[page].render().el
+		else 
+			this.navigate "home", true
