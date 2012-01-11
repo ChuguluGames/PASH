@@ -220,10 +220,10 @@
 			buildPhases = (
 				4929C0E614BB4C36006F1804 /* Sources */,
 				4929C0E714BB4C36006F1804 /* Frameworks */,
+				4929C0EB14BB4C36006F1804 /* ShellScript */,
 				4929C0E814BB4C36006F1804 /* Resources */,
 				4929C0E914BB4C36006F1804 /* Sources */,
 				4929C0EA14BB4C36006F1804 /* Frameworks */,
-				4929C0EB14BB4C36006F1804 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -293,7 +293,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "\n\t\t\t\t\t\t\t\tif [ ! -d \"$PROJECT_DIR/web\" ] ; then\n\t\t\t\t\t\t\t\t\tcp -R /Users/Shared/PhoneGap/Frameworks/PhoneGap.framework/www \"$PROJECT_DIR/web\"\n\t\t\t\t\t\t\t\tfi\n\t\t\t\t\t\t\t\t# detect www folder reference in project, if missing, print warning\n\t\t\t\t\t\t\t\tgrep \"{isa = PBXFileReference; lastKnownFileType = folder; path = web; sourceTree = \\\"<group>\\\"; };\" \"$PROJECT_DIR/$PROJECT_NAME.xcodeproj/project.pbxproj\"\n\t\t\t\t\t\t\t\trc=$? \n\t\t\t\t\t\t\t\tif [ $rc != 0 ] ; then\n\t\t\t\t\t\t\t\techo -e \"warning: Missing - Add $PROJECT_DIR/web as a folder reference in your project. Just drag and drop the folder into your project, into the Project Navigator of Xcode 4. Make sure you select the second radio-button: 'Create folder references for any added folders' (which will create a blue folder)\" 1>&2\n\t\t\t\t\t\t\t\tfi\t\t\t\t\t\t\t";
+			shellScript = "# create a bin dir in brunch\nexport PATH=$PATH:/usr/local/bin\ncd $PROJECT_DIR/../..\n\necho \"Starting the custom builder\"\n\necho \"Cleaning brunch/ios/\"\nrm -rf brunch/ios/\nmkdir brunch/ios/\n\necho \"Updating brunch/ios/\"\n\n# copy phonegap.js in the vendor folder\ncp -rf brunch/src/.ios/ brunch/src/\n/usr/local/bin/brunch build brunch\n\n# copy compiled css and js and assets\ncp -r brunch/build/web/* brunch/ios/\n                       \n                       # get index.html content, change the paths, put it in a new file\n                       echo \"Changing paths of index.html\"\n                       sed -e 's/build\\/web\\///g' brunch/index.html > brunch/ios/index.html\n                       \n                       # copy the web version of phonegap in the folder\n                       cp -rf brunch/src/.web/ brunch/src/\n                       /usr/local/bin/brunch build brunch\n                       \n                       # copy brunch ios folder to www\n                       rm -rf $PROJECT_DIR/web/*\n                       cp -r brunch/ios/* $PROJECT_DIR/web/";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -390,7 +390,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "spots-container/spots-container-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = "PHONEGAP_FRAMEWORK=YES";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PHONEGAP_FRAMEWORK=YES",
+					REMOTE_DEBUG,
+				);
 				INFOPLIST_FILE = "spots-container/spots-container-Info.plist";
 				OTHER_LDFLAGS = (
 					"-weak_framework",

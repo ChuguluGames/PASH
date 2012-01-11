@@ -13,6 +13,10 @@
 	#import "PhoneGapViewController.h"
 #endif
 
+#ifdef REMOTE_DEBUG
+    #import <objc/runtime.h>
+#endif
+
 @implementation AppDelegate
 
 @synthesize invokeString;
@@ -36,7 +40,13 @@
         self.invokeString = [url absoluteString];
 		NSLog(@"spots-container launchOptions = %@",url);
     }    
-		
+
+#ifdef REMOTE_DEBUG
+    Class webViewClass = NSClassFromString(@"WebView");
+    if (webViewClass)
+        [webViewClass performSelector:@selector(_enableRemoteInspector)];
+#endif
+    
 	return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
