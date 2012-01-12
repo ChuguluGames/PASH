@@ -295,6 +295,7 @@
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
+
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;

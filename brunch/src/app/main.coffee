@@ -12,7 +12,6 @@ HomeView 				= require('views/home_view').HomeView
 
 # models
 PackModel 				= require('models/pack_model').PackModel
-ItemModel 				= require('models/item_model').ItemModel
 TagModel 				= require('models/tag_model').TagModel
 DifferenceModel 		= require('models/difference_model').DifferenceModel
 DifferencePointModel 	= require('models/difference_point_model').DifferencePointModel
@@ -32,7 +31,7 @@ app.onDeviceReady = ->
 app.initialize = ->
   app.routers.main = new MainRouter()
   app.views.home = new HomeView()
-  
+
   app.routers.main.navigate 'home', true if Backbone.history.getFragment() is ''
   Backbone.history.start()
 
