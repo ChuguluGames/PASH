@@ -1,17 +1,18 @@
-window.app      = {}
-app.routers     = {}
-app.models      = {}
-app.helpers     = {}
-app.views       = {}
+window.app  = {}
+app.routers = {}
+app.models  = {}
+app.helpers = {}
+app.views   = {}
 
 # helpers
-DBHelper = require('helpers/db_helper').DBHelper
+DBHelper       = require('helpers/db_helper').DBHelper
+#DownloadHelper = require('helpers/download_helper').DownloadHelper
 
 # routers
 MainRouter = require('routers/main_router').MainRouter
 
 # views
-HomeView = require('views/home_view').HomeView
+HomeView   = require('views/home_view').HomeView
 
 # models
 window.PlayerModel          = require('models/player_model').PlayerModel
