@@ -1,16 +1,17 @@
-class exports.ItemModel extends Backbone.Model
-	name: "item"
+# table definition
+ItemDefinition = persistence.define 'item',
+	identity:					"INT"
+	first_image_url:	"TEXT"
+	second_image_url: "TEXT"
 
-	defaults:
-		first_image_url:	""
-		second_image_url:	""
-		differences:			[]
+# relations
+#ItemDefinition.hasMany('differences', DifferenceModel, 'item')
+#ItemDefinition.hasOne('first_image', ImageModel, null)
+#ItemDefinition.hasOne('second_image', ImageModel, null)
 
-	table:
-		first_image_url: "TEXT"
-		second_image_url: "TEXT"
+# custom methods
+#ItemDefinition.fetchSelected = ->
+#	ItemDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
 
-	has_many:	["differences"]
-
-	initialize: (attributes) ->
-		@
+# making it visible outside as Model
+exports.ItemModel = ItemDefinition

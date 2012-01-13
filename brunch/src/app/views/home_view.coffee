@@ -1,7 +1,4 @@
 homeTemplate = require('templates/home')
-ItemModel 				= require('models/item_model').ItemModel
-DifferenceModel 				= require('models/difference_model').DifferenceModel
-DifferencesCollection 				= require('collections/differences_collection').DifferencesCollection
 
 class exports.HomeView extends Backbone.View
 	id: 'home-view'
@@ -9,23 +6,25 @@ class exports.HomeView extends Backbone.View
 	render: ->
 		self=@
 		$(self.el).html homeTemplate()
+#		item = new ItemModel({
+#			identity: 42
+#			first_image_url: "lolo42.jpg"
+#			second_image_url: "lolo2.jpg"
+#		})
+		image = new ImageModel
+			url: "http://google.com/proute.jpg"
+			path: "/root/proute"
 
-		item = new ItemModel({
-			first_image_url: "lolo1.jpg"
-			second_image_url: "lolo2.jpg"
-			differences: new DifferencesCollection()
-		})
+		item = null
+		ItemModel.all().limit(1).one null, (o) ->
+			return if !o?
+			console.log o.first_image_url
+			o.first_image = image
+			o.second_image = image
+			app.helpers.db.save o, -> console.log "flushed"
 
-		difference = new DifferenceModel(item: item)
-
-		difference.set({item: item});
-		item.get("differences").add(difference)
-
-		item.save (item) ->
-			console.log item
-		, null, true
-
-		item.set({first_image_url: "heho"});
-
-		item.save()
+#		some_diff = new DifferenceModel()
+#		other_diff = new DifferenceModel()
+#		item.differences.add(some_diff)
+#		item.differences.add(other_diff)
 		@

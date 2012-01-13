@@ -1337,7 +1337,7 @@ persistence.get = function(arg1, arg2) {
       }
       var subscribers = this.subscribers[eventType].slice(0);
       for(var i = 0; i < subscribers.length; i++) {
-        subscribers[i].apply(null, arguments);
+        subscribers[i].apply(this, arguments);
       }
     };
 

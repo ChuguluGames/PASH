@@ -10,4 +10,3 @@ dependencies:
   - persistence/persistence.store.memory.js
   - persistence/persistence.store.websql.js
   - persistence/persistence.sync.js
-  - backbone.sync.js

@@ -1,11 +1,12 @@
-class exports.DifferenceModel extends Backbone.Model
-	name: "difference"
+# table definition
+DifferenceDefinition = persistence.define 'difference', {}
 
-	defaults:
-		point_diffs:	[]
-		item: null
+# relations
+#DifferenceDefinition.hasMany('difference_points', DifferencePointModel, 'difference')
 
-	table: {}
+# custom methods
+#DiffrenceDefinition.fetchSelected = ->
+#  DiffrenceDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
 
-	initialize: (attributes) ->
-		@
+# making it visible outside as Model
+exports.DifferenceModel = DifferenceDefinition

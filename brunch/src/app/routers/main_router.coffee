@@ -5,5 +5,5 @@ class exports.MainRouter extends Backbone.Router
 	dispatch: (page) ->
 		if app.views[page]?
 			$('body').html app.views[page].render().el
-		else 
+		else
 			this.navigate "home", true

@@ -1,13 +1,13 @@
 # table definition
-ImageDefinition = persistence.define 'image',
-  url:  "TEXT"
-  path: "TEXT"
+PlayerDefinition = persistence.define 'player',
+  identity: "INT"
 
 # relations
+#PlayerDefinition.hasMany('packs', PackModel, 'players')
 
 # custom methods
 #ItemDefinition.fetchSelected = ->
 # ItemDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
 
 # making it visible outside as Model
-exports.ImageModel = ImageDefinition
+exports.PlayerModel = PlayerDefinition
