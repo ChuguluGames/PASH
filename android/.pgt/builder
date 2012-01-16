@@ -9,32 +9,20 @@ COLOR_PURPLE="\\033[0;35m" # Purple
 COLOR_CYAN="\\033[0;36m" # Cyan
 COLOR_WHITE="\\033[0;37m" # White
 
-cd ..
-
-echo "Cleaning brunch/android/"
-rm -rf brunch/android/
-mkdir brunch/android/
-
-# create a bin dir in brunch
-echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
+cd ../brunch
 
 # copy all the files in .android/vendor in vendor
-cp -rf brunch/.android/vendor/ brunch/vendor/
+echo "Build android version"
+cp -rf .android/vendor/ vendor/
 
 # build
 echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
-brunch build brunch
+brunch build -o android
 echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
-
-# copy the build dir in the assets dir
-cp -rf brunch/build/ android/assets/www/
 
 # put back the web version
-cp -rf brunch/.web/vendor/ brunch/vendor/
+echo "Replace web files version"
+cp -rf .web/vendor/ vendor/
 
-# rebuild
-echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
-brunch build brunch
-echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
 
-cd android
+cd ../android
