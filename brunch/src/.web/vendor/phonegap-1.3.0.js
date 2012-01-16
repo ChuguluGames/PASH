@@ -33,3 +33,8 @@ if (typeof PhoneGap === "undefined") {
 	};
 	PhoneGap.fire("deviceready");
 }
+
+var FileTransfer = function() {};
+FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
+    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'download', [source, target]);
+};

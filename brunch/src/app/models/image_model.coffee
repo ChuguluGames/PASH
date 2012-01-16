@@ -1,7 +1,7 @@
 # table definition
-DifferencePointDefinition = persistence.define 'difference_point',
-  x: "INT"
-  y: "INT"
+ImageDefinition = persistence.define 'image',
+  url:  "TEXT"
+  path: "TEXT"
 
 # relations
 
@@ -10,4 +10,4 @@ DifferencePointDefinition = persistence.define 'difference_point',
 # ItemDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
 
 # making it visible outside as Model
-exports.DifferencePointModel = DifferencePointDefinition
+exports.ImageModel = ImageDefinition

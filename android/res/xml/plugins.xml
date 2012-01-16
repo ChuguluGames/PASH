@@ -16,6 +16,4 @@
     <plugin name="Temperature" value="com.phonegap.TempListener"/>
     <plugin name="FileTransfer" value="com.phonegap.FileTransfer"/>
     <plugin name="Capture" value="com.phonegap.Capture"/>
-
-    <plugin name="Downloader" value="com.phonegap.plugins.downloader.Downloader"/>
 </plugins>
