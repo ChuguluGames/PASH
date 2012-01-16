@@ -1,5 +1,5 @@
 window.app  = {}
-app.routers = {}
+app.router = null
 app.models  = {}
 app.helpers = {}
 app.views   = {}
@@ -8,8 +8,11 @@ app.views   = {}
 DBHelper       = require('helpers/db_helper').DBHelper
 #DownloadHelper = require('helpers/download_helper').DownloadHelper
 
-# routers
+# router
 MainRouter = require('routers/main_router').MainRouter
+
+# controllers
+HomeController = require('controllers/home_controller').HomeController
 
 # views
 HomeView   = require('views/home_view').HomeView
@@ -46,11 +49,13 @@ app.onDeviceReady = ->
 		app.initialize()
 
 app.initialize = ->
-  app.routers.main       = new MainRouter()
-  app.views.home         = new HomeView()
+  app.router = new MainRouter()
   app.helpers.db         = DBHelper
   app.helpers.db.verbous = true
   app.helpers.db.createProductionDatabase()
+
+  app.views.home = new HomeView()
+  app.controllers.home = new HomeController(view: app.views.home)
 
   app.routers.main.navigate 'home', true if Backbone.history.getFragment() is ''
   Backbone.history.start()
