@@ -9,34 +9,32 @@ COLOR_PURPLE="\\033[0;35m" # Purple
 COLOR_CYAN="\\033[0;36m" # Cyan
 COLOR_WHITE="\\033[0;37m" # White
 
-# loading the phonegap config
-. android/.phonegap/config
-
-# create a bin dir in brunch
-echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
-
-echo "Starting the custom builder"
+cd ..
 
 echo "Cleaning brunch/android/"
 rm -rf brunch/android/
 mkdir brunch/android/
 
-echo "Updating brunch/android/"
+# create a bin dir in brunch
+echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
 
-# copy phonegap.js in the vendor folder
-cp -rf brunch/src/.android/ brunch/src/
+# copy all the files in .android/vendor in vendor
+cp -rf brunch/.android/vendor/ brunch/vendor/
+
+# build
 echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
 brunch build brunch
 echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
 
-# copy compiled css and js and assets
-cp -r brunch/build/web/* brunch/android/
+# copy the build dir in the assets dir
+cp -rf brunch/build/ android/assets/www/
 
-# get index.html content, change the paths, put it in a new file
-echo "Changing paths of index.html"
-sed -e 's/build\/web\///g' brunch/index.html > brunch/android/index.html
+# put back the web version
+cp -rf brunch/.web/vendor/ brunch/vendor/
 
-# copy the web version of phonegap in the folder
-cp -rf brunch/src/.web/ brunch/src/
+# rebuild
 echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
 brunch build brunch
+echo "\n""$COLOR_YELLOW""-------------------------""$COLOR_WHITE""\n"
+
+cd android
