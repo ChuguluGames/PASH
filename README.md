@@ -6,14 +6,14 @@
 # Installation #
 
 ## Android ##
-Adapt the android/local.properties file.
+Modify the android/local.properties file.
 
 ## iOS ##
 
 # Usage #
 
 ## Web version ##
-Run <code>brunch watch<br> in the brunch folder.<br>
+Run <code>brunch watch</code> in the brunch folder.<br>
 
 ## Android version ##
 Run <code>pgt debug</code> in the android folder.<br>
