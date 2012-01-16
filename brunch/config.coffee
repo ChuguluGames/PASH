@@ -16,6 +16,7 @@ exports.config =
   #     before: [files, that would be loaded before anything else]
   #     after: [files, that would be loaded after anything else]
   #
+
   files:
     'scripts/app.js':
       languages:
