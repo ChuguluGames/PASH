@@ -46,46 +46,7 @@
         modules[key] = bundle[key];
     };
   }
-}).call(this);if (typeof PhoneGap === "undefined") {
-	var PhoneGap = {};
-
-	if (!window.plugins) {
-			window.plugins = {};
-	}
-
-	PhoneGap.fire = function(eventType) {
-		var event = document.createEvent('Event');
-		event.initEvent(eventType, true, false);
-		document.dispatchEvent(event);
-	};
-
-	PhoneGap.exec = function(success, fail, service, action, args) {
-
-	};
-
-	PhoneGap.addConstructor = function(func) {
-		func();
-	};
-
-	PhoneGap.addPlugin = function(name, obj) {
-		if (!window.plugins[name]) {
-			window.plugins[name] = obj;
-		}
-		else {
-			console.log("Error: Plugin " + name + " already exists.");
-		}
-	};
-
-	PhoneGap.onDeviceReady = {
-		fired: true
-	};
-	PhoneGap.fire("deviceready");
-}
-
-var FileTransfer = function() {};
-FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
-    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'download', [source, target]);
-};(function (con) {
+}).call(this);(function (con) {
     // the dummy function
     function dummy() {};
     // console methods that may exist
@@ -5655,7 +5616,46 @@ persistence.sync.postJSON = function(uri, data, callback) {
 
   }());
 
-(this.require.define({
+if (typeof PhoneGap === "undefined") {
+	var PhoneGap = {};
+
+	if (!window.plugins) {
+			window.plugins = {};
+	}
+
+	PhoneGap.fire = function(eventType) {
+		var event = document.createEvent('Event');
+		event.initEvent(eventType, true, false);
+		document.dispatchEvent(event);
+	};
+
+	PhoneGap.exec = function(success, fail, service, action, args) {
+
+	};
+
+	PhoneGap.addConstructor = function(func) {
+		func();
+	};
+
+	PhoneGap.addPlugin = function(name, obj) {
+		if (!window.plugins[name]) {
+			window.plugins[name] = obj;
+		}
+		else {
+			console.log("Error: Plugin " + name + " already exists.");
+		}
+	};
+
+	PhoneGap.onDeviceReady = {
+		fired: true
+	};
+	PhoneGap.fire("deviceready");
+}
+
+var FileTransfer = function() {};
+FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
+    PhoneGap.exec(successCallback, errorCallback, 'FileTransfer', 'download', [source, target]);
+};(this.require.define({
   "models/player_model": function(exports, require, module) {
     (function() {
   var PlayerDefinition;
