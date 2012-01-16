@@ -1,6 +1,10 @@
-# # custom builder script before compilation (set to "no" to disable)
-BUILDER=android/.pgt/builder
-# directory of the webapp relative to the app root
-WWW_DIR=brunch/android/
-# final phonegap library path in the android app assets
-PHONEGAP_PATH=js/
+TARGET=device
+LOG=debug
+ACTIVITY=PASH
+PACKAGE=com.phonegap.pash
+APK=bin/PASH-debug.apk
+# specific phonegap config
+PHONEGAP=true
+PHONEGAP_VERSION=1.3.0
+BUILDER=.pgt/builder
+WWW_FOLDER=../brunch/android/
