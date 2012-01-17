@@ -1,39 +1,42 @@
 class exports.PreloadHelper
-	verbose: 	false
+	verbose: 	true
 	tag: 			"PreloadHelper"
 	callback: null
+	args: 		null
 
 	constructor: ->
 		self=@
+		self
 
 	log: (message) ->
 	  console.log "[" + @tag + "] " , message if message? && @verbose
 
 	load: ->
-		if not arguments? || not typeof arguments == "Array" || arguments.length <= 1
+		if not arguments? || arguments.length <= 1
 			return
 
-		# save the callback
-		@callback = arguments.shift()
+		@args = Array.prototype.slice.call(arguments) # convert the args to a real array
+		@callback = @args.shift() # save the callback
 
-		# start the preloading
-		@startLoading arguments
+		@loadAll() # start the preloading
 
 	loadAll: ->
-		if arguments.length == 0
+		if @args.length == 0
 			@callback()
 		else
-			@loadOne arguments.shift()
+
+			@loadOne @args.shift()
 
 	loadOne: (path) ->
 		self=@
 		img = new Image()
 
-		$(img).on("load", ->
-			self.log @src + " has been loaded"
+		$("<img />").load(->
+			self.log "preload: \"" + @src + "\""
 			self.loadAll() # load the next one
 
-		).on("error", ->
-			self.log @src + " has not been loaded"
+		# bind a possible 404 error
+		).error(->
+			self.log "unable to load: \"" + src + "\""
 
 		).attr("src", path)
