@@ -1,19 +1,35 @@
-class exports.PositionHelper
-	getRelativePosition: (element, absolutePosition) ->
-		offset = $(element).offset(); # from jquery
+helper={}
 
-		return {
-			x: absolutePosition.x - offset.left
-			y: absolutePosition.y - offset.top
-		}
+helper.verbose=false
+helper.tag = "PositionHelper"
 
-	isPointInPolygon = (point, polygon) ->
-	  c = false
-	  i = -1
-	  l = polygon.length
-	  j = l - 1
+helper.log = (message) ->
+  console.log "[" + helper.tag + "] " , message if message? && @verbose
 
-	  while ++i < l
-	    (polygon[i].y <= point.y and point.y < polygon[j].y) or (polygon[j].y <= point.y and point.y < polygon[i].y) and (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) and (c = not c)
-	    j = i
-	  c
+helper.getRelativePosition = (element, absolutePosition) ->
+	offset = $(element).offset(); # from jquery
+	relativePosition=
+		x: absolutePosition.x - offset.left
+		y: absolutePosition.y - offset.top
+
+	PositionHelper.log relativePosition
+
+	return relativePosition
+
+helper.isPointInPolygon = (point, polygon) ->
+	inPolygon = false
+	i = -1
+	polygonSides = polygon.length
+	j = polygonSides - 1
+
+	while ++i < polygonSides
+		(polygon[i].y <= point.y and point.y < polygon[j].y) or
+		(polygon[j].y <= point.y and point.y < polygon[i].y) and
+		(point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x) and
+		(inPolygon = not inPolygon)
+		j = i
+
+	helper.log inPolygon
+	inPolygon
+
+exports.PositionHelper=helper

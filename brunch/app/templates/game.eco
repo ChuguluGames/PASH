@@ -1,1 +1,22 @@
-<b class="fuck">game fuck <a href="#/home">home</a></b>
+<div class="topbar">
+	<div class="back"><a href="#/home">Pause</a></div>
+	<div class="score">
+		<div class="score-text">Score:</div>
+		<div class="score-value"><%= @score %></div>
+	</div>
+	<div class="differences-status">
+		<ul>
+		  <% for difference in @item.differences: %>
+		  	<li></li>
+		  <% end %>
+		</ul>
+	</div>
+	<% if @mode == "practice": %>
+	<div class="button-next-item"><a href="#/game/<%= @next %>/mode/practice">">Next</a></div>
+	<% end %>
+</div>
+<div class="item-loading">chargement en cours...</div>
+<div class="item">
+	<div class="first-image" style="background:<%= @item.first_image.image.path %>"></div>
+	<div class="second-image" style="background:<%= @item.second_image.image.path %>"></div>
+</div>

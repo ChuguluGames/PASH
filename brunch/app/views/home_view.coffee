@@ -1,7 +1,8 @@
 class exports.HomeView extends View
-	id: 'home-view'
+	id: 			'home-view'
+	template: require 'templates/home'
 
 	render: ->
 		self=@
-		$(@el).html require('templates/home')
-		@
+		$(self.el).html self.template
+		self
