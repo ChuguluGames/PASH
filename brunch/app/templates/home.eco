@@ -1,1 +1,3 @@
-<b class="fuck">helloworld <a href="#/game/12">game</a></b>
+<div class="button-play">
+	<a href="#/game">Play</a>
+</div>
