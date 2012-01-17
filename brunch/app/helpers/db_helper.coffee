@@ -1,7 +1,7 @@
-helper = {}
+helper = {verbose: true}
 
 helper.log = (message) ->
-  console.log "db: " + message if message? && @verbose
+  console.log "db: " + message if message? && helper.verbose
 
 helper.remove = (object, callback) ->
   if !object?
@@ -39,4 +39,4 @@ helper.createTestDatabase = ->
 helper.createProductionDatabase = ->
   helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0'
 
-exports.DBHelper = helper
+exports.DbHelper = helper
