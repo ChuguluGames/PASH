@@ -1,10 +1,11 @@
 window.app = {}
 
 # helpers
-{DBHelper}       				= require 'helpers/db_helper'
+{DBHelper}       			= require 'helpers/db_helper'
 {DownloadHelper}       	= require 'helpers/download_helper'
 {FormatHelper}       		= require 'helpers/format_helper'
 {PositionHelper}       	= require 'helpers/position_helper'
+{PreloadHelper}       	= require 'helpers/preload_helper'
 
 # router
 {MainRouter} 						= require 'routers/main_router'
@@ -48,6 +49,8 @@ class exports.Application
 		DownloadHelper: 	true
 		FormatHelper: 		true
 		PositionHelper: 	true
+		PreloadHelper: 		true
+
 	router: 			null
 	helpers: 			{}
 	models: 			{}
@@ -88,6 +91,9 @@ class exports.Application
 		self.helpers.positioner.verbose = self.verbose.PositionHelper
 		self.helpers.formater 					= FormatHelper
 		self.helpers.formater.verbose 	= self.verbose.FormatHelper
+
+		self.helpers.preloader 					= PreloadHelper
+		self.helpers.preloader.verbose 	= self.verbose.PreloadHelper
 
 		# views
 		self.views.home 				= new HomeView()
