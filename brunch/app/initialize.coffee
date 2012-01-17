@@ -37,7 +37,7 @@ for path in modules
 		module_type = path.split('_').pop()
 		module_path = module_type + 's/' + path
 		module_class = path.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
-		console.log module_path + " " + module_class
+#		console.log module_path + " " + module_class
 		window[module_class] = require(module_path)[module_class]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
@@ -60,7 +60,7 @@ DifferenceModel.hasMany('difference_points', DifferencePointModel, 'difference')
 
 class exports.Application
 	verbose:
-		DBHelper           : true
+		DbHelper           : true
 		DownloadHelper     : true
 		FormatHelper       : true
 		PositionHelper     : true
@@ -101,9 +101,8 @@ class exports.Application
 		# helpers
 		self.helpers.db                       = DbHelper
 		self.helpers.db.verbose               = self.verbose.DbHelper
-		self.helpers.db.createProductionDatabase()
-		self.helpers.downloader               = DownloadHelper
 
+		self.helpers.downloader               = DownloadHelper
 		self.helpers.downloader.verbose       = self.verbose.DownloadHelper
 
 		self.helpers.image_downloader         = ImageDownloadHelper
@@ -121,15 +120,17 @@ class exports.Application
 		self.helpers.polygoner 								= PolygonHelper
 		self.helpers.polygoner.verbose 				= self.verbose.PolygonHelper
 
-		# views
-		self.views.home 				= new HomeView()
-		self.views.game 				= new GameView()
+		# wait for database
+		self.helpers.db.createProductionDatabase ->
+			# views
+			self.views.home 				= new HomeView()
+			self.views.game 				= new GameView()
 
-		# controllers
-		self.controllers.home 	= new HomeController(view: self.views.home)
-		self.controllers.game 	= new GameController(view: self.views.game)
+			# controllers
+			self.controllers.home 	= new HomeController(view: self.views.home)
+			self.controllers.game 	= new GameController(view: self.views.game)
 
-		# router
-		self.router 						= MainRouter.init()
+			# router
+			self.router 						= MainRouter.init('/')
 
 window.app = new exports.Application()
