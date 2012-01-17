@@ -1,7 +1,7 @@
 helper = {verbose: true}
 
 helper.log = (message) ->
-  console.log "db: " + message if message? && helper.verbose
+  console.log "db: " + message if message? && @verbose
 
 helper.remove = (object, callback) ->
   if !object?
@@ -15,7 +15,7 @@ helper.save = (object, callback) ->
   persistence.add object
   persistence.flush null, callback
 
-helper.createDatabase = (dbname, dbdescription, dbsize, dbversion) ->
+helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
   helper.log "creating database '" + dbname + "'"
   supports_webdatabase = !!window.openDatabase
   using_localstorage = !supports_webdatabase
@@ -27,16 +27,17 @@ helper.createDatabase = (dbname, dbdescription, dbsize, dbversion) ->
     helper.log "using memory"
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
-  persistence.debug = true
+  persistence.debug = @verbose
   persistence.schemaSync ->
     helper.log "schema synced"
-  persistence.flush null, ->
-    helper.log 'changes flushed'
+    callback() if callback?
+#  persistence.flush null, ->
+#    helper.log 'changes flushed'
 
-helper.createTestDatabase = ->
-  helper.createDatabase "test_pash", "database", 5 * 1024 * 1024, '1.0'
+helper.createTestDatabase = (callback) ->
+  helper.createDatabase "test_pash", "database", 5 * 1024 * 1024, '1.0', callback
 
-helper.createProductionDatabase = ->
-  helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0'
+helper.createProductionDatabase = (callback) ->
+  helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0', callback
 
 exports.DbHelper = helper
