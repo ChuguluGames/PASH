@@ -1,0 +1,67 @@
+#game-view
+	.topbar
+		height 30px
+		background #000000
+		position relative
+		margin-bottom 5px
+
+		.back
+			float left
+			padding 0 10px
+			background #fbfbfb
+			margin-right 10px
+
+			a
+				display block
+				line-height 25px
+				text-decoration none
+
+		.score
+			float left
+			background #ff0000
+			.score-text
+				font-weight bold
+				float left
+			.score-value
+				width 100px
+				text-align center
+
+		.differences-status
+			float left
+			height 10px
+			margin-top 10px
+			margin-left 10px
+
+			ul
+				list-style none
+				li
+					float left
+					width 10px
+					height 10px
+					margin-right 10px
+					display block
+					background #ff0000
+					&.found
+						background #00ff00
+
+		.button-next-item
+			float right
+			padding 0 10px
+			background #0000ff
+			a
+				display block
+				line-height 25px
+				text-decoration none
+				color #000
+
+	.item-loading
+		display none
+
+	.item
+		.first-image, .second-image
+			width 238px
+			height 273px
+			float left
+
+		.first-image
+			margin-right 5px

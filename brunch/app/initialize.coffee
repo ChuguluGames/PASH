@@ -7,6 +7,7 @@ modules = [
 	'image_download_helper'
 	'format_helper'
 	'position_helper'
+	'preload_helper'
 
 	# router
 	'main_router'
@@ -63,6 +64,8 @@ class exports.Application
 		FormatHelper       : true
 		PositionHelper     : true
 		ImageDownloadHelper: true
+		PreloadHelper			 : true
+
 	router: 			null
 	helpers: 			{}
 	models: 			{}
@@ -104,6 +107,8 @@ class exports.Application
 		self.helpers.positioner.verbose       = self.verbose.PositionHelper
 		self.helpers.formater                 = FormatHelper
 		self.helpers.formater.verbose         = self.verbose.FormatHelper
+		self.helpers.preloader 								= PreloadHelper
+		self.helpers.preloader.verbose 				= self.verbose.PreloadHelper
 
 		# wait for database
 		self.helpers.db.createProductionDatabase ->

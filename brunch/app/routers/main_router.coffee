@@ -1,7 +1,19 @@
-exports.MainRouter = new Router
+exports.MainRouter = new Router(
 	routes:
-		"": 						-> app.controllers.home.show(arguments)
-		"/home": 				-> app.controllers.home.show(arguments)
-		"/game": 				-> app.controllers.game.loadItem(arguments)
-		"/game/:item": 	-> app.controllers.game.loadItem(arguments)
+		"/":
+			"/home": -> app.controllers.home.show()
 
+			"/game":
+				on: (item, mode) -> app.controllers.game.loadItem item, mode
+				"/:item":
+					on: ->
+					"/mode":
+						on: ->
+						"/:mode":
+							on: ->
+			on: ->
+				# empty route
+				if this.getRoute()[0] == ""
+					this.setRoute("home")
+
+).configure({ recurse: 'forward' }) # make the first function bind
