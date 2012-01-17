@@ -1,13 +1,13 @@
 class exports.HomeView extends View
 	id: 'home-view'
-  brol = false # TODO: remove me (prevents double execution)
+#    brol: false # TODO: remove me (prevents double execution)
 
-  render: ->
-    self=@
-    $(self.el).html homeTemplate()
-    return @ if brol
-    brol = true
-    console.log "brol"
+	render: ->
+		self=@
+		$(self.el).html require('templates/home')
+#    return @ if @brol
+#    @brol = true
+		console.log "brol"
 #   item = new ItemModel({
 #     identity        : 556
 #     first_image_url : "assets/items/149/original.jpg"
@@ -44,26 +44,26 @@ class exports.HomeView extends View
 
 
 
-    console.log "WTF 1"
-    packImageDownloaded = (packobj) ->
-      console.log "WTF 2-2"
-      if (packobj.preview_image? && packobj.cover_image?)
-        packobj.state = PackModel.STATE_READY_TO_PLAY
+		console.log "WTF 1"
+		packImageDownloaded = (packobj) ->
+			console.log "WTF 2-2"
+			if (packobj.preview_image? && packobj.cover_image?)
+				packobj.state = PackModel.STATE_READY_TO_PLAY
 
-    console.log "WTF 3"
-    ItemModel.all().filter('identity', '=', 556).prefetch('pack').prefetch('first_image').prefetch('second_image').one null, (item) ->
-        console.log "WTF 3-1"
-        return if !item?
-        console.log "WTF 3-2"
-        app.helpers.image_downloader(item.pack.preview_image_url, item.pack, 'preview_image', packImageDownloaded)
-        app.helpers.image_downloader(item.pack.cover_image_url, item.pack, 'cover_image', packImageDownloaded)
-        app.helpers.image_downloader(item.first_image_url, item, 'first_image', null)
-        app.helpers.image_downloader(item.second_image_url, item, 'second_image', null)
+		console.log "WTF 3"
+		ItemModel.all().filter('identity', '=', 556).prefetch('pack').prefetch('first_image').prefetch('second_image').one null, (item) ->
+				console.log "WTF 3-1"
+				return if !item?
+				console.log "WTF 3-2"
+				app.helpers.image_downloader(item.pack.preview_image_url, item.pack, 'preview_image', packImageDownloaded)
+				app.helpers.image_downloader(item.pack.cover_image_url, item.pack, 'cover_image', packImageDownloaded)
+				app.helpers.image_downloader(item.first_image_url, item, 'first_image', null)
+				app.helpers.image_downloader(item.second_image_url, item, 'second_image', null)
 
 
 #   some_diff = new DifferenceModel()
 #   other_diff = new DifferenceModel()
 #   item.differences.add(some_diff)
 #   item.differences.add(other_diff)
-    @
+		@
 
