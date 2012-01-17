@@ -7,6 +7,7 @@ modules = [
 	'image_download_helper'
 	'format_helper'
 	'position_helper'
+	'preload_helper'
 
 	# router
 	'main_router'
@@ -108,8 +109,8 @@ class exports.Application
 		self.helpers.formater                 = FormatHelper
 		self.helpers.formater.verbose         = self.verbose.FormatHelper
 
-		self.helpers.preloader 					= PreloadHelper
-		self.helpers.preloader.verbose 	= self.verbose.PreloadHelper
+		self.helpers.preloader 								= PreloadHelper
+		self.helpers.preloader.verbose 				= self.verbose.PreloadHelper
 
 		# views
 		self.views.home 				= new HomeView()
