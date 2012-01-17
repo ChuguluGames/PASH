@@ -1,7 +1,9 @@
 class exports.GameView extends View
-	id: 'game-view'
+	id: 			'game-view'
+	template: require 'templates/game'
 
-	render: ->
+	render: (item) ->
 		self=@
-		$(@el).html require('templates/game')
-		@
+
+		$(self.el).html self.template item: item
+		self
