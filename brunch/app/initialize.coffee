@@ -1,31 +1,42 @@
 window.app = {}
 
-# helpers
-{DBHelper}            = require 'helpers/db_helper'
-{DownloadHelper}      = require 'helpers/download_helper'
-{ImageDownloadHelper} = require 'helpers/image_download_helper'
-{FormatHelper}        = require 'helpers/format_helper'
-{PositionHelper}      = require 'helpers/position_helper'
+modules = [
+	# helpers
+	'db_helper'
+	'download_helper'
+	'image_download_helper'
+	'format_helper'
+	'position_helper'
 
-# router
-{MainRouter} 						= require 'routers/main_router'
+	# router
+	'main_router'
 
-# controllers
-{HomeController} 				= require 'controllers/home_controller'
-{GameController} 				= require 'controllers/game_controller'
+	# controllers
+	'home_controller'
+	'game_controller'
 
-# views
-{HomeView}   						= require 'views/home_view'
-{GameView}   						= require 'views/game_view'
+	# views
+	'home_view'
+	'game_view'
 
-# models
-{PlayerModel}          	= require 'models/player_model'
-{TagModel}             	= require 'models/tag_model'
-{PackModel}           	= require 'models/pack_model'
-{ItemModel}            	= require 'models/item_model'
-{DifferenceModel}      	= require 'models/difference_model'
-{DifferencePointModel} 	= require 'models/difference_point_model'
-{ImageModel}           	= require 'models/image_model'
+	# models
+	'player_model'
+	'tag_model'
+	'pack_model'
+	'item_model'
+	'difference_model'
+	'difference_point_model'
+	'image_model'
+]
+
+# executes window.SomeType = require('types/some_type').SomeType for each class
+for path in modules
+	do (path) ->
+		module_type = path.split('_').pop()
+		module_path = module_type + 's/' + path
+		module_class = path.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
+		console.log module_path + " " + module_class
+		window[module_class] = require(module_path)[module_class]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
 PlayerModel.hasMany('packs', PackModel, 'players')
@@ -83,8 +94,8 @@ class exports.Application
 		self=@
 
 		# helpers
-		self.helpers.db                       = DBHelper
-		self.helpers.db.verbose               = self.verbose.DBHelper
+		self.helpers.db                       = DbHelper
+		self.helpers.db.verbose               = self.verbose.DbHelper
 		self.helpers.db.createProductionDatabase()
 		self.helpers.downloader               = DownloadHelper
 		self.helpers.downloader.verbose       = self.verbose.DownloadHelper
