@@ -7,6 +7,7 @@ modules = [
 	'image_download_helper'
 	'format_helper'
 	'position_helper'
+	'polygon_helper'
 	'preload_helper'
 
 	# router
@@ -65,6 +66,7 @@ class exports.Application
 		PositionHelper     : true
 		ImageDownloadHelper: true
 		PreloadHelper			 : true
+		PolygonHelper			 : true
 
 	router: 			null
 	helpers: 			{}
@@ -101,16 +103,23 @@ class exports.Application
 		self.helpers.db.verbose               = self.verbose.DbHelper
 		self.helpers.db.createProductionDatabase()
 		self.helpers.downloader               = DownloadHelper
+
 		self.helpers.downloader.verbose       = self.verbose.DownloadHelper
+
 		self.helpers.image_downloader         = ImageDownloadHelper
 		self.helpers.image_downloader.verbose = self.verbose.ImageDownloadHelper
+
 		self.helpers.positioner               = PositionHelper
 		self.helpers.positioner.verbose       = self.verbose.PositionHelper
+
 		self.helpers.formater                 = FormatHelper
 		self.helpers.formater.verbose         = self.verbose.FormatHelper
 
 		self.helpers.preloader 								= PreloadHelper
 		self.helpers.preloader.verbose 				= self.verbose.PreloadHelper
+
+		self.helpers.polygoner 								= PolygonHelper
+		self.helpers.polygoner.verbose 				= self.verbose.PolygonHelper
 
 		# views
 		self.views.home 				= new HomeView()
