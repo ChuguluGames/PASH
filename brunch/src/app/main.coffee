@@ -5,8 +5,9 @@ app.helpers = {}
 app.views   = {}
 
 # helpers
-DBHelper       = require('helpers/db_helper').DBHelper
-#DownloadHelper = require('helpers/download_helper').DownloadHelper
+DBHelper            = require('helpers/db_helper').DBHelper
+DownloadHelper      = require('helpers/download_helper').DownloadHelper
+ImageDownloadHelper = require('helpers/image_download_helper').ImageDownloadHelper
 
 # routers
 MainRouter = require('routers/main_router').MainRouter
@@ -30,10 +31,12 @@ TagModel.hasMany('packs', PackModel, 'tags')
 
 PackModel.hasMany('tags', TagModel, 'packs')
 PackModel.hasMany('players', PlayerModel, 'packs')
+PackModel.hasMany('items', ItemModel, 'pack')
 PackModel.hasOne('preview_image', ImageModel, null)
 PackModel.hasOne('cover_image', ImageModel, null)
 
 ItemModel.hasMany('differences', DifferenceModel, 'item')
+ItemModel.hasOne('pack', PackModel, 'items')
 ItemModel.hasOne('first_image', ImageModel, null)
 ItemModel.hasOne('second_image', ImageModel, null)
 
@@ -49,8 +52,14 @@ app.initialize = ->
   app.routers.main       = new MainRouter()
   app.views.home         = new HomeView()
   app.helpers.db         = DBHelper
-  app.helpers.db.verbous = true
+  app.helpers.db.verbose = true
   app.helpers.db.createProductionDatabase()
+
+  app.helpers.downloader = DownloadHelper
+  app.helpers.downloader.initFilesystem(null, null)
+
+  app.helpers.image_downloader = ImageDownloadHelper
+  app.helpers.image_downloader.setBaseUrl('https://playboy-preprod.chugulu.com/')
 
   app.routers.main.navigate 'home', true if Backbone.history.getFragment() is ''
   Backbone.history.start()
