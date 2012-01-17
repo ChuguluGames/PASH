@@ -3,6 +3,7 @@
 */
 
 (function($){
+	return;
 	// Special event definition.
 	$.event.special.click = {
 		setup: function() {
