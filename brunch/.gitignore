@@ -1,3 +1,3 @@
-build/web/*
-android/*
-ios/*
+build
+android
+ios
