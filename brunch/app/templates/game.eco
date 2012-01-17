@@ -1,17 +1,22 @@
 <div class="topbar">
 	<div class="back"><a href="#/home">Pause</a></div>
-	<div class="score"><div class="score-text">Score:</div><div class="score-value">-</div></div>
+	<div class="score">
+		<div class="score-text">Score:</div>
+		<div class="score-value"><%= @score %></div>
+	</div>
 	<div class="differences-status">
 		<ul>
-		  <% for difference in @differences: %>
+		  <% for difference in @item.differences: %>
 		  	<li></li>
 		  <% end %>
 		</ul>
 	</div>
-	<div class="button-next-item"><a href="#/game/13">Next</a></div>
+	<% if @mode == "practice": %>
+	<div class="button-next-item"><a href="#/game/<%= @next %>/mode/practice">">Next</a></div>
+	<% end %>
 </div>
 <div class="item-loading">chargement en cours...</div>
 <div class="item">
-	<div class="first-image" style="background:<%= @first_image %>"></div>
-	<div class="second-image" style="background:<%= @second_image %>"></div>
+	<div class="first-image" style="background:<%= @item.first_image.image.path %>"></div>
+	<div class="second-image" style="background:<%= @item.second_image.image.path %>"></div>
 </div>
