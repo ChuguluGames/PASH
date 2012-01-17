@@ -23,9 +23,9 @@ Controller.prototype.delegateEvents = function() {
 		match = key.match(Controller.eventSplitter);
 		eventName = match[1], selector = match[2];
 		if (selector === '') {
-			$(el).on(eventName, method);
+			$(el).on(eventName, function(evt) { method.call(self, evt); });
 		} else {
-			$(el).on(eventName, selector, method);
+			$(el).on(eventName, selector, function(evt) { method.call(self, evt); });
 		}
 	}
 };

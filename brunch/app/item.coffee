@@ -1,0 +1,13 @@
+exports.itemData={"identity":601,"first_image_url":"https://playboy.chugulu.com/assets/items/370/original.jpg","second_image_url":"https://playboy.chugulu.com/assets/items/371/original.jpg"}
+exports.differencesData=[
+	{"identity":740},
+	{"identity":741},
+	{"identity":742},
+	{"identity":743}
+]
+exports.differencesPointsData=[
+	[{"identity":3477,"x":304,"y":377},{"identity":3478,"x":368,"y":377},{"identity":3479,"x":368,"y":434},{"identity":3480,"x":304,"y":434}],
+	[{"identity":3481,"x":371,"y":192},{"identity":3482,"x":470,"y":192},{"identity":3483,"x":470,"y":234},{"identity":3484,"x":371,"y":234}],
+	[{"identity":3485,"x":52,"y":365},{"identity":3486,"x":111,"y":365},{"identity":3487,"x":111,"y":403},{"identity":3488,"x":52,"y":403}],
+	[{"identity":3489,"x":184,"y":224},{"identity":3490,"x":222,"y":224},{"identity":3491,"x":222,"y":257},{"identity":3492,"x":184,"y":257}]
+]

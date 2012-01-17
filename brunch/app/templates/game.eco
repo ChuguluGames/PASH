@@ -17,6 +17,6 @@
 </div>
 <div class="item-loading">chargement en cours...</div>
 <div class="item">
-	<div class="first-image" style="background:<%= @item.first_image.image.path %>"></div>
-	<div class="second-image" style="background:<%= @item.second_image.image.path %>"></div>
+	<div class="first-image"></div>
+	<div class="second-image"></div>
 </div>
