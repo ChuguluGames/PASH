@@ -1,7 +1,7 @@
-helper = {verbous: true}
+helper = {verbose: true}
 
 helper.log = (message) ->
-  console.log "db: " + message if message? && helper.verbous
+  console.log "db: " + message if message? && helper.verbose
 
 helper.remove = (object, callback) ->
   if !object?
