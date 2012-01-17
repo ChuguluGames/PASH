@@ -39,4 +39,11 @@ helper.createTestDatabase = ->
 helper.createProductionDatabase = ->
   helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0'
 
+helper.collectionToArray = (collection) ->
+  array=[]
+  collection.each null, (item) ->
+    array.push item
+
+  array
+
 exports.DbHelper = helper
