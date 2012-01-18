@@ -1,4 +1,5 @@
 SequentialDownloader = ->
+SequentialDownloader.tag 								= "SequentialDownloader"
 SequentialDownloader.filesystem_fetching = false
 SequentialDownloader.filesystem          = null
 SequentialDownloader.queue               = new Array()

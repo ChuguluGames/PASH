@@ -1,10 +1,6 @@
 helper={}
 
-helper.verbose=false
 helper.tag = "PolygonHelper"
-
-helper.log = (message) ->
-  console.log "[" + helper.tag + "] " , message if message? && @verbose
 
 # check if the point is in the polygon
 helper.isPointInPolygon = (point, polygon) ->
@@ -18,7 +14,7 @@ helper.isPointInPolygon = (point, polygon) ->
 	  inPolygon = not inPolygon  if (polygon[i].y > point.y) isnt (polygon[j].y > point.y) and (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)
 	  j = i++
 
-	helper.log inPolygon
+	app.log.info "the point", point, "is in the polygon", @tag if inPolygon
 	inPolygon
 
 # get the extremity of the polygon and return a rectangle
@@ -43,7 +39,7 @@ helper.polygonToRectangle = (polygon) ->
 
 		i++
 
-	helper.log bounds
+	app.log.info "the bounds of polygon are ", bounds, @tag
 
 	return {
 		dimensions:
@@ -69,9 +65,12 @@ helper.rectangleFromPointAndTarget = (point, target, dimensions) ->
 		x: Math.min(targetDimensions.width - dimensions.width, Math.max(0, center.x))
 		y: Math.min(targetDimensions.height - dimensions.height, Math.max(0, center.y))
 
-	return {
+	rectangle =
 		dimensions: dimensions
 		position: position
-	}
+
+	app.log.info "the rectangle generated is ", rectangle, @tag
+
+	return rectangle
 
 exports.PolygonHelper=helper

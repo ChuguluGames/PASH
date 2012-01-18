@@ -16,9 +16,11 @@ exports.MainRouter = new Router(
 
 				# empty route
 				if route[0] == ""
-					console.log "empty route"
+					app.log.info "empty route", @tag
 					this.setRoute "home"
 				else
-					console.log "on route: " + route
+					app.log.info "on route: " + route, @tag
 
 ).configure({ recurse: 'forward' }) # make the first function bind
+
+exports.MainRouter.tag = "MainRouter"
