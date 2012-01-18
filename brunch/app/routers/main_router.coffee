@@ -12,8 +12,13 @@ exports.MainRouter = new Router(
 						"/:mode":
 							on: ->
 			on: ->
+				route = this.getRoute()
+
 				# empty route
-				if this.getRoute()[0] == ""
-					this.setRoute("home")
+				if route[0] == ""
+					console.log "empty route"
+					this.setRoute "home"
+				else
+					console.log "on route: " + route
 
 ).configure({ recurse: 'forward' }) # make the first function bind
