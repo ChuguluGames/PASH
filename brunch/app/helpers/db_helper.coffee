@@ -1,7 +1,14 @@
-helper = {verbose: true}
+helper = {
+  verbose   : true
+  created   : false
+  store_type: null
+}
 
 helper.log = (message) ->
   console.log "db: " + message if message? && @verbose
+
+helper.modelIsDefined = (model_name) ->
+  return persistence.isDefined model_name
 
 helper.remove = (object, callback) ->
   if !object?
@@ -22,14 +29,17 @@ helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
 
   if supports_webdatabase
     helper.log "using websql"
+    helper.store_type = "websql"
     persistence.store.websql.config persistence, dbname, dbdescription, dbsize
   else
     helper.log "using memory"
+    helper.store_type = "memory"
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
   persistence.debug = @verbose
   persistence.schemaSync ->
     helper.log "schema synced"
+    helper.created = true
     callback() if callback?
 #  persistence.flush null, ->
 #    helper.log 'changes flushed'
