@@ -25,8 +25,8 @@ class exports.GameController extends Controller
 		itemCurrent = 0 if not itemCurrent?
 		mode = self.modes[0] if not mode?
 
-		return if not self.validateItemID itemCurrent
-		return if not self.validateMode mode
+		# return if not self.validateItemID itemCurrent
+		# return if not self.validateMode mode
 
 		self.mode = mode
 		self.itemCurrent = itemCurrent
@@ -35,10 +35,37 @@ class exports.GameController extends Controller
 
 		self.findNextItem()
 
-		# preload images and bubble to the view
-		# app.helpers.preloader.load ->
-		# 	self.view.hideLoading()
-		# , self.item.first_image.image, self.item.second_image.image
+		{itemData} = require("item")
+		{differencesData} = require("item")
+		{differencesPointsData} = require("item")
+
+		item = new ItemModel(itemData)
+		l = differencesData.length
+		i = 0
+
+		while i < l
+			difference = differencesData[i]
+			differenceModel = new DifferenceModel(difference)
+			differencePointsData = differencesPointsData[i]
+
+			ll = differencePointsData.length
+			ii = 0
+			while ii < ll
+				differencePoint = differencePointsData[ii]
+				differencePointModel = new DifferencePointModel(differencePoint)
+				differenceModel.difference_points.add(differencePointModel)
+				ii++
+
+			item.differences.add(differenceModel)
+			i++
+
+		self.item = item
+
+		# preload images
+		new app.helpers.preloader().load ->
+			self.view.addItemImages(self.item)
+			self.view.hideLoading()
+		, self.item.first_image_url, self.item.second_image_url
 
 		# render the view
 		$("body").html self.view.render(
@@ -47,8 +74,6 @@ class exports.GameController extends Controller
 			mode: 			self.mode
 			score: 			self.score
 		).el
-
-		self.view.hideLoading()
 
 	validateItemID: (itemCurrent) ->
 		self=@
@@ -94,15 +119,19 @@ class exports.GameController extends Controller
 		# make the position relative to the item
 		relativePosition = app.helpers.positioner.getRelativePosition event.currentTarget, position
 
-		# for each difference of the item
-		for difference in self.item.differences
-		  do (difference) ->
-				# difference already been found
-				if difference.haveBeenFound
-					return true
+		differenceFound = false
 
-				# touch in the difference polygon
-				if app.helper.positioner.pointInPolygon relativePosition difference
-					# in polygon
-					console.log "in polygon"
-					return true
+		# for each difference of the item
+		self.item.differences.each null, (difference) ->
+
+			# touch in the difference polygon
+			if app.helpers.polygoner.isPointInPolygon relativePosition, difference.difference_points
+				if not difference.isFound? || not difference.isFound
+					self.view.showDifference app.helpers.polygoner.polygonToRectangle difference.difference_points
+					difference.isFound = true
+				differenceFound = true
+
+		# still there, let's show a missed one
+		if not differenceFound
+			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, {width: 20, height: 20}
+			self.view.showError errorBounds
