@@ -122,7 +122,7 @@ class exports.Application
     self.controllers.game   = new GameController(view: self.views.game)
 
     # router
-    self.router             = MainRouter.init('/')
+    self.router             = MainRouter.init('/home')
 
   initialize: ->
     self=@
