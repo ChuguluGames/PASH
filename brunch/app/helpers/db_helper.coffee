@@ -1,6 +1,12 @@
-helper = {}
+helper = {
+  created   : false
+  store_type: null
+}
 
 helper.tag = "DbHelper"
+
+helper.modelIsDefined = (model_name) ->
+  return persistence.isDefined model_name
 
 helper.remove = (object, callback) ->
   if !object?
@@ -21,14 +27,17 @@ helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
 
   if supports_webdatabase
     app.log.info "using websql", @tag
+    helper.store_type = "websql"
     persistence.store.websql.config persistence, dbname, dbdescription, dbsize
   else
     app.log.info "using memory", @tag
+    helper.store_type = "memory"
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
   persistence.debug = @verbose
   persistence.schemaSync ->
     app.log.info "schema synced", @tag
+    helper.created = true
     callback() if callback?
 #  persistence.flush null, ->
 #    helper.log 'changes flushed'
