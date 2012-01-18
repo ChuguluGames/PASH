@@ -1,7 +1,6 @@
-helper = {verbose: true}
+helper = {}
 
-helper.log = (message) ->
-  console.log "db: " + message if message? && @verbose
+helper.tag = "DbHelper"
 
 helper.remove = (object, callback) ->
   if !object?
@@ -16,20 +15,20 @@ helper.save = (object, callback) ->
   persistence.flush null, callback
 
 helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
-  helper.log "creating database '" + dbname + "'"
+  app.log.info "creating database '" + dbname + "'", @tag
   supports_webdatabase = !!window.openDatabase
   using_localstorage = !supports_webdatabase
 
   if supports_webdatabase
-    helper.log "using websql"
+    app.log.info "using websql", @tag
     persistence.store.websql.config persistence, dbname, dbdescription, dbsize
   else
-    helper.log "using memory"
+    app.log.info "using memory", @tag
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
   persistence.debug = @verbose
   persistence.schemaSync ->
-    helper.log "schema synced"
+    app.log.info "schema synced", @tag
     callback() if callback?
 #  persistence.flush null, ->
 #    helper.log 'changes flushed'

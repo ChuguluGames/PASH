@@ -1,4 +1,6 @@
 ImageDownloader = ->
+
+ImageDownloader.tag = "ImageDownloader"
 ImageDownloader.baseUrl = null
 
 ImageDownloader.setBaseUrl = (newUrl) ->

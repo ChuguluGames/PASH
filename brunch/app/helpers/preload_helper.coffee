@@ -1,5 +1,4 @@
 class exports.PreloadHelper
-	verbose: 	true
 	tag: 			"PreloadHelper"
 	callback: null
 	args: 		null
@@ -7,9 +6,6 @@ class exports.PreloadHelper
 	constructor: ->
 		self=@
 		self
-
-	log: (message) ->
-	  console.log "[" + @tag + "] " , message if message? && @verbose
 
 	load: ->
 		if not arguments? || arguments.length <= 1
@@ -32,11 +28,11 @@ class exports.PreloadHelper
 		img = new Image()
 
 		$("<img />").load(->
-			self.log "preload: \"" + @src + "\""
+			app.log.info "preload: \"" + @src + "\"", self.tag
 			self.loadAll() # load the next one
 
 		# bind a possible 404 error
 		).error(->
-			self.log "unable to load: \"" + src + "\""
+			sapp.log.info "unable to load: \"" + src + "\"", self.tag
 
 		).attr("src", path)

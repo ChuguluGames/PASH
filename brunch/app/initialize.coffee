@@ -2,6 +2,7 @@ window.app = {}
 
 modules = [
 	# helpers
+	'log_helper'
 	'db_helper'
 	'download_helper'
 	'image_download_helper'
@@ -60,6 +61,8 @@ DifferenceModel.hasMany('difference_points', DifferencePointModel, 'difference')
 
 class exports.Application
 	verbose:
+		Application 			 : true
+		MainRouter 				 : true
 		DbHelper           : true
 		DownloadHelper     : true
 		FormatHelper       : true
@@ -68,6 +71,8 @@ class exports.Application
 		PreloadHelper			 : true
 		PolygonHelper			 : true
 
+	tag: 					"Application"
+	log: 					LogHelper
 	router: 			null
 	helpers: 			{}
 	models: 			{}
@@ -75,24 +80,29 @@ class exports.Application
 	views: 				{}
 
 	constructor: ->
-		@waitForDeviceReadyEvent()
+		self=@
+
+		self.log.verbose = self.verbose
+		self.waitForDeviceReadyEvent()
 
 	waitForDeviceReadyEvent: ->
 		self=@
 		$(window).load ->
 			# device ready already fired
 			if PhoneGap? and PhoneGap.onDeviceReady? && PhoneGap.onDeviceReady.fired == true
-				console.log "device ready already fired"
+				self.log.info "device ready already fired", {hello: "prout"}, self.tag
 				self.initialize()
 			else
-				console.log "waiting for device response"
+				self.log.info "waiting for device response"
 				document.addEventListener "deviceready", ->
 					self.onDeviceReady()
 				, false
 
 	onDeviceReady: ->
 		self=@
+		self.log.error "on device ready", self.tag
 		$ =>
+			self.log.info "on dom ready", self.tag
 			self.initialize()
 
 	initialize: ->
@@ -100,28 +110,17 @@ class exports.Application
 
 		# helpers
 		self.helpers.db                       = DbHelper
-		self.helpers.db.verbose               = self.verbose.DbHelper
-
 		self.helpers.downloader               = DownloadHelper
-		self.helpers.downloader.verbose       = self.verbose.DownloadHelper
-
 		self.helpers.image_downloader         = ImageDownloadHelper
-		self.helpers.image_downloader.verbose = self.verbose.ImageDownloadHelper
-
 		self.helpers.positioner               = PositionHelper
-		self.helpers.positioner.verbose       = self.verbose.PositionHelper
-
 		self.helpers.formater                 = FormatHelper
-		self.helpers.formater.verbose         = self.verbose.FormatHelper
-
 		self.helpers.preloader 								= PreloadHelper
-		self.helpers.preloader.verbose 				= self.verbose.PreloadHelper
-
 		self.helpers.polygoner 								= PolygonHelper
-		self.helpers.polygoner.verbose 				= self.verbose.PolygonHelper
 
 		# wait for database
 		self.helpers.db.createProductionDatabase ->
+			self.log.info "database created", self.tag
+
 			# views
 			self.views.home 				= new HomeView()
 			self.views.game 				= new GameView()
