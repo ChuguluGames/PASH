@@ -12,12 +12,13 @@ public class PASH extends DroidGap
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		super.onCreate(savedInstanceState);
+
 		// hide the status bar
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 												WindowManager.LayoutParams.FLAG_FULLSCREEN |
 												WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
-		super.onCreate(savedInstanceState);
 		super.loadUrl("file:///android_asset/www/index.html");
 	}
 }
