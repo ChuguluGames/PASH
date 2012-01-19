@@ -100,7 +100,7 @@ class exports.Application
 
   onDeviceReady: ->
     self=@
-    self.log.error "on device ready", self.tag
+    self.log.info "on device ready", self.tag
     $ =>
       self.log.info "on dom ready", self.tag
       self.initialize()
