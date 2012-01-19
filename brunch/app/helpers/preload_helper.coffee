@@ -25,7 +25,6 @@ class exports.PreloadHelper
 
 	loadOne: (path) ->
 		self=@
-		img = new Image()
 
 		$("<img />").load(->
 			app.log.info "preload: \"" + @src + "\"", self.tag
@@ -33,6 +32,6 @@ class exports.PreloadHelper
 
 		# bind a possible 404 error
 		).error(->
-			sapp.log.info "unable to load: \"" + src + "\"", self.tag
+			app.log.info "unable to load: \"" + @src + "\"", self.tag
 
 		).attr("src", path)
