@@ -2,6 +2,7 @@ window.app = {}
 
 modules = [
   # helpers
+  'client_helper'
   'log_helper'
   'db_helper'
   'download_helper'
@@ -10,6 +11,7 @@ modules = [
   'position_helper'
   'polygon_helper'
   'preload_helper'
+  'retina_helper'
 
   # router
   'main_router'
@@ -63,6 +65,7 @@ class exports.Application
   verbose:
     Application        : true
     MainRouter         : true
+    ClientHelper       : true
     DbHelper           : true
     DownloadHelper     : true
     FormatHelper       : true
@@ -70,9 +73,11 @@ class exports.Application
     ImageDownloadHelper: true
     PreloadHelper      : true
     PolygonHelper      : true
+    RetinaHelper       : true
 
-  tag:          "Application"
-  log:          LogHelper
+  tag   :          "Application"
+  log   :          LogHelper
+  client:          new ClientHelper()
 
   router:       null
   helpers:      {}
@@ -114,27 +119,31 @@ class exports.Application
     self.log.info "on database ready", self.tag
 
     # views
-    self.views.home         = new HomeView()
-    self.views.game         = new GameView()
+    self.views.home       = new HomeView()
+    self.views.game       = new GameView()
 
     # controllers
-    self.controllers.home   = new HomeController(view: self.views.home)
-    self.controllers.game   = new GameController(view: self.views.game)
+    self.controllers.home = new HomeController(view: self.views.home)
+    self.controllers.game = new GameController(view: self.views.game)
 
     # router
-    self.router             = MainRouter.init('/home')
+    self.router           = MainRouter.init('/home')
 
   initialize: ->
     self=@
 
     # helpers
-    self.helpers.db                       = DbHelper
-    self.helpers.downloader               = DownloadHelper
-    self.helpers.image_downloader         = ImageDownloadHelper
-    self.helpers.positioner               = PositionHelper
-    self.helpers.formater                 = FormatHelper
-    self.helpers.preloader                = PreloadHelper
-    self.helpers.polygoner                = PolygonHelper
+    self.helpers.db               = DbHelper
+    self.helpers.downloader       = DownloadHelper
+    self.helpers.image_downloader = ImageDownloadHelper
+    self.helpers.positioner       = PositionHelper
+    self.helpers.formater         = FormatHelper
+    self.helpers.preloader        = PreloadHelper
+    self.helpers.polygoner        = PolygonHelper
+    self.helpers.retina           = RetinaHelper
+
+    # activate the fast clicks if needed
+    activateFastClicks() if self.client.isMobile()
 
     # wait for database
     self.helpers.db['create' + window.env.database + 'Database'] -> self.onDatabaseReady()
