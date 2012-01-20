@@ -4,5 +4,5 @@ class exports.HomeView extends View
 
 	render: ->
 		self=@
-		$(self.el).html self.template
+		$(self.el).html "<img src='file:///data/data/com.phonegap.pash/images/truct/test/zizi/image.png'/>"
 		self
