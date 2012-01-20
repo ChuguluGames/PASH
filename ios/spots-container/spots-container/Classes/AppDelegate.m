@@ -14,7 +14,7 @@
 #endif
 
 #ifdef REMOTE_DEBUG
-    #import <objc/runtime.h>
+//    #import <objc/runtime.h>
 #endif
 
 @implementation AppDelegate
@@ -42,9 +42,9 @@
     }    
 
 #ifdef REMOTE_DEBUG
-    Class webViewClass = NSClassFromString(@"WebView");
-    if (webViewClass)
-        [webViewClass performSelector:@selector(_enableRemoteInspector)];
+//    Class webViewClass = NSClassFromString(@"WebView");
+//    if (webViewClass)
+//        [webViewClass performSelector:@selector(_enableRemoteInspector)];
 #endif
     
 	return [super application:application didFinishLaunchingWithOptions:launchOptions];

@@ -10,21 +10,21 @@ class exports.GameView extends View
 
 		$(self.el).html self.template
 			item: 			data.item
-			next: 			data.nextItem
+			next: 			data.next
 			mode: 			data.mode
 			score: 			data.score
 		self
 
 	addItemImages: (item) ->
-		@firstImage = $(".first-image", self.el).css(backgroundImage: "url(" + item.first_image_url + ")")
-		@secondImage = $(".second-image", self.el).css(backgroundImage: "url(" + item.second_image_url + ")")
+		@firstImage = $(".first-image", self.el).css(backgroundImage: "url(" + item.first_image.getSrc() + ")")
+		@secondImage = $(".second-image", self.el).css(backgroundImage: "url(" + item.second_image.getSrc() + ")")
 
 	showDifference: (difference)->
 		self=@
 		differenceElement = $("<div />").addClass("difference").css(
-			left: difference.position.x + "px"
-			top: difference.position.y + "px"
-			width: difference.dimensions.width + "px"
+			left  : difference.position.x + "px"
+			top   : difference.position.y + "px"
+			width : difference.dimensions.width + "px"
 			height: difference.dimensions.height + "px"
 		)
 		differenceElementClone = differenceElement.clone()
@@ -34,9 +34,9 @@ class exports.GameView extends View
 	showError: (error)->
 		self=@
 		errorElement = $("<div />").addClass("error").css(
-			left: error.position.x + "px"
-			top: error.position.y + "px"
-			width: error.dimensions.width + "px"
+			left  : error.position.x + "px"
+			top   : error.position.y + "px"
+			width : error.dimensions.width + "px"
 			height: error.dimensions.height + "px"
 		)
 		errorElementClone = errorElement.clone()

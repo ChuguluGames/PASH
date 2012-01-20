@@ -6,7 +6,7 @@
 	</div>
 	<div class="differences-status">
 		<ul>
-		  <% for difference in @item.differences: %>
+		  <% for difference in @item.differencesArray: %>
 		  	<li></li>
 		  <% end %>
 		</ul>

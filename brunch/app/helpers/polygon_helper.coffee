@@ -17,8 +17,6 @@ helper.isPointInPolygon = (point, polygon) ->
 
 # get the extremity of the polygon and return a rectangle
 helper.polygonToRectangle = (polygon) ->
-	polygon = app.helpers.db.collectionToArray polygon
-
 	bounds =
 		x: null
 		y: null
