@@ -25,7 +25,7 @@ SequentialDownloader.downloadNextFile = ->
 	return if !(nextFile = SequentialDownloader.queue.pop())?
 	fileTransfer = new FileTransfer()
 
-	downloadDirectory = if app.client.isAndroid then "data/data/com.phonegap.pash/" else SequentialDownloader.filesystem.root.fullPath
+	downloadDirectory = if app.client.isAndroid() then "data/data/com.phonegap.pash/" else SequentialDownloader.filesystem.root.fullPath
 
 	fileTransfer.download nextFile.url, downloadDirectory + '/' + nextFile.path,
 			(entry) ->
