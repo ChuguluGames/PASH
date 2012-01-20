@@ -34,7 +34,7 @@ helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
     helper.store_type = "memory"
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
-  persistence.debug = @verbose
+  persistence.debug = app.verbose.DbHelper
   persistence.schemaSync ->
     app.log.info "schema synced", @tag
     helper.created = true
