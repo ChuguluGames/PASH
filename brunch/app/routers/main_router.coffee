@@ -2,6 +2,7 @@ exports.MainRouter = new Router(
 	routes:
 		"/":
 			"/home": ->
+				app.log.info "caca ", @tag
 				app.views.home       = new HomeView()
 				app.controllers.home = new HomeController(view: app.views.home)
 				app.controllers.home.show()
@@ -22,11 +23,7 @@ exports.MainRouter = new Router(
 				route = this.getRoute()
 
 				# empty route
-				if route[0] == ""
-					app.log.info "empty route", @tag
-					this.setRoute "home"
-				else
-					app.log.info "on route: " + route, @tag
+				app.log.info "on route: " + route, @tag
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 
