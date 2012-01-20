@@ -19,7 +19,7 @@ class exports.GameView extends View
 		@firstImage = $(".first-image", self.el).css(backgroundImage: "url(" + item.first_image.getSrc() + ")")
 		@secondImage = $(".second-image", self.el).css(backgroundImage: "url(" + item.second_image.getSrc() + ")")
 
-	showDifference: (difference)->
+	showDifference: (difference) ->
 		self=@
 		differenceElement = $("<div />").addClass("difference").css(
 			left  : difference.position.x + "px"
@@ -30,6 +30,10 @@ class exports.GameView extends View
 		differenceElementClone = differenceElement.clone()
 		@firstImage.append(differenceElement)
 		@secondImage.append(differenceElementClone)
+
+	showDifferencesFound: (differencesFoundNumber) ->
+		console.log differencesFoundNumber
+		$(".differences-status li:lt(" + differencesFoundNumber + ")", self.el).addClass("found")
 
 	showError: (error)->
 		self=@

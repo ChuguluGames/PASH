@@ -3,12 +3,13 @@
 */
 
 function activateFastClicks() {
+
 	(function($){
-		return;
 		// Special event definition.
 		$.event.special.click = {
 			setup: function() {
 				var self = this;
+				console.log ("fastclick")
 				// add fastbutton on the element if it doesnt exist yet
 				if($(self).data("fastbutton") === undefined) {
 					// console.log("add fclick to " + $(this).attr("id"))
