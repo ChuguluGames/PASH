@@ -2,3 +2,6 @@
 <div class="button-play">
 	<a href="#/game">Play</a>
 </div>
+<button type="button" id="seed-btn">
+  seed me!
+</button>
