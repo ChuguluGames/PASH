@@ -12,6 +12,7 @@ modules = [
   'polygon_helper'
   'preload_helper'
   'retina_helper'
+  'model_download_helper'
 
   # router
   'main_router'
@@ -136,6 +137,8 @@ class exports.Application
 
     # activate the fast clicks if needed
     activateFastClicks() if self.client.isMobile()
+
+    self.helpers.model_downloader         = ModelDownloadHelper
 
     # wait for database
     self.helpers.db['create' + window.env.database + 'Database'] -> self.onDatabaseReady()

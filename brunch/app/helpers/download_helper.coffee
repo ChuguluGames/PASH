@@ -2,20 +2,21 @@ SequentialDownloader = ->
 SequentialDownloader.tag 								= "SequentialDownloader"
 SequentialDownloader.filesystem_fetching = false
 SequentialDownloader.filesystem          = null
-SequentialDownloader.queue               = new Array()
+SequentialDownloader.queue               = []
 
 SequentialDownloader.initFilesystem = (success, fail) ->
+	if !LocalFileSystem?
+		SequentialDownloader.filesystem = {}
+		return (success() if success?)
 	return if SequentialDownloader.filesystem_fetching
 	SequentialDownloader.filesystem_fetching = true
 	window.requestFileSystem LocalFileSystem.PERSISTENT, 0
 	, (fs) ->
-		console.log fs.name
 		SequentialDownloader.filesystem = fs
 		success() if success?
 		SequentialDownloader.filesystem_fetching = false
 		SequentialDownloader.downloadNextFile()
 	, (evt) ->
-		console.log evt
 		fail(evt) if fail?
 		SequentialDownloader.filesystem_fetching = false
 
@@ -38,6 +39,7 @@ SequentialDownloader.downloadNextFile = ->
 # when static download method is used the downloads are queued (LIFO stack)
 # and launched one after another (sequential download)
 SequentialDownloader.download = (url, path, success, fail) ->
+	return (success(url, path) if success?) if !FileTransfer?
 	SequentialDownloader.queue.push {url: url, path: path, success: success, fail: fail}
 	if SequentialDownloader.filesystem?
 		SequentialDownloader.downloadNextFile()
