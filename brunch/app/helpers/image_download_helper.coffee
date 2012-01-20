@@ -1,4 +1,5 @@
 ImageDownloader = ->
+ImageDownloader.tag = "ImageDownloader"
 ImageDownloader.baseUrl = "https://playboy-preprod.chugulu.com"
 
 ImageDownloader.setBaseUrl = (newUrl) ->

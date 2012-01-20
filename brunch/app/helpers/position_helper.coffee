@@ -1,10 +1,6 @@
 helper={}
 
-helper.verbose=false
 helper.tag = "PositionHelper"
-
-helper.log = (message) ->
-  console.log "[" + helper.tag + "] " , message if message? && @verbose
 
 helper.getRelativePosition = (element, absolutePosition) ->
 	offset = $(element).offset(); # from jquery
@@ -12,7 +8,7 @@ helper.getRelativePosition = (element, absolutePosition) ->
 		x: absolutePosition.x - offset.left
 		y: absolutePosition.y - offset.top
 
-	PositionHelper.log relativePosition
+	app.log.info relativePosition, @tag
 
 	relativePosition
 

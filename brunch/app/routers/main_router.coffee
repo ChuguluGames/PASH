@@ -12,8 +12,15 @@ exports.MainRouter = new Router(
 						"/:mode":
 							on: ->
 			on: ->
+				route = this.getRoute()
+
 				# empty route
-				if this.getRoute()[0] == ""
-					this.setRoute("home")
+				if route[0] == ""
+					app.log.info "empty route", @tag
+					this.setRoute "home"
+				else
+					app.log.info "on route: " + route, @tag
 
 ).configure({ recurse: 'forward' }) # make the first function bind
+
+exports.MainRouter.tag = "MainRouter"
