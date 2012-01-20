@@ -1,10 +1,17 @@
 exports.MainRouter = new Router(
 	routes:
 		"/":
-			"/home": -> app.controllers.home.show()
+			"/home": ->
+				app.views.home       = new HomeView()
+				app.controllers.home = new HomeController(view: app.views.home)
+				app.controllers.home.show()
 
 			"/game":
-				on: (item, mode) -> app.controllers.game.loadItem item, mode
+				on: (item, mode) ->
+					app.views.game = new GameView()
+					app.controllers.game = new GameController(view: app.views.game)
+					app.controllers.game.loadItem item, mode
+
 				"/:item":
 					on: ->
 					"/mode":
