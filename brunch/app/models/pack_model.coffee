@@ -9,11 +9,34 @@ PackDefinition = persistence.define 'pack',
   preview_image_url:  "TEXT"
   purchase_date:      "DATE"
 
+PackDefinition.index ['identity'], {unique: true}
+
 # relations
 # PackDefinition.hasMany('tags', TagModel, 'packs')
 # PackDefinition.hasMany('players', PlayerModel, 'packs')
 # PackDefinition.hasOne('preview_image', ImageModel, null)
 # PackDefinition.hasOne('cover_image', ImageModel, null)
+
+# custom mapping
+PackDefinition.fromJSON = (json, callback) ->
+  json = (if json.pack? then json.pack else json)
+  pack_data =
+    identity         : json.identity
+    position         : json.position
+    name             : json.name
+    description_text : json.description_text
+    cover_image_url  : json.cover_image_url
+    preview_image_url: json.preview_image_url
+    state            : json.state
+    purchase_date    : json.purchased_date
+  pack = new PackModel(pack_data)
+  tagIds = []
+  tagIds.push tag.identity for tag in json.tags
+  if tagIds.length > 0
+    TagModel.all().filter('identity', 'in', tagIds).list null, (tag_list) ->
+      pack.tags.add tag for tag in tag_list
+      callback(pack) if callback?
+  pack
 
 # custom methods/vars
 PackDefinition.STATE_AVAILABLE     = 0

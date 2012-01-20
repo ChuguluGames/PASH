@@ -2,6 +2,8 @@
 PlayerDefinition = persistence.define 'player',
   identity: "INT"
 
+PlayerDefinition.index ['identity'], {unique: true}
+
 # relations
 # PlayerDefinition.hasMany('packs', PackModel, 'players')
 

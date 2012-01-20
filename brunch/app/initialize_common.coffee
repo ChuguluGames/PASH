@@ -9,6 +9,7 @@ modules = [
   'position_helper'
   'polygon_helper'
   'preload_helper'
+  'model_download_helper'
 
   # router
   'main_router'
@@ -135,6 +136,8 @@ class exports.Application
 
     self.helpers.polygoner                = PolygonHelper
     self.helpers.polygoner.verbose        = self.verbose.PolygonHelper
+
+    self.helpers.model_downloader         = ModelDownloadHelper
 
     # wait for database
     self.helpers.db['create' + window.env.database + 'Database'] -> self.onDatabaseReady()

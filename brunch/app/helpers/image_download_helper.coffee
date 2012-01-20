@@ -1,23 +1,24 @@
 ImageDownloader = ->
-ImageDownloader.baseUrl = null
+ImageDownloader.baseUrl = "https://playboy-preprod.chugulu.com"
 
 ImageDownloader.setBaseUrl = (newUrl) ->
   ImageDownloader.baseUrl = newUrl
 
-ImageDownloader.getImageExtension = (teh_url) ->
-  matches = /\.[a-zA-Z0-9]{1-5}$/.exec(teh_url)
+ImageDownloader.getImageExtension = (imgUrl) ->
+  matches = /\.[a-zA-Z0-9]{1-5}$/.exec(imgUrl)
   if matches?
     return matches[0]
   '.jpg'
 
-ImageDownloader.download = (teh_url, object, img_name, callback) ->
-  return if !ImageDownloader.baseUrl?
-  app.helpers.downloader.download ImageDownloader.baseUrl + teh_url, object._type + '/' + object.identity + '/' + img_name + ImageDownloader.getImageExtension(teh_url)
+ImageDownloader.download = (imgUrl, object, imgName, callback) ->
+  return (callback(null) if callback?) if !ImageDownloader.baseUrl? or !imgUrl?
+  app.helpers.downloader.download ImageDownloader.baseUrl + '/' + imgUrl, object._type + '/' + object.identity + '/' + imgName + ImageDownloader.getImageExtension(imgUrl)
     , (url, fullPath) ->
+      console.log "proute 2"
       newimage = null
 # does not work as expected (prefetching problem for some objects)
-#      if object[img_name]?
-#        newimage             = object[img_name]
+#      if object[imgName]?
+#        newimage             = object[imgName]
 #        fileEntry            = new FileEntry()
 #        fileEntry.fullPath   = newimage.path
 #        fileEntry.filesystem = app.helpers.downloader.filesystem
@@ -26,15 +27,17 @@ ImageDownloader.download = (teh_url, object, img_name, callback) ->
 #            console.log "remove ok"
 #          , ->
 #            console.log "remove fail"
-      if !newimage?
-        newimage = new ImageModel()
-      newimage.url     = url
-      newimage.path    = fullPath
-      object[img_name] = newimage
-      callback(object) if callback?
-      app.helpers.db.save object, -> console.log "saved " + object._type + ' #' + object.identity
+      newimage        = new ImageModel() if !newimage?
+      newimage.url    = url
+      newimage.path   = fullPath
+      object[imgName] = newimage
+      app.helpers.db.save object, ->
+          callback(newimage) if callback?
+    , ->
+        console.log "proute 1"
+        callback(null) if callback?
 
 class exports.ImageDownloadHelper extends ImageDownloader
-  constructor: (teh_url, object, img_name, callback) ->
-    ImageDownloader.download teh_url, object, img_name, callback
+  constructor: (imgUrl, object, imgName, callback) ->
+    ImageDownloader.download imgUrl, object, imgName, callback
     self=@
