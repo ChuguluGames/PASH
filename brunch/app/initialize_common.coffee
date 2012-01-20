@@ -118,14 +118,6 @@ class exports.Application
 
     self.log.info "on database ready", self.tag
 
-    # views
-    self.views.home       = new HomeView()
-    self.views.game       = new GameView()
-
-    # controllers
-    self.controllers.home = new HomeController(view: self.views.home)
-    self.controllers.game = new GameController(view: self.views.game)
-
     # router
     self.router           = MainRouter.init('/home')
 
