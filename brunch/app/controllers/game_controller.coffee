@@ -61,6 +61,10 @@ class exports.GameController extends Controller
 
 		self.item = item
 
+		# download image
+		# access
+		# remove
+
 		# preload images
 		new app.helpers.preloader().load ->
 			self.view.addItemImages(self.item)
@@ -118,18 +122,27 @@ class exports.GameController extends Controller
 
 		# make the position relative to the item
 		relativePosition = app.helpers.positioner.getRelativePosition event.currentTarget, position
-
+		retinaPosition = if app.client.isRetina() then relativePosition else app.helpers.retina.positionToRetina(relativePosition)
 		differenceFound = false
 
 		# for each difference of the item
-		self.item.differences.each null, (difference) ->
+		for difference in self.item.differences
+			do (difference) ->
 
-			# touch in the difference polygon
-			if app.helpers.polygoner.isPointInPolygon relativePosition, difference.difference_points
-				if not difference.isFound? || not difference.isFound
-					self.view.showDifference app.helpers.polygoner.polygonToRectangle difference.difference_points
-					difference.isFound = true
-				differenceFound = true
+				# touch in the difference polygon.difference_points
+				inPolygon = app.helpers.polygoner.isPointInPolygon retinaPosition, difference.difference_points
+				if inPolygon
+					if not difference.isFound? || not difference.isFound
+						app.log.info "found", "Application"
+						# create the rectangle that wrap the polygon
+						rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.difference_points
+						# get the rectangle for the resolution
+						rectangle = app.helpers.retina.rectangleRetinaToClientResolution(rectangleRetina)
+						# display the difference position
+						console.log rectangleRetina
+						self.view.showDifference(rectangle)
+						difference.isFound = true
+					differenceFound = true
 
 		# still there, let's show a missed one
 		if not differenceFound

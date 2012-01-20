@@ -48,11 +48,4 @@ helper.createTestDatabase = (callback) ->
 helper.createProductionDatabase = (callback) ->
   helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0', callback
 
-helper.collectionToArray = (collection) ->
-  array=[]
-  collection.each null, (item) ->
-    array.push item
-
-  array
-
 exports.DbHelper = helper

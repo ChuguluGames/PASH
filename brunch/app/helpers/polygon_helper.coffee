@@ -4,8 +4,6 @@ helper.tag = "PolygonHelper"
 
 # check if the point is in the polygon
 helper.isPointInPolygon = (point, polygon) ->
-	polygon = app.helpers.db.collectionToArray polygon
-
 	inPolygon = false
 	i = 0
 	j = polygon.length - 1
@@ -71,6 +69,6 @@ helper.rectangleFromPointAndTarget = (point, target, dimensions) ->
 
 	app.log.info "the rectangle generated is ", rectangle, @tag
 
-	return rectangle
+	rectangle
 
 exports.PolygonHelper=helper

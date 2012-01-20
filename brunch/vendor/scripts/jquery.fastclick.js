@@ -2,28 +2,30 @@
 * @author David <david@chugulu.com>
 */
 
-(function($){
-	return;
-	// Special event definition.
-	$.event.special.click = {
-		setup: function() {
-			var self = this;
-			// add fastbutton on the element if it doesnt exist yet
-			if($(self).data("fastbutton") === undefined) {
-				// console.log("add fclick to " + $(this).attr("id"))
-				$(self).data("fastbutton", new fastButton(self));
+function activateFastClicks() {
+	(function($){
+		return;
+		// Special event definition.
+		$.event.special.click = {
+			setup: function() {
+				var self = this;
+				// add fastbutton on the element if it doesnt exist yet
+				if($(self).data("fastbutton") === undefined) {
+					// console.log("add fclick to " + $(this).attr("id"))
+					$(self).data("fastbutton", new fastButton(self));
+				}
+			},
+			teardown: function() {
+				var self = this;
+
+				// destroy fastbutton
+				$(self).unbind("click,touchstart,touchmove,touchend")
+				$(self).data("fastbutton", null);
 			}
-		},
-		teardown: function() {
-			var self = this;
+		};
 
-			// destroy fastbutton
-			$(self).unbind("click,touchstart,touchmove,touchend")
-			$(self).data("fastbutton", null);
-		}
-	};
-
-})(jQuery);
+	})(jQuery);
+}
 
 /* Construct the FastButton with a reference to the element and click handler. */
 var fastButton = function (element) {

@@ -2,7 +2,7 @@ TARGET=device
 LOG=debug
 ACTIVITY=PASH
 PACKAGE=com.phonegap.pash
-APK=bin/PASH-debug.apk
+COMPILATION_MODE=release
 # specific phonegap config
 PHONEGAP=true
 PHONEGAP_VERSION=1.3.0

@@ -1,14 +1,17 @@
 function View(attributes) {
+	var self = this;
 	for (var prop in attributes) {
-		this[prop] = attributes[prop];
+		self[prop] = attributes[prop];
 	}
 
-	this.el = null
+	self.el = null
 
 	// create the element
-	this.make();
+	self.make();
 
-	this.initialize();
+	self.initialize();
+
+	return self;
 }
 
 View.prototype.tagName = "div";
@@ -16,16 +19,19 @@ View.prototype.id = null;
 View.prototype.className = null;
 
 View.prototype.make = function() {
-	var attributes = {};
+	var self = this,
+			attributes = {};
 
-	if (this.id) attributes.id = this.id;
-	if (this.className) attributes['class'] = this.className;
+	if (self.id) attributes.id = self.id;
+	if (self.className) attributes['class'] = self.className;
 
-	var el = document.createElement(this.tagName);
+	var el = document.createElement(self.tagName);
 	if (attributes) $(el).attr(attributes);
-	this.el = el;
+	self.el = el;
 },
 
 View.prototype.initialize = function() {};
 View.prototype.render = function() {};
-View.prototype.destroy = function() {};
+View.prototype.destroy = function() {
+	$(this.el).remove();
+};

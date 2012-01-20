@@ -16,8 +16,8 @@ class exports.GameView extends View
 		self
 
 	addItemImages: (item) ->
-		@firstImage = $(".first-image", self.el).css(background: "url(" + item.first_image_url + ")")
-		@secondImage = $(".second-image", self.el).css(background: "url(" + item.second_image_url + ")")
+		@firstImage = $(".first-image", self.el).css(backgroundImage: "url(" + item.first_image_url + ")")
+		@secondImage = $(".second-image", self.el).css(backgroundImage: "url(" + item.second_image_url + ")")
 
 	showDifference: (difference)->
 		self=@
