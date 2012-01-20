@@ -1,12 +1,15 @@
 function Controller(attributes) {
+	var self = this;
 	for (var prop in attributes) {
-		this[prop] = attributes[prop];
+		self[prop] = attributes[prop];
 	}
 
 	// instanciation of the events
-	this.delegateEvents();
+	self.delegateEvents();
 
-	this.initialize();
+	self.initialize();
+
+	return self;
 }
 
 Controller.eventSplitter = /^(\S+)\s*(.*)$/;
@@ -15,11 +18,11 @@ Controller.prototype.events = {};
 
 Controller.prototype.delegateEvents = function() {
 	var self = this,
-			el = this.view.el,
+			el = self.view.el,
 			key, method, match, eventName;
 
-	for (var key in this.events) {
-		method = this[this.events[key]];
+	for (var key in self.events) {
+		method = self[self.events[key]];
 		match = key.match(Controller.eventSplitter);
 		eventName = match[1], selector = match[2];
 		if (selector === '') {
