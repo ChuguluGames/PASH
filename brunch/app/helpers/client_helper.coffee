@@ -1,12 +1,15 @@
 class exports.ClientHelper
-	windowSize: null
-	isAndroid : null
-	isIOS     : null
-	isIpad    : null
-	isIPhone  : null
-	isIPod    : null
-	isRetina  : null
-	resolution: null
+	tag        : "ClientHelper"
+	_userAgent : null
+	_windowSize: null
+	_isMobile  : null
+	_isAndroid : null
+	_isIOS     : null
+	_isIpad    : null
+	_isIPhone  : null
+	_isIPod    : null
+	_isRetina  : null
+	_resolution: null
 
 	constructor: ->
 		self=@
@@ -14,59 +17,73 @@ class exports.ClientHelper
 
 	getUserAgent: ->
 		self=@
-		if !self.userAgent?
-			self.userAgent = navigator.userAgent.lowerCase()
-		self.userAgent
+		if !self._userAgent?
+			self._userAgent = navigator.userAgent.toLowerCase()
+
+		self._userAgent
 
 	getWindowSize: ->
 		self=@
-		if !self.windowSize?
-			self.windowSize =
+		if !self._windowSize?
+			self._windowSize =
 				width : $(window).width()
 				height: $(window).height()
-		self.windowSize
+		self._windowSize
+
+	isMobile: ->
+		self=@
+		if !self._isMobile
+			self._isMobile = self.isAndroid() | self.isIOS()
+		self._isMobile
 
 	isAndroid: ->
 		self=@
-		if !self.isAndroid
-			self.isAndroid = self.userAgentMatch "android"
-		self.isAndroid
-
-	isIpad: ->
-		self=@
-		if !self.isIpad
-			self.isIpad = self.userAgentMatch "ipad"
-		self.isIpad
-
-	isIPhone: ->
-		self=@
-		if !self.isIPhone
-			self.isIPhone = self.userAgentMatch "iphone"
-		self.isIPhone
-
-	isIPod: ->
-		self=@
-		if !self.isIPod
-			self.isIPod = self.userAgentMatch "ipod"
-		self.isIPod
+		if !self._isAndroid
+			self._isAndroid = self.userAgentMatch "android"
+		self._isAndroid
 
 	isIOS: ->
 		self=@
-		if !self.isIOS
-			self.isIOS = self.isIpad() | self.isIPhone() | self.isIPod()
-		self.isIOS
+		if !self._isIOS
+			self._isIOS = self.isIpad() | self.isIPhone() | self.isIPod()
+		self._isIOS
+
+	isIpad: ->
+		self=@
+		if !self._isIpad
+			self._isIpad = self.userAgentMatch "ipad"
+		self._isIpad
+
+	isIPhone: ->
+		self=@
+		if !self._isIPhone
+			self._isIPhone = self.userAgentMatch "iphone"
+		self._isIPhone
+
+	isIPod: ->
+		self=@
+		if !self._isIPod
+			self._isIPod = self.userAgentMatch "ipod"
+		self._isIPod
+
+	isIOS: ->
+		self=@
+		if !self._isIOS
+			self._isIOS = self.isIpad() | self.isIPhone() | self.isIPod()
+		self._isIOS
 
 	isRetina: ->
 		self=@
-		if !self.isRetina
-			self.isRetina = self.getResolution() == 2
-		self.isRetina
+		if !self._isRetina
+			self._isRetina = self.getResolution() == 2
+		self._isRetina
 
 	getResolution: ->
 		self=@
-		if !self.resolution
-			self.resolution = window.devicePixelRatio
-		self.resolution
+		if !self._resolution
+			self._resolution = window.devicePixelRatio | 1
+
+		self._resolution
 
 	userAgentMatch: (string) ->
-		return self.userAgent.indexOf(string) > -1
+		return @getUserAgent().indexOf(string) > -1
