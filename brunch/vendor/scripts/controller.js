@@ -32,17 +32,23 @@ Controller.prototype.delegateEvent = function(selector, el, eventName, method) {
 	var self = this;
 
 	if (selector === '') {
-		$(el).on(eventName, function(evt) { method.call(self, evt); });
+		$(el).on(eventName, function(evt) { return method.call(self, evt); });
 	} else {
-		$(selector, el).on(eventName, function(evt) { method.call(self, evt); });
+		$(selector, el).on(eventName, function(evt) { return method.call(self, evt); });
 	}
 };
 
 Controller.prototype.onClickLink = function(event) {
-	console.log("on onClickLink")
-	var route = $(event.target).attr("href");
-	window.location.href = route;
 	event.preventDefault();
+	var route = $(event.target).attr("href");
+
+	if (route.substr(0, 1) == "#") {
+		app.router.setRoute(route.substr(2)); // get ride of #/
+	}
+	else {
+		window.location.href = route;
+	}
+	return false;
 };
 
 Controller.prototype.subscribers = function() {};
