@@ -8,7 +8,7 @@ helper.download = (url, params, success, fail) ->
     success : (data) ->
       success(data) if success?
     error : (error) ->
-      fail(error) if error?
+      fail(error) if fail?
 
 helper.getTags = (done, progress) ->
   helper.download app.helpers.config.getTagsUrl(), null, (data) ->
