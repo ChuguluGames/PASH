@@ -1,8 +1,10 @@
 class exports.GameController extends Controller
 	events:
-		"click .item .first-image, .item .second-image": "onClickItem"
+		app.clickEvent + " .item .first-image, .item .second-image": "onClickItem"
 
 	modes: ["practice", "survival", "challenge"]
+
+	loaded          : false
 
 	items           : []
 	item            : null
@@ -12,21 +14,27 @@ class exports.GameController extends Controller
 	score           : 0
 	differencesFound: 0
 
+	initialize: ->
+		self=@
+		self.loadItems ->
+			console.log self.items
+			self.loaded = true
+
+		self
+
 	loadItems: (callback) ->
 		self=@
 
 		ItemModel.fetchSelected (items) ->
-			console.log "loadItems"
-			console.log items
 			self.items = items
 			callback()
-			# app.router.setRoute "/game/0"
+
+		self
 
 	loadItem: (itemCurrent, mode) ->
 		self=@
 
-		self.loadItems ->
-			console.log "loadItem"
+		onLoaded = ->
 			itemCurrent = 0 if not itemCurrent?
 			mode = self.modes[0] if not mode?
 
@@ -39,6 +47,8 @@ class exports.GameController extends Controller
 			self.item = self.items[itemCurrent]
 
 			self.item.fetchAll ->
+				return self.loadNextItem() if not self.item.differencesArray.length? || self.item.differencesArray.length == 0
+
 				# preload images
 				new app.helpers.preloader().load ->
 					self.view.addItemImages(self.item)
@@ -52,6 +62,10 @@ class exports.GameController extends Controller
 					mode: 			self.mode
 					score: 			self.score
 				).el
+
+		if not self.loaded
+			self.on "change:loaded", onLoaded
+		else onLoaded()
 
 		# return if not self.validateItemID itemCurrent
 		# return if not self.validateMode mode
