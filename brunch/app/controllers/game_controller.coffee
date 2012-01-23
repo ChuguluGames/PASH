@@ -1,6 +1,6 @@
 class exports.GameController extends Controller
 	events:
-		app.clickEvent + " .item .first-image, .item .second-image": "onClickItem"
+		"click .item .first-image, .item .second-image": "onClickItem"
 
 	modes: ["practice", "survival", "challenge"]
 
