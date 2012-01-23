@@ -38,7 +38,7 @@ helper.log = (type, args) ->
 
 	# can log
 	if args? && args.length >= 1 && @isVerbose tag
-		type = "log" if (console[type] == 'undefined' or console[type] == null)
+		type = "log" if (typeof console[type] == "undefined" or console[type] == null)
 		# android version
 		if app.client.isMobile()
 			# goto print the object of the mother
