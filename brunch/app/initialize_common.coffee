@@ -2,6 +2,8 @@ window.app = {}
 
 modules = [
   # helpers
+  'config_helper'
+  'locale_helper'
   'client_helper'
   'log_helper'
   'db_helper'
@@ -77,6 +79,7 @@ class exports.Application
     RetinaHelper       : true
 
   tag   :          "Application"
+  config:          require('config').config
   log   :          LogHelper
   client:          new ClientHelper()
 
@@ -112,8 +115,8 @@ class exports.Application
       self.initialize()
 
   onDatabaseReady: ->
-    if window.env.onDatabaseReady?
-      return window.env.onDatabaseReady()
+    if window.onDatabaseReady?
+      return window.onDatabaseReady()
 
     self=@
 
@@ -134,6 +137,8 @@ class exports.Application
     self.helpers.preloader        = PreloadHelper
     self.helpers.polygoner        = PolygonHelper
     self.helpers.retina           = RetinaHelper
+    self.helpers.config           = ConfigHelper
+    self.helpers.locale           = LocaleHelper
 
     # activate the fast clicks if needed
     activateFastClicks() if self.client.isMobile()
@@ -141,6 +146,6 @@ class exports.Application
     self.helpers.model_downloader         = ModelDownloadHelper
 
     # wait for database
-    self.helpers.db['create' + window.env.database + 'Database'] -> self.onDatabaseReady()
+    self.helpers.db.createPASHDatabase -> self.onDatabaseReady()
 
 window.app = new exports.Application()

@@ -1,9 +1,5 @@
 ImageDownloader = ->
 ImageDownloader.tag = "ImageDownloader"
-ImageDownloader.baseUrl = "https://playboy-preprod.chugulu.com"
-
-ImageDownloader.setBaseUrl = (newUrl) ->
-  ImageDownloader.baseUrl = newUrl
 
 ImageDownloader.getImageExtension = (imgUrl) ->
   matches = /\.[a-zA-Z0-9]{1-5}$/.exec(imgUrl)
@@ -11,11 +7,16 @@ ImageDownloader.getImageExtension = (imgUrl) ->
     return matches[0]
   '.jpg'
 
+ImageDownloader.getLocalImagePath = (object, imgUrl, imgName) ->
+  object._type + '/' + object.identity + '/' + imgName + ImageDownloader.getImageExtension(imgUrl)
+
+ImageDownloader.getRemoteImageUrl = (imgUrl) ->
+  app.helpers.config.getAssetsBaseUrl() + '/' + imgUrl
+
 ImageDownloader.download = (imgUrl, object, imgName, callback) ->
-  return (callback(null) if callback?) if !ImageDownloader.baseUrl? or !imgUrl?
-  app.helpers.downloader.download ImageDownloader.baseUrl + '/' + imgUrl, object._type + '/' + object.identity + '/' + imgName + ImageDownloader.getImageExtension(imgUrl)
+  return (callback(null) if callback?) if !imgUrl?
+  app.helpers.downloader.download ImageDownloader.getLocalImagePath(imgUrl), ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
     , (url, fullPath) ->
-      console.log "proute 2"
       newimage = null
 # does not work as expected (prefetching problem for some objects)
 #      if object[imgName]?
@@ -35,7 +36,6 @@ ImageDownloader.download = (imgUrl, object, imgName, callback) ->
       app.helpers.db.save object, ->
           callback(newimage) if callback?
     , ->
-        console.log "proute 1"
         callback(null) if callback?
 
 class exports.ImageDownloadHelper extends ImageDownloader

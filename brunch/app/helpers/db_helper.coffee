@@ -42,10 +42,13 @@ helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
 #  persistence.flush null, ->
 #    helper.log 'changes flushed'
 
-helper.createTestDatabase = (callback) ->
-  helper.createDatabase "test_pash", "database", 5 * 1024 * 1024, '1.0', callback
-
-helper.createProductionDatabase = (callback) ->
-  helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0', callback
+#helper.createTestDatabase = (callback) ->
+#  helper.createDatabase "test_pash", "database", 5 * 1024 * 1024, '1.0', callback
+#
+#helper.createProductionDatabase = (callback) ->
+#  helper.createDatabase "pash", "database", 5 * 1024 * 1024, '1.0', callback
+#
+helper.createPASHDatabase = (callback) ->
+  helper.createDatabase app.helpers.config.getDatabaseName(), "database", 5 * 1024 * 1024, '1.0', callback
 
 exports.DbHelper = helper
