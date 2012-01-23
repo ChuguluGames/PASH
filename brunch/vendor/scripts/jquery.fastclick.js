@@ -7,6 +7,7 @@ function activateFastClicks() {
 		// Special event definition.
 		$.event.special.click = {
 			setup: function() {
+				console.log("setup")
 				if(typeof $(this).data("fastclick_activated") === undefined || $(this).data("fastclick_activated") !== true) {
 
 					// listen to touchstart event
@@ -17,6 +18,7 @@ function activateFastClicks() {
 						// dispatch click event
 						$(this).trigger({
 							type: 	"click",
+							target: touch.target,
 							pageX: 	touch.pageX,
 							pageY: 	touch.pageY
 						});
@@ -33,10 +35,4 @@ function activateFastClicks() {
 		};
 
 	})(jQuery);
-
-	// activate the fastlinks
-	$("a").live ("click", function(event) {
-		console.log("link clicked")
-		return true;
-	});
 }
