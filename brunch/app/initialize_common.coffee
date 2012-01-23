@@ -79,7 +79,6 @@ class exports.Application
   tag   :          "Application"
   log   :          LogHelper
   client:          new ClientHelper()
-
   router:       null
   helpers:      {}
   models:       {}
@@ -136,7 +135,7 @@ class exports.Application
     self.helpers.retina           = RetinaHelper
 
     # activate the fast clicks if needed
-    activateFastClicks() if self.client.isMobile()
+    activateFastClicks() if self.client.isIOS()
 
     self.helpers.model_downloader         = ModelDownloadHelper
 
