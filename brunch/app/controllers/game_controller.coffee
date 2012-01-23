@@ -4,12 +4,13 @@ class exports.GameController extends Controller
 
 	modes: ["practice", "survival", "challenge"]
 
-	items: 				[]
-	item: 				null
-	itemCurrent: 	false
-	itemNext: 		false
-	mode: 				null
-	score: 				0
+	items           : []
+	item            : null
+	itemCurrent     : false
+	itemNext        : false
+	mode            : null
+	score           : 0
+	differencesFound: 0
 
 	loadItems: (callback) ->
 		self=@
@@ -90,6 +91,16 @@ class exports.GameController extends Controller
 		# access
 		# remove
 
+	loadNextItem: ->
+		self=@
+
+		# no more item
+		if !self.itemNext
+
+		# change the route
+		else
+			app.router.setRoute "/game/" + self.itemNext + "/mode/" + self.mode
+
 	validateItemID: (itemCurrent) ->
 		self=@
 		if not app.helpers.formater.isInt itemCurrent
@@ -133,27 +144,38 @@ class exports.GameController extends Controller
 
 		# make the position relative to the item
 		relativePosition = app.helpers.positioner.getRelativePosition event.currentTarget, position
-		retinaPosition = if app.client.isRetina() then relativePosition else app.helpers.retina.positionToRetina(relativePosition)
+
+		# make the position adapt to the retina
+		retinaPosition = app.helpers.retina.positionToRetina(relativePosition)
 		differenceFound = false
 
 		# for each difference of the item
 		for difference in self.item.differencesArray
 			do (difference) ->
+				console.log difference
 
-				# touch in the difference polygon.difference_points
 				inPolygon = app.helpers.polygoner.isPointInPolygon retinaPosition, difference.differencePointsArray
+				# touch in the difference polygon.difference_points
+
 				if inPolygon
-					if not difference.isFound? || not difference.isFound
-						app.log.info "found", "Application"
+					if not typeof difference.isFound == "undefined" || not difference.isFound
 						# create the rectangle that wrap the polygon
 						rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
+
 						# get the rectangle for the resolution
-						rectangle = app.helpers.retina.rectangleRetinaToClientResolution(rectangleRetina)
+						rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
+
 						# display the difference position
-						console.log rectangleRetina
 						self.view.showDifference(rectangle)
+
 						difference.isFound = true
+						self.differencesFound++
 					differenceFound = true
+
+					self.view.showDifferencesFound(self.differencesFound)
+
+					# found each differences, load the next item
+					self.loadNextItem() if self.differencesFound == self.item.differencesArray.length
 
 		# still there, let's show a missed one
 		if not differenceFound
