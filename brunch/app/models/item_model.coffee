@@ -21,6 +21,8 @@ ItemDefinition.prototype.fetchAll = (callback) ->
           self.differences.list (c) ->
               self.differencesArray = c
               pointFetchCount = c.length
+              alert "no differences for item " + self.identity if pointFetchCount == 0
+              callback(self) if callback? and pointFetchCount == 0
               for difference in c
                 do (difference) ->
                   difference.fetchPoints (points) ->

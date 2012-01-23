@@ -1,9 +1,8 @@
-helper =
-  baseUrl: "https://playboy-preprod.chugulu.com"
+helper = {}
 
 helper.download = (url, params, success, fail) ->
   $.ajax
-    url     : helper.baseUrl + '/' + url
+    url     : url
     data    : params
     dataType: 'jsonp'
     success : (data) ->
@@ -12,7 +11,7 @@ helper.download = (url, params, success, fail) ->
       fail(error) if error?
 
 helper.getTags = (done, progress) ->
-  helper.download "en/tags.js", null, (data) ->
+  helper.download app.helpers.config.getTagsUrl(), null, (data) ->
       tags = []
       count = 0
       total = data.length
@@ -26,7 +25,7 @@ helper.getTags = (done, progress) ->
               done(tags) if (count == total) and done?
 
 helper.getPacks = (done, progress) ->
-  helper.download "en/packs.js", null, (data) ->
+  helper.download app.helpers.config.getPacksUrl(), null, (data) ->
       packs = []
       count = 0
       total = data.length
@@ -49,7 +48,7 @@ helper.getItemsForPack = (pack, done, progress) ->
   return (done(null) if done?) if !pack?
   pack.state = PackModel.STATE_INCOMPLETE
   app.helpers.db.save pack, ->
-      helper.download "en/packs/" + pack.identity + "/items.js", {player_id: 454}, (data) ->
+      helper.download app.helpers.config.getItemsUrlForPack(pack), {player_id: 454}, (data) ->
           items = []
           count = 0
           total = data.length

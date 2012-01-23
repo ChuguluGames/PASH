@@ -24,6 +24,7 @@ class exports.GameController extends Controller
 
 	loadItems: (callback) ->
 		self=@
+		return callback() if self.items.length > 0
 
 		ItemModel.fetchSelected (items) ->
 			self.items = items
@@ -42,9 +43,7 @@ class exports.GameController extends Controller
 			self.itemCurrent = parseInt(itemCurrent)
 			self.findNextItem()
 
-			console.log self.itemNext
-
-			self.item = self.items[itemCurrent]
+			self.item = self.items[self.itemCurrent]
 
 			self.item.fetchAll ->
 				return self.loadNextItem() if not self.item.differencesArray.length? || self.item.differencesArray.length == 0
@@ -119,11 +118,11 @@ class exports.GameController extends Controller
 	validateItemID: (itemCurrent) ->
 		self=@
 		if not app.helpers.formater.isInt itemCurrent
-			console.error "Invalid itemID format"
+			app.log.error "Invalid itemID format", self.tag
 			return false
 
 		else if not self.items[itemCurrent]?
-			console.error "no item at index " + itemCurrent
+			app.log.error "no item at index " + itemCurrent, self.tag
 			return false
 
 		true
@@ -133,7 +132,7 @@ class exports.GameController extends Controller
 
 		# can't find the mode in the config array
 		if $.inArray(mode, self.modes) == -1
-			console.error "unknown mode: " + mode
+			app.log.error "unknown mode: " + mode, self.tag
 			return false
 
 		true
