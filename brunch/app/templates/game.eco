@@ -12,7 +12,7 @@
 		</ul>
 	</div>
 	<% if @mode == "practice": %>
-	<div class="button-next-item"><a href="#/game/<%= @next %>/mode/practice">Next</a></div>
+	<div class="button-next-item"><a href="#/game/<%= @next %>/mode/<%= @mode %>">Next</a></div>
 	<% end %>
 </div>
 <div class="item-loading">chargement en cours...</div>
