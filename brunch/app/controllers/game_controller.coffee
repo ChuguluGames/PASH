@@ -118,11 +118,11 @@ class exports.GameController extends Controller
 	validateItemID: (itemCurrent) ->
 		self=@
 		if not app.helpers.formater.isInt itemCurrent
-			app.log.error "Invalid itemID format", self.tag
+			app.helpers.log.error "Invalid itemID format", self.tag
 			return false
 
 		else if not self.items[itemCurrent]?
-			app.log.error "no item at index " + itemCurrent, self.tag
+			app.helpers.log.error "no item at index " + itemCurrent, self.tag
 			return false
 
 		true
@@ -132,7 +132,7 @@ class exports.GameController extends Controller
 
 		# can't find the mode in the config array
 		if $.inArray(mode, self.modes) == -1
-			app.log.error "unknown mode: " + mode, self.tag
+			app.helpers.log.error "unknown mode: " + mode, self.tag
 			return false
 
 		true

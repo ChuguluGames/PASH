@@ -12,7 +12,7 @@ helper.isPointInPolygon = (point, polygon) ->
 	  inPolygon = not inPolygon  if (polygon[i].y > point.y) isnt (polygon[j].y > point.y) and (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)
 	  j = i++
 
-	app.log.info "the point", point, "is in the polygon", @tag if inPolygon
+	app.helpers.log.info "the point", point, "is in the polygon", @tag if inPolygon
 	inPolygon
 
 # get the extremity of the polygon and return a rectangle
@@ -35,7 +35,7 @@ helper.polygonToRectangle = (polygon) ->
 
 		i++
 
-	app.log.info "the bounds of polygon are ", bounds, @tag
+	app.helpers.log.info "the bounds of polygon are ", bounds, @tag
 
 	return {
 		dimensions:
@@ -65,7 +65,7 @@ helper.rectangleFromPointAndTarget = (point, target, dimensions) ->
 		dimensions: dimensions
 		position: position
 
-	app.log.info "the rectangle generated is ", rectangle, @tag
+	app.helpers.log.info "the rectangle generated is ", rectangle, @tag
 
 	rectangle
 

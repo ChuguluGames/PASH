@@ -2,11 +2,6 @@ helper={}
 
 helper.tag = "RetinaHelper"
 
-helper.getFactor = ->
-	resolution = app.client.getResolution()
-	factor = 2 / resolution
-	factor
-
 helper.positionToRetina = (position) ->
 	return {
 		x: position.x * 2

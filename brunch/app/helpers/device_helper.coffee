@@ -1,5 +1,5 @@
-class exports.ClientHelper
-	tag        : "ClientHelper"
+class exports.DeviceHelper
+	tag        : "DeviceHelper"
 	_userAgent : null
 	_windowSize: null
 	_isMobile  : null

@@ -27,11 +27,11 @@ class exports.PreloadHelper
 		self=@
 
 		$("<img />").load(->
-			app.log.info "preload: \"" + @src + "\"", self.tag
+			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
 			self.loadAll() # load the next one
 
 		# bind a possible 404 error
 		).error(->
-			app.log.info "unable to load: \"" + @src + "\"", self.tag
+			app.helpers.log.info "unable to load: \"" + @src + "\"", self.tag
 
 		).attr("src", path)

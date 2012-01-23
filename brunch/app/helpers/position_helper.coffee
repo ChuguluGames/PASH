@@ -8,7 +8,7 @@ helper.getRelativePosition = (element, absolutePosition) ->
 		x: absolutePosition.x - offset.left
 		y: absolutePosition.y - offset.top
 
-	app.log.info relativePosition, @tag
+	app.helpers.log.info relativePosition, @tag
 
 	relativePosition
 

@@ -4,7 +4,7 @@ modules = [
   # helpers
   'config_helper'
   'locale_helper'
-  'client_helper'
+  'device_helper'
   'log_helper'
   'db_helper'
   'download_helper'
@@ -68,7 +68,7 @@ class exports.Application
   verbose:
     Application        : true
     MainRouter         : true
-    ClientHelper       : true
+    DeviceHelper       : true
     DbHelper           : true
     DownloadHelper     : true
     FormatHelper       : true
@@ -78,19 +78,20 @@ class exports.Application
     PolygonHelper      : true
     RetinaHelper       : true
 
-  tag   :          "Application"
-  config:          require('config').config
-  log   :          LogHelper
-  client:          new ClientHelper()
-  router:       null
-  helpers:      {}
-  models:       {}
-  controllers:  {}
-  views:        {}
+  tag        : "Application"
+  config     : require('config').config
+  router     : null
+  helpers    : {}
+  models     : {}
+  controllers: {}
+  views      : {}
 
   constructor: ->
     self=@
-    self.log.verbose = self.verbose
+
+    self.helpers.device = new DeviceHelper
+    self.helpers.log    = LogHelper
+
     self.waitForDeviceReadyEvent()
 
   waitForDeviceReadyEvent: ->
@@ -98,19 +99,19 @@ class exports.Application
     $(window).load ->
       # device ready already fired
       if PhoneGap? and PhoneGap.onDeviceReady? && PhoneGap.onDeviceReady.fired == true
-        self.log.info "device ready already fired", self.tag
+        self.helpers.log.info "device ready already fired", self.tag
         self.initialize()
       else
-        self.log.info "waiting for device response", self.tag
+        self.helpers.log.info "waiting for device response", self.tag
         document.addEventListener "deviceready", ->
           self.onDeviceReady()
         , false
 
   onDeviceReady: ->
     self=@
-    self.log.info "on device ready", self.tag
+    self.helpers.log.info "on device ready", self.tag
     $ =>
-      self.log.info "on dom ready", self.tag
+      self.helpers.log.info "on dom ready", self.tag
       self.initialize()
 
   onDatabaseReady: ->
@@ -119,10 +120,10 @@ class exports.Application
 
     self=@
 
-    self.log.info "on database ready", self.tag
+    self.helpers.log.info "on database ready", self.tag
 
     # router
-    self.router           = MainRouter.init('/home')
+    self.router = MainRouter.init('/home')
 
   initialize: ->
     self=@
@@ -140,9 +141,9 @@ class exports.Application
     self.helpers.locale           = LocaleHelper
 
     # activate the fast clicks if needed
-    activateFastClicks() if self.client.isIOS()
+    activateFastClicks() if self.helpers.device.isIOS()
 
-    self.helpers.model_downloader         = ModelDownloadHelper
+    self.helpers.model_downloader = ModelDownloadHelper
 
     # wait for database
     self.helpers.db.createPASHDatabase -> self.onDatabaseReady()

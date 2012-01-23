@@ -25,7 +25,7 @@ exports.MainRouter = new Router(
 				route = this.getRoute()
 
 				# empty route
-				app.log.info "on route: " + route, @tag
+				app.helpers.log.info "on route: " + route, @tag
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 

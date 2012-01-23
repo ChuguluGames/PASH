@@ -21,22 +21,22 @@ helper.save = (object, callback) ->
   persistence.flush null, callback
 
 helper.createDatabase = (dbname, dbdescription, dbsize, dbversion, callback) ->
-  app.log.info "creating database '" + dbname + "'", @tag
+  app.helpers.log.info "creating database '" + dbname + "'", @tag
   supports_webdatabase = !!window.openDatabase
   using_localstorage = !supports_webdatabase
 
   if supports_webdatabase
-    app.log.info "using websql", @tag
+    app.helpers.log.info "using websql", @tag
     helper.store_type = "websql"
     persistence.store.websql.config persistence, dbname, dbdescription, dbsize
   else
-    app.log.info "using memory", @tag
+    app.helpers.log.info "using memory", @tag
     helper.store_type = "memory"
     persistence.store.memory.config persistence, dbdescription, dbsize, dbversion
 
   persistence.debug = app.verbose.DbHelper
   persistence.schemaSync ->
-    app.log.info "schema synced", @tag
+    app.helpers.log.info "schema synced", @tag
     helper.created = true
     callback() if callback?
 #  persistence.flush null, ->
