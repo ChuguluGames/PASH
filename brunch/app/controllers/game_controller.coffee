@@ -1,5 +1,6 @@
 class exports.GameController extends Controller
 	events:
+		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
 	modes: ["practice", "survival", "challenge"]
@@ -61,6 +62,8 @@ class exports.GameController extends Controller
 					mode: 			self.mode
 					score: 			self.score
 				).el
+
+				self.delegateEvents()
 
 		if not self.loaded
 			self.on "change:loaded", onLoaded
