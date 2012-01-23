@@ -17,13 +17,13 @@ class exports.GameController extends Controller
 
 	initialize: ->
 		self=@
-		self.loadItems ->
+		self.loadGame ->
 			console.log self.items
 			self.loaded = true
 
 		self
 
-	loadItems: (callback) ->
+	loadGame: (callback) ->
 		self=@
 		return callback() if self.items.length > 0
 
@@ -36,7 +36,7 @@ class exports.GameController extends Controller
 	loadItem: (itemCurrent, mode) ->
 		self=@
 
-		onLoaded = ->
+		onGameLoaded = ->
 			itemCurrent = 0 if not itemCurrent?
 			mode = self.modes[0] if not mode?
 
@@ -66,7 +66,7 @@ class exports.GameController extends Controller
 				self.delegateEvents()
 
 		if not self.loaded
-			self.on "change:loaded", onLoaded
+			self.on "change:loaded", onGameLoaded
 		else onLoaded()
 
 		# return if not self.validateItemID itemCurrent
