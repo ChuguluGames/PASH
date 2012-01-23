@@ -2,21 +2,17 @@
 	<div class="back"><a href="#/home">Pause</a></div>
 	<div class="score">
 		<div class="score-text">Score:</div>
-		<div class="score-value"><%= @score %></div>
+		<div class="score-value"> - </div>
 	</div>
 	<div class="differences-status">
-		<ul>
-		  <% for difference in @item.differencesArray: %>
-		  	<li></li>
-		  <% end %>
-		</ul>
+		<ul></ul>
 	</div>
-	<% if @mode == "practice": %>
-	<div class="button-next-item"><a href="#/game/<%= @next %>/mode/<%= @mode %>">Next</a></div>
-	<% end %>
+	<div class="button-next-item"><a href="#/game">Next</a></div>
 </div>
-<div class="item-loading">chargement en cours...</div>
-<div class="item">
-	<div class="first-image"></div>
-	<div class="second-image"></div>
+<div class="item-wrapper">
+	<div class="item-loading">chargement en cours...</div>
+	<div class="item">
+		<div class="first-image"></div>
+		<div class="second-image"></div>
+	</div>
 </div>
