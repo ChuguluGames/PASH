@@ -2,6 +2,8 @@ exports.MainRouter = new Router(
 	routes:
 		"/":
 			"/home": ->
+				app.controllers.game.rendered = false if app.controllers.game?
+
 				app.views.home       = new HomeView()
 				app.controllers.home = new HomeController(view: app.views.home)
 				app.controllers.home.show()
@@ -24,8 +26,7 @@ exports.MainRouter = new Router(
 			on: ->
 				route = this.getRoute()
 
-				# empty route
-				app.helpers.log.info "on route: " + route, @tag
+				console.log "new route " + route
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 
