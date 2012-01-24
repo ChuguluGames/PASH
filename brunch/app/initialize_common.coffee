@@ -15,6 +15,7 @@ modules = [
   'preload_helper'
   'retina_helper'
   'model_download_helper'
+  'event_helper'
 
   # router
   'main_router'
@@ -77,6 +78,7 @@ class exports.Application
     PreloadHelper      : true
     PolygonHelper      : true
     RetinaHelper       : true
+    EventHelper        : true
 
   tag        : "Application"
   config     : require('config').config
@@ -139,9 +141,11 @@ class exports.Application
     self.helpers.retina           = RetinaHelper
     self.helpers.config           = ConfigHelper
     self.helpers.locale           = LocaleHelper
+    self.helpers.event            = EventHelper
 
-    # activate the fast clicks if needed
-    activateFastClicks() if self.helpers.device.isIOS()
+    if self.helpers.device.isMobile()
+      activateFastClicks()
+      self.helpers.event.disableScroll()
 
     self.helpers.model_downloader = ModelDownloadHelper
 

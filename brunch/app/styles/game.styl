@@ -48,16 +48,36 @@
 			float right
 			padding 0 10px
 			background #0000ff
+			display:none
 			a
 				display block
 				line-height 25px
 				text-decoration none
 				color #000
 
+	.item-wrapper
+		position relative
+		height 272px
+
 	.item-loading
+		position absolute
+		top 0
+		left 0
+		width 100%
+		height 272px
+		background #fbfbfb
 		display none
+		text-align center
+		z-index 10
 
 	.item
+		position absolute
+		top 0
+		left 0
+		width 100%
+		height 272px
+		z-index 9
+
 		.first-image, .second-image
 			width 237px
 			height 272px

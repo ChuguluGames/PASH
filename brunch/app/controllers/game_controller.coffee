@@ -1,29 +1,51 @@
 class exports.GameController extends Controller
 	events:
+		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
 	modes: ["practice", "survival", "challenge"]
 
 	loaded          : false
+	rendered        : false
 
 	items           : []
 	item            : null
 	itemCurrent     : false
 	itemNext        : false
+	itemNextRoute   : null
 	mode            : null
 	score           : 0
 	differencesFound: 0
 
 	initialize: ->
 		self=@
-		self.loadItems ->
-			console.log self.items
+
+		self.render().load ->
+			console.log "game loaded"
 			self.loaded = true
 
 		self
 
-	loadItems: (callback) ->
+	render: ->
 		self=@
+
+		# render the view
+		$("body").html self.view.render(
+			score: self.score
+		).el
+
+		# initiate events
+		self.delegateEvents()
+
+		self.rendered = true
+
+		self
+
+	load: (callback) ->
+		self=@
+
+		console.log "loading game"
+
 		return callback() if self.items.length > 0
 
 		ItemModel.fetchSelected (items) ->
@@ -32,10 +54,23 @@ class exports.GameController extends Controller
 
 		self
 
+	resetItem: ->
+		self=@
+		self.item = null
+		self.differencesFound = 0
+
 	loadItem: (itemCurrent, mode) ->
 		self=@
 
+		self.view.reset() # reset visuals
+		self.view.showLoading() # show item loading
+		self.resetItem() # reset item
+
 		onLoaded = ->
+			# render the game if not yet rendered
+			self.render() if not self.rendered
+
+			console.log "loading item"
 			itemCurrent = 0 if not itemCurrent?
 			mode = self.modes[0] if not mode?
 
@@ -45,31 +80,29 @@ class exports.GameController extends Controller
 
 			self.item = self.items[self.itemCurrent]
 
+			# get the data of the item
 			self.item.fetchAll ->
-				return self.loadNextItem() if not self.item.differencesArray.length? || self.item.differencesArray.length == 0
+				console.log "item fetched"
+				# return self.loadNextItem() if not self.item.differencesArray.length? || self.item.differencesArray.length == 0
 
 				# preload images
 				new app.helpers.preloader().load ->
-					self.view.addItemImages(self.item)
-					self.view.hideLoading()
+
+					# update the view
+					self.view.update(
+						item: self.item
+						next: "#/" + self.itemNextRoute
+					)
+
+					self.view.hideLoading() # hide the loading indicator
 				, self.item.first_image.getSrc(), self.item.second_image.getSrc()
 
-				# render the view
-				$("body").html self.view.render(
-					item: 			self.item
-					next: 			self.itemNext
-					mode: 			self.mode
-					score: 			self.score
-				).el
 
-		if not self.loaded
-			self.on "change:loaded", onLoaded
-		else onLoaded()
+		# wait until the game is loaded to load the item
+		if not self.loaded then self.on("change:loaded", onLoaded) else onLoaded()
 
 		# return if not self.validateItemID itemCurrent
 		# return if not self.validateMode mode
-
-
 
 		# self.item = self.items[itemCurrent]
 
@@ -113,7 +146,7 @@ class exports.GameController extends Controller
 
 		# change the route
 		else
-			app.router.setRoute "/game/" + self.itemNext + "/mode/" + self.mode
+			app.router.setRoute self.itemNextRoute
 
 	validateItemID: (itemCurrent) ->
 		self=@
@@ -147,6 +180,8 @@ class exports.GameController extends Controller
 				self.itemNext = 0
 			# can't go further
 			else self.itemNext = false
+
+		self.itemNextRoute = "game/" + self.itemNext + "/mode/" + self.mode
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->

@@ -6,9 +6,6 @@ function Controller(attributes) {
 		self[prop] = attributes[prop];
 	}
 
-	// instanciation of the custom events
-	self.delegateEvents();
-
 	return self;
 }
 
@@ -24,14 +21,34 @@ Controller.prototype.delegateEvents = function() {
 
 	for (var key in self.events) {
 		method = self[self.events[key]];
-		match = key.match(Controller.eventSplitter);
+		match = key.match(this.eventSplitter);
 		eventName = match[1], selector = match[2];
-		if (selector === '') {
-			$(el).on(eventName, function(evt) { method.call(self, evt); });
-		} else {
-			$(el).on(eventName, selector, function(evt) { method.call(self, evt); });
-		}
+
+		self.delegateEvent(selector, el, eventName, method);
 	}
+};
+
+Controller.prototype.delegateEvent = function(selector, el, eventName, method) {
+	var self = this;
+
+	if (selector === '') {
+		$(el).on(eventName, function(evt) { return method.call(self, evt); });
+	} else {
+		$(selector, el).on(eventName, function(evt) { return method.call(self, evt); });
+	}
+};
+
+Controller.prototype.onClickLink = function(event) {
+	event.preventDefault();
+	var route = $(event.target).attr("href");
+
+	if (route.substr(0, 1) == "#") {
+		app.router.setRoute(route.substr(2)); // get ride of #/
+	}
+	else {
+		window.location.href = route;
+	}
+	return false;
 };
 
 Controller.prototype.subscribers = function() {};
