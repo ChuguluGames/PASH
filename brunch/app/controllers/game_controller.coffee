@@ -5,6 +5,8 @@ class exports.GameController extends Controller
 
 	errorDimensions: {width: 20, height: 20}
 
+	toleranceAccuracy: 20
+
 	modes: ["practice", "survival", "challenge"]
 
 	loaded                : false
@@ -53,6 +55,7 @@ class exports.GameController extends Controller
 		ItemModel.fetchSelected (items) ->
 			console.log items.length
 			self.items = items
+
 			self.loaded = true
 
 		self
@@ -100,6 +103,9 @@ class exports.GameController extends Controller
 
 		self.view.reset().showLoading() # reset visuals and show loading
 
+		# reset the differences for the item
+
+
 		self.item = null
 		self.differencesFoundNumber = 0
 
@@ -140,6 +146,10 @@ class exports.GameController extends Controller
 
 	onItemFetched: ->
 		self=@
+
+		# order each differences polygon points
+		for difference in self.item.differencesArray
+			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
 
 		self.view.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
 
@@ -194,20 +204,28 @@ class exports.GameController extends Controller
 		retinaPosition = app.helpers.retina.positionToRetina(relativePosition)
 		differenceFound = false
 
+		# create a circle from the position and the given tolerance accuracy
+		circle =
+			center: retinaPosition
+			radius: self.toleranceAccuracy
+
 		# for each difference of the item
 		for difference in self.item.differencesArray
-			console.log difference
 
 			# touch in the difference polygon.difference_points
-			if app.helpers.polygoner.isPointInPolygon(retinaPosition, difference.differencePointsArray)
+			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
 				differenceFound = true
 				# activate it only if not already found
 				self.activateDifference difference if not difference.isFound? || not difference.isFound
-				return true
 
-		# still there, let's show a missed one
-		errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
-		self.view.showError errorBounds
+				# break to let the user find one difference by one
+				# return true
+
+		# show an error if no difference were found
+		if not differenceFound
+			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
+			self.view.showError errorBounds
+
 		return false
 
 	activateDifference: (difference) ->
