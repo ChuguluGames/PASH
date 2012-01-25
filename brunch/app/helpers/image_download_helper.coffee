@@ -15,7 +15,7 @@ ImageDownloader.getRemoteImageUrl = (imgUrl) ->
 
 ImageDownloader.download = (imgUrl, object, imgName, callback) ->
   return (callback(null) if callback?) if !imgUrl?
-  app.helpers.downloader.download ImageDownloader.getLocalImagePath(imgUrl), ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
+  app.helpers.downloader.download ImageDownloader.getRemoteImageUrl(imgUrl), ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
     , (url, fullPath) ->
       newimage = null
 # does not work as expected (prefetching problem for some objects)
