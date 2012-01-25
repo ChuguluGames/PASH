@@ -1,7 +1,7 @@
 # Dependencies #
 
 * brunch (0.9-beta1)
-* PGT (Android Version) ([https://github.com/SuperSkunk/PGT/ github]
+* PGT (Android Version) ([github https://github.com/SuperSkunk/PGT/]
 
 # Installation #
 
