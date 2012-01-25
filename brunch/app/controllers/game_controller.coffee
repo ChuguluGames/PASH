@@ -72,6 +72,12 @@ class exports.GameController extends Controller
 	resume: ->
 		self=@
 
+		# can also be a previous from game, so let's check it!
+		if self.rendered and self.itemCurrent > 0
+			self.itemCurrent = self.getPreviousItem()
+			self.loadItem()
+			return
+
 		console.log "resume game"
 
 		self.render()
@@ -99,10 +105,14 @@ class exports.GameController extends Controller
 	loadItem: ->
 		self=@
 
+		console.log self.rendered
+		self.render() if not self.rendered
+
+		console.log "loadItem"
+
 		self.getArguments.apply(self, arguments)
 
 		self.view.reset().showLoading() # reset visuals and show loading
-
 
 		# reset item differences
 		if self.item?
@@ -191,6 +201,12 @@ class exports.GameController extends Controller
 		self.itemNextRoute = "game/" + self.itemNext + "/mode/" + self.mode
 
 		console.log "next route " + self.itemNextRoute
+
+	getPreviousItem: ->
+		self=@
+		if self.itemCurrent > 0
+			return self.itemCurrent - 1
+		else return 0
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
