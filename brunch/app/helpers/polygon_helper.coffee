@@ -13,6 +13,8 @@ helper.isPointInPolygon = (point, polygon) ->
 		j = i++
 
 	app.helpers.log.info "the point", point, "is in the polygon", @tag if inPolygon
+
+	console.log inPolygon
 	inPolygon
 
 # get the extremity of the polygon and return a rectangle
@@ -73,11 +75,7 @@ helper.rectangleFromPointAndTarget = (point, target, dimensions) ->
 helper.orderPoints = (points) ->
 	self=@
 
-	pointsToBeOrder = []
-	for point in points
-		pointsToBeOrder.push(new app.helpers.point(point.x, point.y))
-
-	upperPoint = self.getUpperLeftPoint(pointsToBeOrder)
+	upperPoint = self.getUpperLeftPoint(points)
 
 	# custom array sort function
 	sortPoints = (pointA, pointB) ->
@@ -96,8 +94,7 @@ helper.orderPoints = (points) ->
 		# both slopes are either positive, or negative
 		(if slopeA > slopeB then -1 else 1)
 
-	pointsToBeOrder.sort(sortPoints)
-	pointsToBeOrder
+	points.sort(sortPoints)
 
 # get the upper left point of a polygon
 helper.getUpperLeftPoint = (points) ->
