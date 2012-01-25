@@ -103,9 +103,12 @@ class exports.GameController extends Controller
 
 		self.view.reset().showLoading() # reset visuals and show loading
 
-		# reset the differences for the item
 
-
+		# reset item differences
+		if self.item?
+			for difference in self.item.differencesArray
+				difference.isFound = false
+		# reset item
 		self.item = null
 		self.differencesFoundNumber = 0
 
