@@ -17,7 +17,6 @@ modules = [
   'model_download_helper'
   'event_helper'
   'collision_helper'
-  'point_helper'
 
   # router
   'main_router'
@@ -145,7 +144,6 @@ class exports.Application
     self.helpers.locale           = LocaleHelper
     self.helpers.event            = EventHelper
     self.helpers.collision        = CollisionHelper
-    self.helpers.point            = PointHelper
 
     if self.helpers.device.isMobile()
       activateFastClicks()
