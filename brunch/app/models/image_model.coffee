@@ -11,7 +11,7 @@ ImageDefinition = persistence.define 'image',
 
 ImageDefinition.prototype.getSrc = ->
   self=@
-  (if LocalFileSystem? then self.path else self.url)
+  encodeURI(if LocalFileSystem? then self.path else self.url)
 
 # making it visible outside as Model
 exports.ImageModel = ImageDefinition

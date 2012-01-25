@@ -16,6 +16,7 @@ modules = [
   'retina_helper'
   'model_download_helper'
   'event_helper'
+  'collision_helper'
 
   # router
   'main_router'
@@ -70,7 +71,7 @@ class exports.Application
     Application        : true
     MainRouter         : true
     DeviceHelper       : true
-    DbHelper           : true
+    DbHelper           : false
     DownloadHelper     : true
     FormatHelper       : true
     PositionHelper     : true
@@ -142,6 +143,7 @@ class exports.Application
     self.helpers.config           = ConfigHelper
     self.helpers.locale           = LocaleHelper
     self.helpers.event            = EventHelper
+    self.helpers.collision        = CollisionHelper
 
     if self.helpers.device.isMobile()
       activateFastClicks()

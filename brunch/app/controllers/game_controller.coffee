@@ -3,6 +3,10 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
+	errorDimensions: {width: 20, height: 20}
+
+	toleranceAccuracy: 20
+
 	modes: ["practice", "survival", "challenge"]
 
 	loaded                : false
@@ -51,6 +55,7 @@ class exports.GameController extends Controller
 		ItemModel.fetchSelected (items) ->
 			console.log items.length
 			self.items = items
+
 			self.loaded = true
 
 		self
@@ -66,6 +71,12 @@ class exports.GameController extends Controller
 	# resume game
 	resume: ->
 		self=@
+
+		# can also be a previous from game, so let's check it!
+		if self.rendered and self.itemCurrent > 0
+			self.itemCurrent = self.getPreviousItem()
+			self.loadItem()
+			return
 
 		console.log "resume game"
 
@@ -94,10 +105,20 @@ class exports.GameController extends Controller
 	loadItem: ->
 		self=@
 
+		console.log self.rendered
+		self.render() if not self.rendered
+
+		console.log "loadItem"
+
 		self.getArguments.apply(self, arguments)
 
 		self.view.reset().showLoading() # reset visuals and show loading
 
+		# reset item differences
+		if self.item?
+			for difference in self.item.differencesArray
+				difference.isFound = false
+		# reset item
 		self.item = null
 		self.differencesFoundNumber = 0
 
@@ -139,6 +160,10 @@ class exports.GameController extends Controller
 	onItemFetched: ->
 		self=@
 
+		# order each differences polygon points
+		for difference in self.item.differencesArray
+			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
+
 		self.view.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
 
 		new app.helpers.preloader().load ->
@@ -177,6 +202,12 @@ class exports.GameController extends Controller
 
 		console.log "next route " + self.itemNextRoute
 
+	getPreviousItem: ->
+		self=@
+		if self.itemCurrent > 0
+			return self.itemCurrent - 1
+		else return 0
+
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
 		self=@
@@ -192,20 +223,28 @@ class exports.GameController extends Controller
 		retinaPosition = app.helpers.retina.positionToRetina(relativePosition)
 		differenceFound = false
 
+		# create a circle from the position and the given tolerance accuracy
+		circle =
+			center: retinaPosition
+			radius: self.toleranceAccuracy
+
 		# for each difference of the item
 		for difference in self.item.differencesArray
-			console.log difference
 
 			# touch in the difference polygon.difference_points
-			if app.helpers.polygoner.isPointInPolygon(retinaPosition, difference.differencePointsArray)
+			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
 				differenceFound = true
 				# activate it only if not already found
 				self.activateDifference difference if not difference.isFound? || not difference.isFound
-				return true
 
-		# still there, let's show a missed one
-		errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, {width: 20, height: 20}
-		self.view.showError errorBounds
+				# break to let the user find one difference by one
+				# return true
+
+		# show an error if no difference were found
+		if not differenceFound
+			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
+			self.view.showError errorBounds
+
 		return false
 
 	activateDifference: (difference) ->
