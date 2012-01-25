@@ -3,6 +3,8 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
+	errorDimensions: {width: 20, height: 20}
+
 	modes: ["practice", "survival", "challenge"]
 
 	loaded                : false
@@ -204,7 +206,7 @@ class exports.GameController extends Controller
 				return true
 
 		# still there, let's show a missed one
-		errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, {width: 20, height: 20}
+		errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
 		self.view.showError errorBounds
 		return false
 
