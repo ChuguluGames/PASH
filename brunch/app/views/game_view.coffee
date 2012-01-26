@@ -3,6 +3,9 @@ class exports.GameView extends View
 	template      : require 'templates/game'
 	hideErrorAfter: 1000 # hide after xx milliseconds
 	elements      : {}
+	differencesIndicator:
+		fadeInSpeed: 700
+		delayBetweenAppearance: 300
 
 	render: (data) ->
 		self=@
@@ -52,9 +55,13 @@ class exports.GameView extends View
 
 	initializeDifferencesFoundIndicator: (differences, activatedNumber) ->
 		self=@
-		indicator = self.elements.differencesFoundIndicator.empty()
-		indicator.append("<li></li>") for difference in differences
-		self.updateDifferencesFoundIndicator(activatedNumber)
+		indicator = self.elements.differencesFoundIndicator.empty() # empty the indicator container
+
+		for n in [0..differences.length - 1]
+			li = $("<li />").appendTo(indicator)
+			li.addClass("found") if n < activatedNumber
+			li.delay(n * self.differencesIndicator.delayBetweenAppearance)
+				.fadeIn(self.differencesIndicator.fadeInSpeed)
 
 	updateDifferencesFoundIndicator: (differencesFoundNumber) ->
 		self=@
