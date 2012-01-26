@@ -3,36 +3,45 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
+	errorDimensions: {width: 20, height: 20}
+
+	toleranceAccuracy: 20
+
 	modes: ["practice", "survival", "challenge"]
 
-	loaded          : false
-	rendered        : false
+	loaded                : false
+	rendered              : false
+	disabledClicks        : true
 
-	items           : []
-	item            : null
-	itemCurrent     : false
-	itemNext        : false
-	itemNextRoute   : null
-	mode            : null
-	score           : 0
-	differencesFound: 0
+	items                 : []
+	item                  : null
+	itemCurrent           : 0
+	itemNext              : 0
+	itemNextRoute         : null
+	mode                  : null
+	score                 : 0
+	differencesFoundNumber: 0
 
-	initialize: ->
+	start: ->
 		self=@
 
-		self.render().load ->
-			console.log "game loaded"
-			self.loaded = true
+		console.log "new game"
+		self.getArguments.apply(self, arguments)
 
-		self
+		self.on("change:loaded", self.onGameLoaded)
+		self.render().load()
 
 	render: ->
 		self=@
+
+		console.log "render"
 
 		# render the view
 		$("body").html self.view.render(
 			score: self.score
 		).el
+
+		self.view.disableLinks() # disable link until item is loaded
 
 		# initiate events
 		self.delegateEvents()
@@ -41,121 +50,91 @@ class exports.GameController extends Controller
 
 		self
 
-	load: (callback) ->
+	load: ->
 		self=@
 
-		console.log "loading game"
-
-		return callback() if self.items.length > 0
+		console.log "load"
 
 		ItemModel.fetchSelected (items) ->
+			console.log items.length
 			self.items = items
-			callback()
+
+			self.loaded = true
 
 		self
 
-	resetItem: ->
+	getArguments: (itemCurrent, mode) ->
 		self=@
-		self.item = null
-		self.differencesFound = 0
+		console.log "getArguments"
+		self.itemCurrent = if not itemCurrent? or not self.validateItemID(itemCurrent) then 0 else parseInt(itemCurrent)
+		console.log "tested id"
+		self.mode = if not mode? or not self.validateMode(mode) then self.modes[0] else mode
+		console.log "tested mode"
 
-	loadItem: (itemCurrent, mode) ->
+	# resume game
+	resume: ->
 		self=@
+
+		# can also be a previous from game, so let's check it!
+		if self.rendered and self.itemCurrent > 0
+			self.itemCurrent = self.getPreviousItem()
+			self.loadItem()
+			return
+
+		console.log "resume game"
+
+		self.render()
+
+		# self.view.reset() 			# reset visuals
+		self.view.showLoading() # show item loading
+			.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
+
+		# show the difference already found
+		for difference in self.item.differencesArray
+			do (difference) ->
+				if difference.isFound? and difference.isFound
+					# create the rectangle that wrap the polygon
+					rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
+
+					# get the rectangle for the resolution
+					rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
+
+					# display the difference position
+					self.view.showDifference(rectangle)
+
+		self.onItemFetched() 		# item should be already fetched
+
+	# load a new item
+	loadItem: ->
+		self=@
+
+		console.log self.rendered
+		self.render() if not self.rendered
+
+		console.log "loadItem"
+
+		self.getArguments.apply(self, arguments)
 
 		self.view.reset() # reset visuals
-		self.view.showLoading() # show item loading
-		self.resetItem() # reset item
+			.showLoading()  # and show loading
+			.disableLinks()
+		self.disabledClicks = true # disable clicks
 
-		onLoaded = ->
-			# render the game if not yet rendered
-			self.render() if not self.rendered
-
-			console.log "loading item"
-			itemCurrent = 0 if not itemCurrent?
-			mode = self.modes[0] if not mode?
-
-			self.mode = mode
-			self.itemCurrent = parseInt(itemCurrent)
-			self.findNextItem()
-
-			self.item = self.items[self.itemCurrent]
-
-			# get the data of the item
-			self.item.fetchAll ->
-				console.log "item fetched"
-				# return self.loadNextItem() if not self.item.differencesArray.length? || self.item.differencesArray.length == 0
-
-				# preload images
-				new app.helpers.preloader().load ->
-
-					# update the view
-					self.view.update(
-						item: self.item
-						next: "#/" + self.itemNextRoute
-					)
-
-					self.view.hideLoading() # hide the loading indicator
-				, self.item.first_image.getSrc(), self.item.second_image.getSrc()
-
+		# reset item differences
+		if self.item?
+			for difference in self.item.differencesArray
+				difference.isFound = false
+		# reset item
+		self.item = null
+		self.differencesFoundNumber = 0
 
 		# wait until the game is loaded to load the item
-		if not self.loaded then self.on("change:loaded", onLoaded) else onLoaded()
-
-		# return if not self.validateItemID itemCurrent
-		# return if not self.validateMode mode
-
-		# self.item = self.items[itemCurrent]
-
-		# self.findNextItem()
-
-		# {itemData} = require("item")
-		# {differencesData} = require("item")
-		# {differencesPointsData} = require("item")
-
-		# item = new ItemModel(itemData)
-		# l = differencesData.length
-		# i = 0
-
-		# while i < l
-		# 	difference = differencesData[i]
-		# 	differenceModel = new DifferenceModel(difference)
-		# 	differencePointsData = differencesPointsData[i]
-
-		# 	ll = differencePointsData.length
-		# 	ii = 0
-		# 	while ii < ll
-		# 		differencePoint = differencePointsData[ii]
-		# 		differencePointModel = new DifferencePointModel(differencePoint)
-		# 		differenceModel.difference_points.add(differencePointModel)
-		# 		ii++
-
-		# 	item.differences.add(differenceModel)
-		# 	i++
-
-		# self.item = item
-
-		# download image
-		# access
-		# remove
-
-	loadNextItem: ->
-		self=@
-
-		# no more item
-		if !self.itemNext
-
-		# change the route
-		else
-			app.router.setRoute self.itemNextRoute
+		if not self.loaded then self.on("change:loaded", self.onGameLoaded) else self.onGameLoaded()
 
 	validateItemID: (itemCurrent) ->
 		self=@
 		if not app.helpers.formater.isInt itemCurrent
-			app.helpers.log.error "Invalid itemID format", self.tag
-			return false
-
-		else if not self.items[itemCurrent]?
-			app.helpers.log.error "no item at index " + itemCurrent, self.tag
+			console.log "Invalid itemID format"
 			return false
 
 		true
@@ -170,6 +149,58 @@ class exports.GameController extends Controller
 
 		true
 
+	onGameLoaded: ->
+		self=@
+
+		console.log self.itemCurrent
+
+		if self.items[self.itemCurrent]?
+			self.item = self.items[self.itemCurrent]
+		else
+			alert "error, no item at " + self.itemCurrent
+			return false
+
+		self.findNextItem()
+		self.item.fetchAll -> self.onItemFetched() # get the data of the item
+
+	onItemFetched: ->
+		self=@
+
+		# order each differences polygon points
+		for difference in self.item.differencesArray
+			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
+
+		new app.helpers.preloader().load ->
+
+			# update the view
+			self.view.update(
+				item: self.item 									# update the item images
+				next: "#/" + self.itemNextRoute 	# update the next link
+			)
+				.hideLoading() # hide the loading indicator
+				.enableLinks() # enable links
+				.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber) # initialize difference indicator
+
+			self.disabledClicks = false # enable clicks
+
+		, (error) ->
+			alert error
+			# load next item
+			self.loadNextItem()
+
+		, self.item.first_image.getSrc(), self.item.second_image.getSrc() # preload the item images
+
+	loadNextItem: ->
+		self=@
+
+		# no more item
+		if !self.itemNext
+			# if practice mode, load the first one
+			# else load the end game
+		# change the route
+		else
+			app.router.setRoute self.itemNextRoute
+
 	findNextItem: ->
 		self=@
 		if self.itemCurrent + 1 < self.items.length
@@ -183,9 +214,26 @@ class exports.GameController extends Controller
 
 		self.itemNextRoute = "game/" + self.itemNext + "/mode/" + self.mode
 
+		console.log "next route " + self.itemNextRoute
+
+	getPreviousItem: ->
+		self=@
+		if self.itemCurrent > 0
+			return self.itemCurrent - 1
+		else return 0
+
+	onClickLink: (event) ->
+		self=@
+
+		return event.preventDefault() if self.disabledClicks
+		# call parent
+		GameController.__super__.onClickLink.call(self, event)
+
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
 		self=@
+
+		return event.preventDefault() if self.disabledClicks
 
 		position=
 			x: event.pageX
@@ -198,35 +246,46 @@ class exports.GameController extends Controller
 		retinaPosition = app.helpers.retina.positionToRetina(relativePosition)
 		differenceFound = false
 
+		# create a circle from the position and the given tolerance accuracy
+		circle =
+			center: retinaPosition
+			radius: self.toleranceAccuracy
+
 		# for each difference of the item
 		for difference in self.item.differencesArray
-			do (difference) ->
-				console.log difference
 
-				inPolygon = app.helpers.polygoner.isPointInPolygon retinaPosition, difference.differencePointsArray
-				# touch in the difference polygon.difference_points
+			# touch in the difference polygon.difference_points
+			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
+				differenceFound = true
+				# activate it only if not already found
+				self.activateDifference difference if not difference.isFound? || not difference.isFound
 
-				if inPolygon
-					if not typeof difference.isFound == "undefined" || not difference.isFound
-						# create the rectangle that wrap the polygon
-						rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
+				# break to let the user find one difference by one
+				# return true
 
-						# get the rectangle for the resolution
-						rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
-
-						# display the difference position
-						self.view.showDifference(rectangle)
-
-						difference.isFound = true
-						self.differencesFound++
-					differenceFound = true
-
-					self.view.showDifferencesFound(self.differencesFound)
-
-					# found each differences, load the next item
-					self.loadNextItem() if self.differencesFound == self.item.differencesArray.length
-
-		# still there, let's show a missed one
+		# show an error if no difference were found
 		if not differenceFound
-			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, {width: 20, height: 20}
+			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
 			self.view.showError errorBounds
+
+		return false
+
+	activateDifference: (difference) ->
+		self=@
+
+		# create the rectangle that wrap the polygon
+		rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
+
+		# get the rectangle for the resolution
+		rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
+
+		difference.isFound = true
+		self.differencesFoundNumber++
+
+		# display the difference position
+		self.view.showDifference(rectangle)
+			.updateDifferencesFoundIndicator(self.differencesFoundNumber)
+
+		# found each differences, load the next item
+		if self.differencesFoundNumber == self.item.differencesArray.length
+			setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item

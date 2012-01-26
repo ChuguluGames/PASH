@@ -1,15 +1,14 @@
-helper={}
+class exports.PositionHelper
+	self=@
 
-helper.tag = "PositionHelper"
+	self.tag = "PositionHelper"
 
-helper.getRelativePosition = (element, absolutePosition) ->
-	offset = $(element).offset(); # from jquery
-	relativePosition=
-		x: absolutePosition.x - offset.left
-		y: absolutePosition.y - offset.top
+	self.getRelativePosition = (element, absolutePosition) ->
+		offset = $(element).offset(); # from jquery
+		relativePosition=
+			x: absolutePosition.x - offset.left
+			y: absolutePosition.y - offset.top
 
-	app.helpers.log.info relativePosition, @tag
+		app.helpers.log.info relativePosition, self.tag
 
-	relativePosition
-
-exports.PositionHelper=helper
+		relativePosition

@@ -1,7 +1,7 @@
 # Dependencies #
 
-* brunch (0.9-beta1)
-* PGT (Android Version) ([https://github.com/SuperSkunk/PGT/ github]
+* brunch (0.9-beta1) ([website](http://brunch.io/), [github](https://github.com/brunch/brunch))
+* PGT (Android Version) ([github](https://github.com/SuperSkunk/PGT/]))
 
 # Installation #
 
@@ -56,10 +56,13 @@ There is <strong>no automatism</strong> to copy the brunch/.web in the vendor fo
     │
     ├── app
     │   ├── assets # will be copied to build automatically (see brunch AssetsPlugin)
+    │   │   ├── scripts
+    │   │   ├── styles
+    │   │   ├── test
     │   │   └── images
     │   │       index.html
+    │   │       test.html
     │   │
-    │   ├── collections
     │   ├── controllers
     │   ├── helpers
     │   ├── models
@@ -67,6 +70,10 @@ There is <strong>no automatism</strong> to copy the brunch/.web in the vendor fo
     │   ├── styles
     │   ├── templates
     │   └── views
+    │       config.coffee # application configuration
+    │       initialize.coffee # application initialization in development environment
+    │       initialize_common.coffee # application initialization
+    │       initialize_tests.coffee # application initialization in test environment
     │
     └── vendor
 </pre>

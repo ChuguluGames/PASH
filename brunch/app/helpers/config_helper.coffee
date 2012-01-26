@@ -1,42 +1,41 @@
-helper = {}
+class exports.ConfigHelper
+  self=@
 
-helper.getBaseUrl = ->
-  app.config[window.env].base_url
+  self.getBaseUrl = ->
+    app.config[window.env].base_url
 
-helper.getAssetsBaseUrl = ->
-  helper.getBaseUrl()
+  self.getAssetsBaseUrl = ->
+    self.getBaseUrl()
 
-helper.getTagsUrl = ->
-  locale = app.helpers.locale.getLocale()
-  helper.getBaseUrl() + '/' + locale + '/tags.js'
+  self.getTagsUrl = ->
+    locale = app.helpers.locale.getLocale()
+    self.getBaseUrl() + '/' + locale + '/tags.js'
 
-helper.getTagsLocalSeedUrl = ->
-  locale = app.helpers.locale.getLocale()
-  'seed/json/' + locale + '/tags.json'
+  self.getTagsLocalSeedUrl = ->
+    locale = app.helpers.locale.getLocale()
+    'seed/json/' + locale + '/tags.json'
 
-helper.getPacksUrl = ->
-  locale = app.helpers.locale.getLocale()
-  helper.getBaseUrl() + '/' + locale + '/packs.js'
+  self.getPacksUrl = ->
+    locale = app.helpers.locale.getLocale()
+    self.getBaseUrl() + '/' + locale + '/packs.js'
 
-helper.getPacksLocalSeedUrl = ->
-  locale = app.helpers.locale.getLocale()
-  'seed/json/' + locale + '/packs.json'
+  self.getPacksLocalSeedUrl = ->
+    locale = app.helpers.locale.getLocale()
+    'seed/json/' + locale + '/packs.json'
 
-helper.getItemsUrlForPackIdentity = (packIdentity) ->
-  locale = app.helpers.locale.getLocale()
-  helper.getBaseUrl() + '/' + locale + '/packs/' + packIdentity + '/items.js'
+  self.getItemsUrlForPackIdentity = (packIdentity) ->
+    locale = app.helpers.locale.getLocale()
+    self.getBaseUrl() + '/' + locale + '/packs/' + packIdentity + '/items.js'
 
-helper.getItemsUrlForPack = (pack) ->
-  helper.getItemsUrlForPackIdentity pack.identity
+  self.getItemsUrlForPack = (pack) ->
+    self.getItemsUrlForPackIdentity pack.identity
 
-helper.getItemsLocalSeedUrlForPackIdentity = (packIdentity) ->
-  locale = app.helpers.locale.getLocale()
-  'seed/json/' + locale + '/packs/' + packIdentity + '/items.json'
+  self.getItemsLocalSeedUrlForPackIdentity = (packIdentity) ->
+    locale = app.helpers.locale.getLocale()
+    'seed/json/' + locale + '/packs/' + packIdentity + '/items.json'
 
-helper.getItemsLocalSeedUrlForPack = (pack) ->
-  helper.getItemsLocalSeedUrlForPackIdentity pack.identity
+  self.getItemsLocalSeedUrlForPack = (pack) ->
+    self.getItemsLocalSeedUrlForPackIdentity pack.identity
 
-helper.getDatabaseName = ->
-  app.config[window.env].database
-
-exports.ConfigHelper = helper
+  self.getDatabaseName = ->
+    app.config[window.env].database

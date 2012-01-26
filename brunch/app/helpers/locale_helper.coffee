@@ -1,6 +1,5 @@
-helper = {}
+class exports.LocaleHelper
+	self=@
 
-helper.getLocale = ->
-  'en'
-
-exports.LocaleHelper = helper
+	self.getLocale = ->
+	  'en'
