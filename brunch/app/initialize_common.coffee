@@ -2,11 +2,12 @@ window.app = {}
 
 modules = [
   # helpers
-  'config_helper'
   'locale_helper'
+  'config_helper'
   'device_helper'
   'log_helper'
   'db_helper'
+  'file_system_helper'
   'download_helper'
   'image_download_helper'
   'format_helper'
@@ -16,6 +17,7 @@ modules = [
   'retina_helper'
   'model_download_helper'
   'event_helper'
+  'seed_helper'
 
   # router
   'main_router'
@@ -119,19 +121,25 @@ class exports.Application
   onDatabaseReady: ->
     if window.onDatabaseReady?
       return window.onDatabaseReady()
-
     self=@
 
     self.helpers.log.info "on database ready", self.tag
 
-    # router
-    self.router = MainRouter.init('/home')
+    self.helpers.fs.init ->
+      self.helpers.seeder.seed ->
+        # router
+        self.router = MainRouter.init('/home')
+      , ->
+        console.log "seed fail"
+    , ->
+      console.log "init fs fail"
 
   initialize: ->
     self=@
 
     # helpers
     self.helpers.db               = DbHelper
+    self.helpers.fs               = FileSystemHelper
     self.helpers.downloader       = DownloadHelper
     self.helpers.image_downloader = ImageDownloadHelper
     self.helpers.positioner       = PositionHelper
@@ -142,6 +150,7 @@ class exports.Application
     self.helpers.config           = ConfigHelper
     self.helpers.locale           = LocaleHelper
     self.helpers.event            = EventHelper
+    self.helpers.seeder           = SeedHelper
 
     if self.helpers.device.isMobile()
       activateFastClicks()

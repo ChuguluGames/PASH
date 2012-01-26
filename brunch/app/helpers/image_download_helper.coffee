@@ -13,30 +13,27 @@ ImageDownloader.getLocalImagePath = (object, imgUrl, imgName) ->
 ImageDownloader.getRemoteImageUrl = (imgUrl) ->
   app.helpers.config.getAssetsBaseUrl() + '/' + imgUrl
 
-ImageDownloader.download = (imgUrl, object, imgName, callback) ->
+ImageDownloader.download = (imgUrl, object, imgName, callback, pretend) ->
   return (callback(null) if callback?) if !imgUrl?
-  app.helpers.downloader.download ImageDownloader.getLocalImagePath(imgUrl), ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
-    , (url, fullPath) ->
-      newimage = null
-# does not work as expected (prefetching problem for some objects)
-#      if object[imgName]?
-#        newimage             = object[imgName]
-#        fileEntry            = new FileEntry()
-#        fileEntry.fullPath   = newimage.path
-#        fileEntry.filesystem = app.helpers.downloader.filesystem
-#        console.log "removing " + fileEntry.fullPath
-#        fileEntry.remove ->
-#            console.log "remove ok"
-#          , ->
-#            console.log "remove fail"
-      newimage        = new ImageModel() if !newimage?
-      newimage.url    = url
-      newimage.path   = fullPath
-      object[imgName] = newimage
+  app.helpers.fs.getContentDownloadPath (contentEntry) ->
+    url  = ImageDownloader.getRemoteImageUrl(imgUrl)
+    path = contentEntry.fullPath + '/' + ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
+    if pretend?
+      console.log "pretending"
+      object[imgName] = new ImageModel({url: url, path: path})
       app.helpers.db.save object, ->
-          callback(newimage) if callback?
-    , ->
-        callback(null) if callback?
+          callback(object[imgName]) if callback?
+    else
+      console.log "downloading fo real"
+      app.helpers.downloader.download url, path
+      , ->
+        object[imgName] = new ImageModel({url: url, path: path})
+        app.helpers.db.save object, ->
+            callback(object[imgName]) if callback?
+      , ->
+          callback(null) if callback?
+  , ->
+    callback(null) if callback?
 
 class exports.ImageDownloadHelper extends ImageDownloader
   constructor: (imgUrl, object, imgName, callback) ->

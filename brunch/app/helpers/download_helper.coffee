@@ -1,42 +1,16 @@
 SequentialDownloader = ->
-SequentialDownloader.tag 								= "SequentialDownloader"
-SequentialDownloader.filesystem_fetching = false
-SequentialDownloader.filesystem          = null
-SequentialDownloader.queue               = []
-
-SequentialDownloader.initFilesystem = (success, fail) ->
-	if !LocalFileSystem?
-		SequentialDownloader.filesystem = {}
-		return (success() if success?)
-	return if SequentialDownloader.filesystem_fetching
-	SequentialDownloader.filesystem_fetching = true
-	window.requestFileSystem LocalFileSystem.PERSISTENT, 0
-	, (fs) ->
-		SequentialDownloader.filesystem = fs
-		success() if success?
-		SequentialDownloader.filesystem_fetching = false
-		SequentialDownloader.downloadNextFile()
-	, (evt) ->
-		fail(evt) if fail?
-		SequentialDownloader.filesystem_fetching = false
+SequentialDownloader.tag     = "SequentialDownloader"
+SequentialDownloader.queue   = []
 
 SequentialDownloader.downloadNextFile = ->
 	return if SequentialDownloader.queue.length < 1
 	return if !(nextFile = SequentialDownloader.queue.pop())?
 	fileTransfer = new FileTransfer()
-
-	downloadDirectory = if app.helpers.device.isAndroid() then "data/data/com.phonegap.pash/" else SequentialDownloader.filesystem.root.fullPath
-
-	fileTransfer.download nextFile.url, downloadDirectory + '/' + nextFile.path,
+	fileTransfer.download nextFile.url, nextFile.path,
 			(entry) ->
-				console.log nextFile.url
-				console.log entry.fullPath
 				nextFile.success nextFile.url, entry.fullPath if nextFile.success?
 				SequentialDownloader.downloadNextFile()
-		,
-			(error) ->
-				console.log error
-				nextFile.fail(error) if nextFile.fail?
+		, nextFile.fail
 
 
 # when static download method is used the downloads are queued (LIFO stack)
@@ -44,21 +18,10 @@ SequentialDownloader.downloadNextFile = ->
 SequentialDownloader.download = (url, path, success, fail) ->
 	return (success(url, path) if success?) if !FileTransfer?
 	SequentialDownloader.queue.push {url: url, path: path, success: success, fail: fail}
-	if SequentialDownloader.filesystem?
-		SequentialDownloader.downloadNextFile()
-	else if !SequentialDownloader.filesystem_fetching
-		SequentialDownloader.initFilesystem(null, null)
+	SequentialDownloader.downloadNextFile() if SequentialDownloader.queue.length == 1
 
 # when new instance is created the download is launched immediatly
 class exports.DownloadHelper extends SequentialDownloader
 	constructor: (url, path, success, fail) ->
 		SequentialDownloader.download url, path, success, fail
 		self=@
-
-#	checkInternalMemory: ->
-#		self=@
-#
-#		PhoneGap.exec((size) ->
-#			alert(size)
-#		, -> alert "ok"
-#		, "File", "getFreeDeviceSpace", [])
