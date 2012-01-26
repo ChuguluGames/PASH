@@ -11,6 +11,7 @@ class exports.GameController extends Controller
 
 	loaded                : false
 	rendered              : false
+	disabledClicks        : true
 
 	items                 : []
 	item                  : null
@@ -39,6 +40,8 @@ class exports.GameController extends Controller
 		$("body").html self.view.render(
 			score: self.score
 		).el
+
+		self.view.disableLinks() # disable link until item is loaded
 
 		# initiate events
 		self.delegateEvents()
@@ -112,7 +115,10 @@ class exports.GameController extends Controller
 
 		self.getArguments.apply(self, arguments)
 
-		self.view.reset().showLoading() # reset visuals and show loading
+		self.view.reset() # reset visuals
+			.showLoading()  # and show loading
+			.disableLinks()
+		self.disabledClicks = true # disable clicks
 
 		# reset item differences
 		if self.item?
@@ -164,14 +170,18 @@ class exports.GameController extends Controller
 		for difference in self.item.differencesArray
 			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
 
-		self.view.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
-
 		new app.helpers.preloader().load ->
+
 			# update the view
 			self.view.update(
 				item: self.item 									# update the item images
 				next: "#/" + self.itemNextRoute 	# update the next link
-			).hideLoading() # hide the loading indicator
+			)
+				.hideLoading() # hide the loading indicator
+				.enableLinks() # enable links
+				.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber) # initialize difference indicator
+
+			self.disabledClicks = false # enable clicks
 
 		, (error) ->
 			alert error
@@ -212,9 +222,18 @@ class exports.GameController extends Controller
 			return self.itemCurrent - 1
 		else return 0
 
+	onClickLink: (event) ->
+		self=@
+
+		return event.preventDefault() if self.disabledClicks
+		# call parent
+		GameController.__super__.onClickLink.call(self, event)
+
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
 		self=@
+
+		return event.preventDefault() if self.disabledClicks
 
 		position=
 			x: event.pageX
