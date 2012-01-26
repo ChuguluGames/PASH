@@ -1,8 +1,12 @@
 class exports.PreloadHelper
 	tag            : "PreloadHelper"
+	timeout        : 1000
+	timeoutTimer   : null
 	callbackSuccess: null
 	callbackError  : null
 	images         : null
+	image          : null
+	startLoadingAt : null
 
 	constructor: ->
 		self=@
@@ -28,14 +32,41 @@ class exports.PreloadHelper
 	loadOne: (path) ->
 		self=@
 
-		$("<img />").load(->
+		self.startTimeoutChecker()
+
+		self.image = $("<img />").load(->
+
+			self.stopTimeoutChecker()
 			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
 			self.loadAll() # load the next one
 
 		# bind a possible 404 error
 		).error(->
+			self.stopTimeoutChecker()
 			errorMessage = "Unable to load: \"" + @src + "\""
 			app.helpers.log.info errorMessage, self.tag
-			# throw error
-			self.callbackError(errorMessage)
+			self.callbackError(errorMessage) # throw error
+
 		).attr("src", path)
+
+	startTimeoutChecker: ->
+		self=@
+		self.startLoadingAt = new Date().getTime()
+		console.log "start timer"
+		self.timeoutTimer = setInterval ->
+			self.checkTimeout()
+		, 10
+
+	stopTimeoutChecker: ->
+		self=@
+		self.startLoadingAt = null
+		console.log "stop timer"
+		clearInterval self.timeoutTimer if self.timeoutTimer?
+
+	checkTimeout: ->
+		self=@
+		if new Date().getTime() - self.startLoadingAt > self.timeout
+			self.stopTimeoutChecker() # stop timer
+			path = self.image.attr("src")
+			self.image.remove() # remove the image
+			self.callbackError("Timeout during loading " + path) # throw error
