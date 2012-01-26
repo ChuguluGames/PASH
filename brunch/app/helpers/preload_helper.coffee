@@ -35,7 +35,7 @@ class exports.PreloadHelper
 		self.startTimeoutChecker()
 
 		self.image = $("<img />").load(->
-
+			app.helpers.log.info "loaded in " + (new Date().getTime() - self.startLoadingAt), self.tag
 			self.stopTimeoutChecker()
 			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
 			self.loadAll() # load the next one
