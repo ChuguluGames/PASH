@@ -1,7 +1,12 @@
 class exports.PreloadHelper
-	tag: 			"PreloadHelper"
-	callback: null
-	args: 		null
+	tag            : "PreloadHelper"
+	timeout        : 1000
+	timeoutTimer   : null
+	callbackSuccess: null
+	callbackError  : null
+	images         : null
+	image          : null
+	startLoadingAt : null
 
 	constructor: ->
 		self=@
@@ -11,27 +16,57 @@ class exports.PreloadHelper
 		if not arguments? || arguments.length <= 1
 			return
 
-		@args = Array.prototype.slice.call(arguments) # convert the args to a real array
-		@callback = @args.shift() # save the callback
+		@images          = Array.prototype.slice.call(arguments) # convert the args to a real array
+		@callbackSuccess = @images.shift() # save the callback
+		@callbackError   = @images.shift() # save the callback
 
 		@loadAll() # start the preloading
 
 	loadAll: ->
-		if @args.length == 0
-			@callback()
+		if @images.length == 0
+			@callbackSuccess()
 		else
 
-			@loadOne @args.shift()
+			@loadOne @images.shift()
 
 	loadOne: (path) ->
 		self=@
 
-		$("<img />").load(->
+		self.startTimeoutChecker()
+
+		self.image = $("<img />").load(->
+			app.helpers.log.info "loaded in " + (new Date().getTime() - self.startLoadingAt), self.tag
+			self.stopTimeoutChecker()
 			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
 			self.loadAll() # load the next one
 
 		# bind a possible 404 error
 		).error(->
-			app.helpers.log.info "unable to load: \"" + @src + "\"", self.tag
+			self.stopTimeoutChecker()
+			errorMessage = "Unable to load: \"" + @src + "\""
+			app.helpers.log.info errorMessage, self.tag
+			self.callbackError(errorMessage) # throw error
 
 		).attr("src", path)
+
+	startTimeoutChecker: ->
+		self=@
+		self.startLoadingAt = new Date().getTime()
+		console.log "start timer"
+		self.timeoutTimer = setInterval ->
+			self.checkTimeout()
+		, 10
+
+	stopTimeoutChecker: ->
+		self=@
+		self.startLoadingAt = null
+		console.log "stop timer"
+		clearInterval self.timeoutTimer if self.timeoutTimer?
+
+	checkTimeout: ->
+		self=@
+		if new Date().getTime() - self.startLoadingAt > self.timeout
+			self.stopTimeoutChecker() # stop timer
+			path = self.image.attr("src")
+			self.image.remove() # remove the image
+			self.callbackError("Timeout during loading " + path) # throw error

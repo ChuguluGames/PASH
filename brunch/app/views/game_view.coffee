@@ -9,6 +9,7 @@ class exports.GameView extends View
 
 		$(self.el).html self.template
 
+		self.elements.links                     = $(".topbar .back a, .topbar .button-next-item a", self.el)
 		self.elements.firstImage                = $(".first-image", self.el)
 		self.elements.secondImage               = $(".second-image", self.el)
 		self.elements.differencesFoundIndicator = $(".differences-status ul", self.el)
@@ -97,6 +98,16 @@ class exports.GameView extends View
 
 		errorElement.add(errorElementClone).fadeOut self.hideErrorAfter, ->
 			$(@this).remove()
+
+	disableLinks: ->
+		self=@
+		self.elements.links.add(self.elements.links.parent()).addClass("disabled")
+		self
+
+	enableLinks: ->
+		self=@
+		self.elements.links.add(self.elements.links.parent()).removeClass("disabled")
+		self
 
 	hideLoading: ->
 		self=@

@@ -11,10 +11,17 @@
 			background #fbfbfb
 			margin-right 10px
 
+			&.disabled
+				background red
+
 			a
 				display block
 				line-height 25px
 				text-decoration none
+				color #000000
+
+				&.disabled
+					color #888888
 
 		.score
 			float left
@@ -47,13 +54,20 @@
 		.button-next-item
 			float right
 			padding 0 10px
-			background #0000ff
+			background #fbfbfb
 			display:none
+
+			&.disabled
+				background red
+
 			a
 				display block
 				line-height 25px
 				text-decoration none
-				color #000
+				color #000000
+
+				&.disabled
+					color #888888
 
 	.item-wrapper
 		position relative
