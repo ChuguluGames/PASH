@@ -1,12 +1,11 @@
-helper={}
+class exports.FormatHelper
+	self=@
 
-helper.tag="FormatHelper"
+	self.tag = "FormatHelper"
 
-helper.isInt = (input) ->
-	helper.validate input, /^[0-9]*$/
+	self.isInt = (input) ->
+		self.validate input, /^[0-9]*$/
 
-helper.validate = (input, regex) ->
-	regexp = new RegExp regex
-	regexp.test input
-
-exports.FormatHelper=helper
+	self.validate = (input, regex) ->
+		regexp = new RegExp regex
+		regexp.test input

@@ -1,6 +1,5 @@
-helper = {}
+class exports.EventHelper
+	self=@
 
-helper.disableScroll = ->
-  document.ontouchstart = (e) -> e.preventDefault()
-
-exports.EventHelper = helper
+	self.disableScroll = ->
+		document.ontouchstart = (e) -> e.preventDefault()

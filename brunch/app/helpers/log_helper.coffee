@@ -1,62 +1,61 @@
-helper = {}
+class exports.LogHelper
+	self=@
 
-helper.verbose = {}
+	self.verbose = {}
 
-helper.isVerbose = (tag) ->
-	@verbose[tag]? && @verbose[tag]
+	self.isVerbose = (tag) ->
+		self.verbose[tag]? && self.verbose[tag]
 
-helper.argumentsToArray = (args) ->
-	Array.prototype.slice.call(args)
+	self.argumentsToArray = (args) ->
+		Array.prototype.slice.call(args)
 
-helper.printObjects = (array) ->
-	newArray = []
-	for item in array
-		do (item) ->
-			if typeof item == "object"
-				itemString = "{"
-				i = 0
-				for prop, key of item
-					do (prop, key) ->
-						itemString += ", " if i > 0
-						value = item[prop]
-						itemString += prop + ": "
-						itemString += value
-						i++
+	self.printObjects = (array) ->
+		newArray = []
+		for item in array
+			do (item) ->
+				if typeof item == "object"
+					itemString = "{"
+					i = 0
+					for prop, key of item
+						do (prop, key) ->
+							itemString += ", " if i > 0
+							value = item[prop]
+							itemString += prop + ": "
+							itemString += value
+							i++
 
-				item = itemString + "}"
+					item = itemString + "}"
 
-			newArray.push item
-	newArray
+				newArray.push item
+		newArray
 
-helper.log = (type, args) ->
-	args = @argumentsToArray(args)
+	self.log = (type, args) ->
+		args = self.argumentsToArray(args)
 
-	tag = args.pop()
+		tag = args.pop()
 
-	# add the tag before the message
-	args.unshift "[" + tag + "] "
+		# add the tag before the message
+		args.unshift "[" + tag + "] "
 
-	# can log
-	if args? && args.length >= 1 && @isVerbose tag
-		type = "log" if (typeof console[type] == "undefined" or console[type] == null)
-		# android version
-		if app.helpers.device.isMobile()
-			# goto print the object of the mother
-			args = @printObjects args
+		# can log
+		if args? && args.length >= 1 && self.isVerbose tag
+			type = "log" if (typeof console[type] == "undefined" or console[type] == null)
+			# android version
+			if app.helpers.device.isMobile()
+				# goto print the object of the mother
+				args = self.printObjects args
 
-			console[type](args.join(""))
-		else
-			console[type].apply(window.console, args)
+				console[type](args.join(""))
+			else
+				console[type].apply(window.console, args)
 
-	true
+		true
 
-helper.error = ->
-	@log "error", arguments
+	self.error = ->
+		self.log "error", arguments
 
-helper.warn = ->
-	@log "warn", arguments
+	self.warn = ->
+		self.log "warn", arguments
 
-helper.info = ->
-	@log "info", arguments
-
-exports.LogHelper = helper
+	self.info = ->
+		self.log "info", arguments
