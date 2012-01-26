@@ -1,52 +1,54 @@
 window.app = {}
 
-modules = [
-  # helpers
-  'config_helper'
-  'locale_helper'
-  'device_helper'
-  'log_helper'
-  'db_helper'
-  'download_helper'
-  'image_download_helper'
-  'format_helper'
-  'position_helper'
-  'polygon_helper'
-  'preload_helper'
-  'retina_helper'
-  'model_download_helper'
-  'event_helper'
-  'collision_helper'
-
-  # router
-  'main_router'
-
-  # controllers
-  'home_controller'
-  'game_controller'
-
-  # views
-  'home_view'
-  'game_view'
-
-  # models
-  'player_model'
-  'tag_model'
-  'pack_model'
-  'item_model'
-  'difference_model'
-  'difference_point_model'
-  'image_model'
-]
+modules = {
+  helpers: [
+    'config'
+    'locale'
+    'device'
+    'log'
+    'db'
+    'download'
+    'image_download'
+    'format'
+    'position'
+    'polygon'
+    'preload'
+    'retina'
+    'model_download'
+    'event'
+    'collision'
+  ]
+  routers: [
+    'main'
+  ]
+  controllers: [
+    'home'
+    'game'
+  ]
+  views: [
+    'home'
+    'game'
+  ]
+  models: [
+    'player'
+    'tag'
+    'pack'
+    'item'
+    'difference'
+    'difference_point'
+    'image'
+  ]
+}
 
 # executes window.SomeType = require('types/some_type').SomeType for each class
-for path in modules
-  do (path) ->
-    module_type = path.split('_').pop()
-    module_path = module_type + 's/' + path
-    module_class = path.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
-#   console.log module_path + " " + module_class
-    window[module_class] = require(module_path)[module_class]
+for type, list of modules
+  typePath = type + "/"
+  typeOdd = type.slice(0, -1)
+  for name in list
+    moduleFileName = name + "_" + typeOdd
+    modulePath = typePath + moduleFileName
+    moduleClass = moduleFileName.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
+    window[moduleClass] = require(modulePath)[moduleClass]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
 PlayerModel.hasMany('packs', PackModel, 'players')
