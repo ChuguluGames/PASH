@@ -167,12 +167,16 @@ class exports.GameController extends Controller
 		self.view.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
 
 		new app.helpers.preloader().load ->
-
 			# update the view
 			self.view.update(
 				item: self.item 									# update the item images
 				next: "#/" + self.itemNextRoute 	# update the next link
 			).hideLoading() # hide the loading indicator
+
+		, (error) ->
+			alert error
+			# load next item
+			self.loadNextItem()
 
 		, self.item.first_image.getSrc(), self.item.second_image.getSrc() # preload the item images
 

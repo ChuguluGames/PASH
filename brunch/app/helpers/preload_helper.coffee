@@ -1,7 +1,8 @@
 class exports.PreloadHelper
-	tag: 			"PreloadHelper"
-	callback: null
-	args: 		null
+	tag            : "PreloadHelper"
+	callbackSuccess: null
+	callbackError  : null
+	images         : null
 
 	constructor: ->
 		self=@
@@ -11,17 +12,18 @@ class exports.PreloadHelper
 		if not arguments? || arguments.length <= 1
 			return
 
-		@args = Array.prototype.slice.call(arguments) # convert the args to a real array
-		@callback = @args.shift() # save the callback
+		@images          = Array.prototype.slice.call(arguments) # convert the args to a real array
+		@callbackSuccess = @images.shift() # save the callback
+		@callbackError   = @images.shift() # save the callback
 
 		@loadAll() # start the preloading
 
 	loadAll: ->
-		if @args.length == 0
-			@callback()
+		if @images.length == 0
+			@callbackSuccess()
 		else
 
-			@loadOne @args.shift()
+			@loadOne @images.shift()
 
 	loadOne: (path) ->
 		self=@
@@ -32,6 +34,8 @@ class exports.PreloadHelper
 
 		# bind a possible 404 error
 		).error(->
-			app.helpers.log.info "unable to load: \"" + @src + "\"", self.tag
-
+			errorMessage = "Unable to load: \"" + @src + "\""
+			app.helpers.log.info errorMessage, self.tag
+			# throw error
+			self.callbackError(errorMessage)
 		).attr("src", path)
