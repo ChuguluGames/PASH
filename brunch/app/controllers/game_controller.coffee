@@ -93,15 +93,7 @@ class exports.GameController extends Controller
 		# show the difference already found
 		for difference in self.item.differencesArray
 			do (difference) ->
-				if difference.isFound? and difference.isFound
-					# create the rectangle that wrap the polygon
-					rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
-
-					# get the rectangle for the resolution
-					rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
-
-					# display the difference position
-					self.view.showDifference(rectangle)
+				self.activateDifference(difference) if difference.isFound? and difference.isFound
 
 		self.onItemFetched() 		# item should be already fetched
 
@@ -258,8 +250,20 @@ class exports.GameController extends Controller
 			# touch in the difference polygon.difference_points
 			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
 				differenceFound = true
-				# activate it only if not already found
-				self.activateDifference difference, event.currentTarget if not difference.isFound? || not difference.isFound
+
+				# not already found
+				if not difference.isFound? || not difference.isFound
+					# activate it only if not already found
+					self.activateDifference difference, event.currentTarget
+
+					difference.isFound = true
+					self.differencesFoundNumber++
+					self.view.updateDifferencesFoundIndicator(self.differencesFoundNumber) # update the difference indicator
+
+					# found all differences, load the next item
+					if self.differencesFoundNumber == self.item.differencesArray.length
+						setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item
+						return true
 
 				# break to let the user find one difference by one
 				# return true
@@ -274,6 +278,9 @@ class exports.GameController extends Controller
 	activateDifference: (difference, target) ->
 		self=@
 
+		if not target?
+			target = self.view.elements.firstImage
+
 		# create the rectangle that wrap the polygon
 		rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
 		rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
@@ -281,18 +288,7 @@ class exports.GameController extends Controller
 		# find the center point of the rectangle
 		rectangleCenter = app.helpers.polygoner.getRectangleCenter rectangle
 
-		console.log rectangle
-
 		# create the difference
 		differenceRectangle = app.helpers.polygoner.rectangleFromPointAndTarget rectangleCenter, target, self.differenceDimensions
 
-		difference.isFound = true
-		self.differencesFoundNumber++
-
-		# display the difference position
-		self.view.showDifference(differenceRectangle)
-			.updateDifferencesFoundIndicator(self.differencesFoundNumber)
-
-		# found each differences, load the next item
-		if self.differencesFoundNumber == self.item.differencesArray.length
-			setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item
+		self.view.showDifference(differenceRectangle) # display the difference position
