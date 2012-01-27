@@ -25,6 +25,7 @@ helper.seed = (success, fail) ->
   helper.shouldSeed (should) ->
     return success() if not should
     app.helpers.model_downloader.getLocalAll ->
-      helper.moveImages success, fail
+      success() if success?
+      #helper.moveImages success, fail
 
 exports.SeedHelper = helper

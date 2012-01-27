@@ -15,7 +15,9 @@ ImageDownloader.getRemoteImageUrl = (imgUrl) ->
 
 ImageDownloader.download = (imgUrl, object, imgName, callback, pretend) ->
   return (callback(null) if callback?) if !imgUrl?
-  app.helpers.fs.getContentDownloadPath (contentEntry) ->
+  pathMethod = 'getContentDownloadPath'
+  pathMethod = 'getSeedImagesPath' if pretend?
+  app.helpers.fs[pathMethod] (contentEntry) ->
     url  = ImageDownloader.getRemoteImageUrl(imgUrl)
     path = contentEntry.fullPath + '/' + ImageDownloader.getLocalImagePath(object, imgUrl, imgName)
     if pretend?
