@@ -96,8 +96,8 @@ helper.saveItemsForPack = (pack, data, done, progress, pretend) ->
             count++
             progress(count / total) if progress?
             if (count == total)
+              console.log "pack id : " + pack.identity + " selected"
               pack.state = PackModel.STATE_SELECTED
-              #pack.state = PackModel.STATE_READY_TO_PLAY # use this instead when pack selection is implemented
               app.helpers.db.save pack, ->
                 done(items) if done?
           , pretend # second_image
@@ -108,7 +108,7 @@ helper.getItemsForPack = (pack, done, progress) ->
   return (done(null) if done?) if !pack?
   pack.state = PackModel.STATE_INCOMPLETE
   app.helpers.db.save pack, ->
-      helper.download app.helpers.config.getItemsUrlForPack(pack), {player_id: 454}, (data) ->
+      helper.download app.helpers.config.getItemsUrlForPack(pack), {player_id: PlayerModel.getPlayer().identity}, (data) ->
         helper.saveItemsForPack pack, data, done, progress
 
 helper.getItemsForPackIdentity = (packIdentity, done, progress) ->
@@ -145,11 +145,15 @@ helper.getAll = (done) ->
 helper.getLocalAll = (done) ->
   helper.getLocalTags (tags) ->
       helper.getLocalPacks (packs) ->
+        basePackIds = app.helpers.config.getBasePackIds()
         count = 0
         total = packs.length
+        baseTotal = basePackIds.length
         for pack in packs
           do (pack) ->
-            helper.getLocalItemsForPack pack, (items) ->
-                done() if (++count == total) and done?
+            if $.inArray(pack.identity, basePackIds) != -1
+              #console.log "pack " + pack.identity + " is base pack"
+              helper.getLocalItemsForPack pack, (items) ->
+                  done() if (++count == total || count == baseTotal) and done?
 
 exports.ModelDownloadHelper = helper

@@ -11,5 +11,8 @@ PlayerDefinition.index ['identity'], {unique: true}
 # ItemDefinition.fetchSelected = ->
 # ItemDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
 
+PlayerDefinition.getPlayer = ->
+  new PlayerDefinition(identity: 450)
+
 # making it visible outside as Model
 exports.PlayerModel = PlayerDefinition
