@@ -3,8 +3,8 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
-	differenceDimensions: {width: 50, height: 50}
-	errorDimensions: {width: 50, height: 50}
+	differenceDimensions: {width: 64, height: 64}
+	errorDimensions: {width: 36, height: 36}
 
 	toleranceAccuracy: 20
 
