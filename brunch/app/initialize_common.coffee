@@ -129,11 +129,13 @@ class exports.Application
     self.helpers.log.info "on database ready", self.tag
 
     self.helpers.fs.init ->
-      # self.helpers.seeder.seed ->
-      #   # router
-      self.router = MainRouter.init('/home')
-      # , ->
-      #   console.log "seed fail"
+      self.helpers.seeder.seed ->
+        # router
+        self.router = MainRouter.init()
+        # fix for .init("/home") ("#/home" fired twice)
+        self.router.setRoute("/home") if self.router.getRoute()[0] is ""
+      , ->
+        console.log "seed fail"
     , ->
       console.log "init fs fail"
 

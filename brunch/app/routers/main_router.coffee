@@ -1,16 +1,17 @@
 exports.MainRouter = new Router(
 	routes:
-		"/":
-			"/home": ->
-				app.controllers.game.rendered = false if app.controllers.game?
+			"/home":
+				on: ->
+					console.log "in home"
+					app.controllers.game.rendered = false if app.controllers.game?
 
-				app.views.home       = new HomeView()
-				app.controllers.home = new HomeController(view: app.views.home)
-				app.controllers.home.show()
+					app.views.home       = new HomeView()
+					app.controllers.home = new HomeController(view: app.views.home)
+					app.controllers.home.show()
 
 			"/game":
 				on: (item, mode) ->
-
+					console.log "in game"
 					# no current game
 					if not app.controllers.game? or not app.controllers.game.loaded
 						app.views.game = new GameView()
@@ -27,10 +28,6 @@ exports.MainRouter = new Router(
 						on: ->
 						"/:mode":
 							on: ->
-			on: ->
-				route = this.getRoute()
-
-				console.log "new route " + route
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 
