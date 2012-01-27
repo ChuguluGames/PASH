@@ -39,3 +39,6 @@ class exports.ConfigHelper
 
   self.getDatabaseName = ->
     app.config[window.env].database
+
+  self.getBasePackIds = ->
+    app.config[window.env].base_pack_ids
