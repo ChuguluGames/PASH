@@ -1,17 +1,25 @@
+#!/usr/bin/env php
 <?php
+
+class PackState {
+    const AVAILABLE     = 0;
+    const INCOMPLETE    = 3;
+    const READY_TO_PLAY = 4;
+    const SELECTED      = 5;
+}
 
 class SeedJSONDownloader {
   private $locales = array();
   private $baseUrl = NULL;
-  private $playerId = 0;
+  private $basePackIds = array();
 
   private $imgsDone = FALSE;
 
   public function __construct() {
   }
 
-  public function setPlayerId($newId) {
-    $this->playerId = $newId;
+  public function setBasePAckIds($newIds) {
+    $this->basePackIds = $newIds;
   }
 
   public function setBaseUrl($newUrl) {
@@ -31,7 +39,7 @@ class SeedJSONDownloader {
   }
 
   public function getItemsUrlForPackId($packId, $locale) {
-    return ($this->baseUrl.'/'.$locale.'/packs/'.$packId.'/items?player_id='.$this->playerId);
+    return ($this->baseUrl.'/'.$locale.'/packs/'.$packId.'/items');
   }
 
   private function getTagsPath($locale) {
@@ -64,6 +72,10 @@ class SeedJSONDownloader {
     return $path.'/'.basename($imageName);
   }
 
+  private function log($msg) {
+    echo $msg,"\n";
+  }
+
   private function downloadFile($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -76,8 +88,11 @@ class SeedJSONDownloader {
   }
 
   private function downloadTags($locale) {
-    $tags = $this->downloadFile($this->getTagsUrl($locale));
+    $url = $this->getTagsUrl($locale);
+    $this->log("Downloading tags [".$locale."] from [".$url."]");
+    $tags = $this->downloadFile($url);
     file_put_contents($this->getTagsPath($locale), $tags);
+    $this->log("Done tags [".$locale."]");
   }
 
   private function downloadPackImage($packId, $imgUrl, $type) {
@@ -95,7 +110,9 @@ class SeedJSONDownloader {
   }
 
   private function downloadPacks($locale) {
-    $packs = $this->downloadFile($this->getPacksUrl($locale));
+    $url = $this->getPacksUrl($locale);
+    $this->log("Downloading packs [".$locale."] from [".$url."]");
+    $packs = $this->downloadFile($url);
     file_put_contents($this->getPacksPath($locale), $packs);
     $packIds = array();
     $packs = json_decode($packs);
@@ -103,17 +120,21 @@ class SeedJSONDownloader {
       foreach ($packs as $pack) {
         if (isset($pack->pack))
           $pack = $pack->pack;
-        $packIds[] = $pack->identity;
+        if (in_array($pack->identity, $this->basePackIds))
+          $packIds[] = $pack->identity;
         if (!$this->imgsDone) {
           $this->downloadPackImage($pack->identity, $pack->preview_image_url, 'preview_image');
           $this->downloadPackImage($pack->identity, $pack->cover_image_url, 'cover_image');
         }
       }
+    $this->log("Done packs [".$locale."]");
     return $packIds;
   }
 
   private function downloadItemsForPackId($packId, $locale) {
-    $items = $this->downloadFile($this->getItemsUrlForPackId($packId, $locale));
+    $url = $this->getItemsUrlForPackId($packId, $locale);
+    $this->log("Downloading items [".$locale."] for pack [".$packId."] from ".$url);
+    $items = $this->downloadFile($url);
     file_put_contents($this->getItemsPathForPackId($packId, $locale), $items);
     $items = json_decode($items);
     if (is_array($items))
@@ -125,9 +146,11 @@ class SeedJSONDownloader {
           $this->downloadItemImage($item->identity, $item->second_image_url, 'second_image');
         }
       }
+    $this->log("Done items [".$locale."] for pack [".$packId."]");
   }
 
   public function download() {
+    $this->log("Downloading locales [".implode(',', $this->locales)."], base packs [".implode(',', $this->basePackIds)."]");
     foreach ($this->locales as $locale) {
       $this->downloadTags($locale);
       $packIds = $this->downloadPacks($locale);
@@ -135,13 +158,14 @@ class SeedJSONDownloader {
         $this->downloadItemsForPackId($packId, $locale);
       $this->imgsDone = TRUE;
     }
+    $this->log("ALL DONE");
   }
 }
 
 $dl = new SeedJSONDownloader();
 $dl->setLocales(array('en', 'fr', 'es'));
 $dl->setBaseUrl("https://playboy-preprod.chugulu.com");
-$dl->setPlayerId(454);
+$dl->setBasePackIds(array(450));
 $dl->download();
 
 ?>
