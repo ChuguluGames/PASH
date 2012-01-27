@@ -1,6 +1,7 @@
 #game-view
 	height 320px
 	width 480px
+	background-color white
 	background-size 480px 320px
 	background-position 0 0
 	background-repeat repeat-x
@@ -10,7 +11,7 @@
 		padding-top 3px
 
 		.topbar
-			height 41px
+			height 44px
 			position relative
 
 			.back
@@ -34,7 +35,7 @@
 					background-repeat no-repeat
 					background-image url(../images/ingame/ingame_btnback_title@2x.png)
 
-					&:hover, &.clicked
+					&:active
 						background-position 0 -41px
 
 					&.disabled
@@ -126,7 +127,7 @@
 					background-repeat no-repeat
 					background-image url(../images/ingame/ingame_btnnext_title@2x.png)
 
-					&:hover, &.clicked
+					&:active
 						background-position 0 -41px
 
 					&.disabled
@@ -195,4 +196,5 @@
 				background-image url(../images/ingame/ingame_spot_fail@2x.png)
 
 		.first-image
-			margin-right 5px
+			margin-left 2px
+			margin-right 2px

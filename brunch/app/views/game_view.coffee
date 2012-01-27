@@ -37,7 +37,7 @@ class exports.GameView extends View
 
 	updateNext: (nextRoute) ->
 		self=@
-		self.elements.nextItemLink.attr("href", nextRoute).removeClass("clicked").parent().show()
+		self.elements.nextItemLink.attr("href", nextRoute).parent().show()
 
 	updateScore: (score) ->
 		self=@
