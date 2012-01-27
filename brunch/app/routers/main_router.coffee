@@ -1,3 +1,6 @@
+Router::firstRoute = true
+Router::onFirstRoute = ->
+
 exports.MainRouter = new Router(
 	routes:
 			"/home":
@@ -8,6 +11,9 @@ exports.MainRouter = new Router(
 					app.views.home       = new HomeView()
 					app.controllers.home = new HomeController(view: app.views.home)
 					app.controllers.home.show()
+					if @firstRoute
+						@firstRoute = false
+						@onFirstRoute()
 
 			"/game":
 				on: (item, mode) ->
