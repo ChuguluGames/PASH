@@ -21,7 +21,7 @@ class exports.GameView extends View
 		self.elements.nextItemLink              = $(".button-next-item a", self.el)
 		self.elements.loading                   = $(".item-loading", self.el)
 
-		self.setLoadingAndroid() if app.helpers.device.isAndroid() || true
+		self.setLoadingAndroid() if app.helpers.device.isAndroid()
 
 		self.update data
 
@@ -123,14 +123,14 @@ class exports.GameView extends View
 
 	hideLoading: ->
 		self=@
-		self.stopLoadingAndroid()
+		self.stopLoadingAndroid() if app.helpers.device.isAndroid()
 		self.elements.loading.hide()
 		self.elements.item.show()
 		self
 
 	showLoading: ->
 		self=@
-		self.startLoadingAndroid()
+		self.startLoadingAndroid() if app.helpers.device.isAndroid()
 		self.elements.loading.show()
 		self.elements.item.hide()
 		self
