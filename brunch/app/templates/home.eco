@@ -1,3 +1,9 @@
+<div class="header">
+	<div class="button-credit"></div>
+</div>
+<div class="wrapper-title">
+	<div class="title"></div>
+</div>
 <a href="test.html">TESTS</a>
 <div class="button-play">
 	<a href="#/game">Play</a>

@@ -4,8 +4,8 @@ class exports.GameView extends View
 	hideErrorAfter: 1000 # hide after xx milliseconds
 	elements      : {}
 	differencesIndicator:
-		fadeInSpeed: 700
-		delayBetweenAppearance: 300
+		fadeInSpeed: 400
+		delayBetweenAppearance: 200
 
 	render: (data) ->
 		self=@
@@ -13,12 +13,15 @@ class exports.GameView extends View
 		$(self.el).html self.template
 
 		self.elements.links                     = $(".topbar .back a, .topbar .button-next-item a", self.el)
+		self.elements.item                      = $(".item", self.el)
 		self.elements.firstImage                = $(".first-image", self.el)
 		self.elements.secondImage               = $(".second-image", self.el)
 		self.elements.differencesFoundIndicator = $(".differences-status ul", self.el)
 		self.elements.scoreValue                = $(".score-value", self.el)
 		self.elements.nextItemLink              = $(".button-next-item a", self.el)
 		self.elements.loading                   = $(".item-loading", self.el)
+
+		self.setLoadingAndroid() if app.helpers.device.isAndroid() || true
 
 		self.update data
 
@@ -34,7 +37,7 @@ class exports.GameView extends View
 
 	updateNext: (nextRoute) ->
 		self=@
-		self.elements.nextItemLink.attr("href", nextRoute).parent().show()
+		self.elements.nextItemLink.attr("href", nextRoute).removeClass("clicked").parent().show()
 
 	updateScore: (score) ->
 		self=@
@@ -80,6 +83,7 @@ class exports.GameView extends View
 			top   : differenceRectangle.position.y + "px"
 			width : differenceRectangle.dimensions.width + "px"
 			height: differenceRectangle.dimensions.height + "px"
+			backgroundSize: differenceRectangle.dimensions.width + "px " + differenceRectangle.dimensions.height + "px"
 		)
 		differenceElementClone = differenceElement.clone()
 		self.elements.firstImage.append(differenceElement)
@@ -98,6 +102,7 @@ class exports.GameView extends View
 			top   : error.position.y + "px"
 			width : error.dimensions.width + "px"
 			height: error.dimensions.height + "px"
+			backgroundSize: error.dimensions.width + "px " + error.dimensions.height + "px"
 		)
 		errorElementClone = errorElement.clone()
 		self.elements.firstImage.append(errorElement)
@@ -118,10 +123,43 @@ class exports.GameView extends View
 
 	hideLoading: ->
 		self=@
+		self.stopLoadingAndroid()
 		self.elements.loading.hide()
+		self.elements.item.show()
 		self
 
 	showLoading: ->
 		self=@
+		self.startLoadingAndroid()
 		self.elements.loading.show()
+		self.elements.item.hide()
+		self
+
+	startLoadingAndroid: ->
+		self=@
+
+		self.stopLoadingAndroid()
+		self.elements.loadingPoints.html "..."
+		self.loadingAndroidCurrentPoints = 3
+
+		self.loadingAndroidTimer = setInterval ->
+			console.log self.loadingAndroidCurrentPoints
+			if self.loadingAndroidCurrentPoints == 3
+				self.elements.loadingPoints.empty()
+				self.loadingAndroidCurrentPoints = 0
+			else
+				self.elements.loadingPoints.append $("<span />").html(".").fadeIn(200)
+				self.loadingAndroidCurrentPoints++
+		, 250
+
+	stopLoadingAndroid: ->
+		self=@
+		console.log "stoped"
+		clearInterval self.loadingAndroidTimer if self.loadingAndroidTimer?
+		self
+
+	setLoadingAndroid: ->
+		self=@
+		self.elements.loadingPoints = self.elements.loading.find(".points")
+		self.elements.loading.addClass("android")
 		self

@@ -1,73 +1,136 @@
 #game-view
-	.topbar
-		height 30px
-		background #000000
-		position relative
-		margin-bottom 5px
+	height 320px
+	width 480px
+	background-size 480px 320px
+	background-position 0 0
+	background-repeat repeat-x
+	background-image url(../images/ingame/ingame_background@2x.jpg)
 
-		.back
-			float left
-			padding 0 10px
-			background #fbfbfb
-			margin-right 10px
+	.topbar-wrapper
+		padding-top 3px
 
-			&.disabled
-				background red
+		.topbar
+			height 41px
+			position relative
 
-			a
-				display block
-				line-height 25px
-				text-decoration none
-				color #000000
-
-				&.disabled
-					color #888888
-
-		.score
-			float left
-			background #ff0000
-			.score-text
-				font-weight bold
+			.back
 				float left
-			.score-value
-				width 100px
-				text-align center
+				height 41px
+				width 77px
+				background-size 77px 41px
+				background-position 0 0
+				background-repeat no-repeat
+				background-image url(../images/ingame/ingame_btnback@2x.png)
+				margin-left 3px
+				margin-top 2px
 
-		.differences-status
-			float left
-			height 10px
-			margin-top 10px
-			margin-left 10px
+				a
+					display block
+					text-indent -5000px
+					height 41px
+					width 77px
+					background-size 77px 82px
+					background-position 0 0
+					background-repeat no-repeat
+					background-image url(../images/ingame/ingame_btnback_title@2x.png)
 
-			ul
-				list-style none
-				li
+					&:hover, &.clicked
+						background-position 0 -41px
+
+					&.disabled
+						background-position 0 -41px
+
+			.toolbar-center
+				margin-left 3px
+				float left
+				height 47px
+				width 314px
+				background-size 314px 47px
+				background-position 0 0
+				background-repeat no-repeat
+				background-image url(../images/ingame/ingame_options@2x.png)
+
+				.score
 					float left
-					width 10px
-					height 10px
-					margin-right 10px
-					display none
-					background #ff0000
-					&.found
-						background #00ff00
+					margin-top 11px
+					margin-left 20px
 
-		.button-next-item
-			float right
-			padding 0 10px
-			background #fbfbfb
-			display:none
+					.score-text
+						float left
+						height 18px
+						width 49px
+						background-size 49px 18px
+						background-position 0 0
+						background-repeat no-repeat
+						background-image url(../images/ingame/ingame_score@2x.png)
+						text-indent -5000px
 
-			&.disabled
-				background red
+					.score-value
+						float left
+						height 18px
+						width 65px
+						background-size 10px 18px
+						background-position 50% 0
+						background-repeat no-repeat
+						background-image url(../images/ingame/ingame_special@2x.png)
+						text-indent -5000px
 
-			a
-				display block
-				line-height 25px
-				text-decoration none
-				color #000000
+				.timer
+					float left
+					height 47px
+					width 62px
+					background-size 62px 47px
+					background-position 0 0
+					background-repeat no-repeat
+					background-image url(../images/ingame/ingame_time@2x.png)
 
-				&.disabled
-					color #888888
+				.differences-status
+					float left
+					height 23px
+					margin-top 9px
+
+					ul
+						list-style none
+						li
+							float left
+							height 23px
+							width 23px
+							background-size 23px 47px
+							background-position 0 0
+							background-repeat no-repeat
+							background-image url(../images/ingame/ingame_lug@2x.png)
+							margin-right -4px
+							display none
+
+							&.found
+								background-position 0 -23px
+
+			.button-next-item
+				float right
+				height 41px
+				width 77px
+				background-size 77px 41px
+				background-position 0 0
+				background-repeat no-repeat
+				background-image url(../images/ingame/ingame_btnnext@2x.png)
+				margin-right 3px
+				margin-top 2px
+
+				a
+					display block
+					text-indent -5000px
+					height 41px
+					width 77px
+					background-size 77px 82px
+					background-position 0 0
+					background-repeat no-repeat
+					background-image url(../images/ingame/ingame_btnnext_title@2x.png)
+
+					&:hover, &.clicked
+						background-position 0 -41px
+
+					&.disabled
+						background-position 0 -41px
 
 	.item-wrapper
 		position relative
@@ -79,9 +142,26 @@
 		left 0
 		width 100%
 		height 272px
-		background #fbfbfb
-		text-align center
 		z-index 10
+		background-size 70px 70px
+		background-position 50% 50%
+		background-repeat no-repeat
+		background-image url(../images/ingame/image_spinner.gif)
+		text-indent -5000px
+
+		&.android
+			height auto
+			background none
+			text-indent 0
+			font-size 200px
+			color #EC72E4
+			font-weigth bold
+			line-height 200px
+
+			div
+				width 170px
+				text-align left
+				margin auto
 
 	.item
 		position absolute
@@ -100,16 +180,19 @@
 			background-position 50% 50%
 			background-repeat no-repeat
 			background-color transparent
+			overflow hidden
+
+			.difference, .error
+				position absolute
+				background-position 50% 50%
+				background-repeat no-repeat
+				background-color transparent
 
 			.difference
-				position absolute
-				background green
-				opacity .5
+				background-image url(../images/ingame/ingame_circle01@2x.png)
 
 			.error
-				position absolute
-				background red
-				opacity .5
+				background-image url(../images/ingame/ingame_circle02@2x.png)
 
 		.first-image
 			margin-right 5px

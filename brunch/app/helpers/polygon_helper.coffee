@@ -49,24 +49,23 @@ class exports.PolygonHelper
 				y: bounds.y
 		}
 
+	self.getRectangleCenter = (rectangle) ->
+		center = {
+			x: rectangle.dimensions.width / 2 + rectangle.position.x
+			y: rectangle.dimensions.height / 2 + rectangle.position.y
+		}
+
+		center
+
 	# create a rectangle bound to the target and center relativly to the point
 	self.rectangleFromPointAndTarget = (point, target, dimensions) ->
-		targetElement = $(target)
-		targetDimensions =
-			width : targetElement.width()
-			height: targetElement.height()
-
 		center =
 			x: point.x - dimensions.width / 2
 			y: point.y - dimensions.height / 2
 
-		position =
-			x: Math.min(targetDimensions.width - dimensions.width, Math.max(0, center.x))
-			y: Math.min(targetDimensions.height - dimensions.height, Math.max(0, center.y))
-
 		rectangle =
 			dimensions: dimensions
-			position: position
+			position: center
 
 		app.helpers.log.info "the rectangle generated is ", rectangle, self.tag
 

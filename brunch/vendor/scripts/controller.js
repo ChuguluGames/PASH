@@ -40,7 +40,7 @@ Controller.prototype.delegateEvent = function(selector, el, eventName, method) {
 
 Controller.prototype.onClickLink = function(event) {
 	event.preventDefault();
-	var route = $(event.target).attr("href");
+	var route = $(event.target).addClass("clicked").attr("href");
 
 	if (route.substr(0, 1) == "#") {
 		app.router.setRoute(route.substr(2)); // get ride of #/

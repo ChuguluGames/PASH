@@ -1,16 +1,21 @@
-<div class="topbar">
-	<div class="back"><a href="#/home">Pause</a></div>
-	<div class="score">
-		<div class="score-text">Score:</div>
-		<div class="score-value"> - </div>
+<div class="topbar-wrapper">
+	<div class="topbar">
+		<div class="back"><a href="#/home">Pause</a></div>
+		<div class="toolbar-center">
+			<div class="score">
+				<div class="score-text">Score:</div>
+				<div class="score-value"> - </div>
+			</div>
+			<div class="timer"></div>
+			<div class="differences-status">
+				<ul></ul>
+			</div>
+		</div>
+		<div class="button-next-item"><a href="#/game">Next</a></div>
 	</div>
-	<div class="differences-status">
-		<ul></ul>
-	</div>
-	<div class="button-next-item"><a href="#/game">Next</a></div>
 </div>
 <div class="item-wrapper">
-	<div class="item-loading">chargement en cours...</div>
+	<div class="item-loading"><div class="loading-text"><span class="points">...</span></div></div>
 	<div class="item">
 		<div class="first-image"></div>
 		<div class="second-image"></div>

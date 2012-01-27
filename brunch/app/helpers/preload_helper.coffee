@@ -1,6 +1,6 @@
 class exports.PreloadHelper
 	tag            : "PreloadHelper"
-	timeout        : 1000
+	timeout        : 40000
 	timeoutTimer   : null
 	callbackSuccess: null
 	callbackError  : null

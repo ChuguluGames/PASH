@@ -17,7 +17,7 @@ helper.getAssetsPath = (success, fail) ->
   return success(helper.emptyEntry) if !LocalFileSystem?
   if (app.helpers.device.isAndroid())
     entry = new DirectoryEntry()
-    entry.fullPath = 'file:///android_asset/www/'
+    entry.fullPath = 'file:///android_asset/www'
     success(entry) if success?
     #window.resolveLocalFileSystemURI 'file:///android_asset/www/', success, fail
   else if (app.helpers.device.isIOS())
@@ -37,25 +37,25 @@ helper.getSubdirInDirectoryEntry = (entry, subdir, success, fail) ->
 helper.getSeedPath = (success, fail) ->
   return success(helper.emptyEntry) if !LocalFileSystem?
   helper.getAssetsPath (entry) ->
-    helper.getSubdirInDirectoryEntry entry, '/seed/', success, fail
+    helper.getSubdirInDirectoryEntry entry, '/seed', success, fail
   , fail
 
 helper.getSeedImagesPath = (success, fail) ->
   return success(helper.emptyEntry) if !LocalFileSystem?
   helper.getSeedPath (entry) ->
-    helper.getSubdirInDirectoryEntry entry, '/images/', success, fail
+    helper.getSubdirInDirectoryEntry entry, '/images', success, fail
   , fail
 
 helper.getSeedPackImagesPath = (success, fail) ->
   return success(helper.emptyEntry) if !LocalFileSystem?
   helper.getSeedImagesPath (entry) ->
-    helper.getSubdirInDirectoryEntry '/pack/', success, fail
+    helper.getSubdirInDirectoryEntry '/pack', success, fail
   , fail
 
 helper.getSeedItemImagesPath = (success, fail) ->
   return success(helper.emptyEntry) if !LocalFileSystem?
   helper.getSeedImagesPath (entry) ->
-    helper.getSubdirInDirectoryEntry '/item/', success, fail
+    helper.getSubdirInDirectoryEntry '/item', success, fail
   , fail
 
 helper.getContentDownloadPath = (success, fail) ->

@@ -3,7 +3,8 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
-	errorDimensions: {width: 20, height: 20}
+	differenceDimensions: {width: 50, height: 50}
+	errorDimensions: {width: 50, height: 50}
 
 	toleranceAccuracy: 20
 
@@ -41,7 +42,7 @@ class exports.GameController extends Controller
 			score: self.score
 		).el
 
-		self.view.disableLinks() # disable link until item is loaded
+		self.view.showLoading().disableLinks() # disable link until item is loaded
 
 		# initiate events
 		self.delegateEvents()
@@ -258,7 +259,7 @@ class exports.GameController extends Controller
 			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
 				differenceFound = true
 				# activate it only if not already found
-				self.activateDifference difference if not difference.isFound? || not difference.isFound
+				self.activateDifference difference, event.currentTarget if not difference.isFound? || not difference.isFound
 
 				# break to let the user find one difference by one
 				# return true
@@ -270,20 +271,26 @@ class exports.GameController extends Controller
 
 		return false
 
-	activateDifference: (difference) ->
+	activateDifference: (difference, target) ->
 		self=@
 
 		# create the rectangle that wrap the polygon
 		rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
-
-		# get the rectangle for the resolution
 		rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
+
+		# find the center point of the rectangle
+		rectangleCenter = app.helpers.polygoner.getRectangleCenter rectangle
+
+		console.log rectangle
+
+		# create the difference
+		differenceRectangle = app.helpers.polygoner.rectangleFromPointAndTarget rectangleCenter, target, self.differenceDimensions
 
 		difference.isFound = true
 		self.differencesFoundNumber++
 
 		# display the difference position
-		self.view.showDifference(rectangle)
+		self.view.showDifference(differenceRectangle)
 			.updateDifferencesFoundIndicator(self.differencesFoundNumber)
 
 		# found each differences, load the next item
