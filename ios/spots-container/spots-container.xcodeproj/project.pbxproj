@@ -401,7 +401,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+=======
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+>>>>>>> 1566599a82eed815f688eb53536d1cc7b9f21e34
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = /Users/Shared/PhoneGap/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -434,7 +441,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+<<<<<<< HEAD
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+=======
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+>>>>>>> 1566599a82eed815f688eb53536d1cc7b9f21e34
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Chugulu SARL";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chugulu SARL";
 				COPY_PHASE_STRIP = YES;
