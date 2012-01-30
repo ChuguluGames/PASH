@@ -1,6 +1,9 @@
 Router::firstRoute = true
 Router::onFirstRoute = ->
 
+Router::routeForItem = (itemIndex, modeName) ->
+	'game/' + itemIndex + '/mode/' + modeName
+
 exports.MainRouter = new Router(
 	routes:
 			"/home":
