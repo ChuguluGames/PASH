@@ -1,8 +1,12 @@
 class exports.GameView extends View
 	id            : 'game-view'
 	template      : require 'templates/game'
-	hideErrorAfter: 1000 # hide after xx milliseconds
 	elements      : {}
+
+	errorElement:
+		hideAfter: 500
+		hideIn   : 500
+
 	differencesIndicator:
 		fadeInSpeed: 400
 		delayBetweenAppearance: 200
@@ -78,15 +82,37 @@ class exports.GameView extends View
 
 	showDifference: (differenceRectangle) ->
 		self=@
+
+		ratio = 7
+
+		initialWidth = differenceRectangle.dimensions.width * ratio
+		initialheight = differenceRectangle.dimensions.height * ratio
+		initialLeft = differenceRectangle.position.x + differenceRectangle.dimensions.width - initialWidth / 2
+		initialTop = differenceRectangle.position.y + differenceRectangle.dimensions.height - initialheight / 2
+
+		console.log initialWidth
+		console.log initialTop
+
+		# make the
 		differenceElement = $("<div />").addClass("difference").css(
-			left  : differenceRectangle.position.x + "px"
-			top   : differenceRectangle.position.y + "px"
-			width : differenceRectangle.dimensions.width + "px"
-			height: differenceRectangle.dimensions.height + "px"
-		)
-		differenceElementClone = differenceElement.clone()
-		self.elements.firstImage.append(differenceElement)
-		self.elements.secondImage.append(differenceElementClone)
+			left  : initialLeft + "px"
+			top   : initialTop + "px"
+			width : initialWidth + "px"
+			height: initialheight + "px"
+		).appendTo(self.elements.firstImage)
+
+		differenceElementClone = differenceElement.clone().appendTo(self.elements.secondImage)
+
+		differenceElement.add(differenceElementClone).animate {
+			opacity: 1
+			left   : differenceRectangle.position.x + "px"
+			top    : differenceRectangle.position.y + "px"
+			width  : differenceRectangle.dimensions.width + "px"
+			height : differenceRectangle.dimensions.height + "px"
+		}, {
+			duration: 1000
+		}
+
 		self
 
 	removeDifferencesElements: ->
@@ -106,16 +132,22 @@ class exports.GameView extends View
 		self.elements.firstImage.append(errorElement)
 		self.elements.secondImage.append(errorElementClone)
 
-		errorElement.add(errorElementClone).animate {
-			opacity: 0
-		}, {
-			duration: self.hideErrorAfter
-			complete: ->
-				# fix ios 4.2-
-				setTimeout(->
-					$(@).remove()
-				, 1)
-		}
+		errorElements = errorElement.add(errorElementClone)
+
+		setTimeout(->
+			errorElements.animate {
+				opacity: "0"
+			}, {
+				duration: self.errorElement.hideIn
+				complete: ->
+					# put the left the errors
+					errorElements.css({left: -error.dimensions.width + "px"})
+					# remove them after a little while...
+					setTimeout(->
+						errorElements.remove()
+					, 10)
+			}
+		, self.errorElement.hideAfter)
 
 	disableLinks: ->
 		self=@

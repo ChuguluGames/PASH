@@ -28,6 +28,7 @@ exports.config =
           'vendor/scripts/phonegap-1.3.0.js'
           'vendor/scripts/console-helper.js'
           'vendor/scripts/jquery-1.7.1.js'
+          'vendor/scripts/jquery.animate-enhanced.js'
           'vendor/scripts/underscore-1.1.7.js'
           'vendor/scripts/director-1.0.7.js'
           'vendor/scripts/controller.js'
