@@ -45,4 +45,4 @@ exports.config =
         '\.css$': languages.CSSLanguage
         '\.styl$': languages.StylusLanguage
       order:
-        before: ['vendor/styles/reset.css', 'app/styles/main.styl', 'app/styles/fonts.styl']
+        before: ['vendor/styles/reset.styl', 'app/styles/fonts.styl', 'app/styles/main.styl']
