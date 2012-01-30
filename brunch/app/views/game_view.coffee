@@ -3,6 +3,10 @@ class exports.GameView extends View
 	template      : require 'templates/game'
 	elements      : {}
 
+	differenceElement:
+		initialRatio  : 7
+		effectDuration: 5000
+
 	errorElement:
 		hideAfter: 500
 		hideIn   : 500
@@ -83,12 +87,10 @@ class exports.GameView extends View
 	showDifference: (differenceRectangle) ->
 		self=@
 
-		ratio = 7
-
-		initialWidth = differenceRectangle.dimensions.width * ratio
-		initialheight = differenceRectangle.dimensions.height * ratio
-		initialLeft = differenceRectangle.position.x + differenceRectangle.dimensions.width - initialWidth / 2
-		initialTop = differenceRectangle.position.y + differenceRectangle.dimensions.height - initialheight / 2
+		initialWidth = differenceRectangle.dimensions.width * self.differenceElement.initialRatio
+		initialheight = differenceRectangle.dimensions.height * self.differenceElement.initialRatio
+		initialLeft = differenceRectangle.position.x + differenceRectangle.dimensions.width / 2 - initialWidth / 2
+		initialTop = differenceRectangle.position.y + differenceRectangle.dimensions.height / 2 - initialheight / 2
 
 		console.log initialWidth
 		console.log initialTop
@@ -99,6 +101,7 @@ class exports.GameView extends View
 			top   : initialTop + "px"
 			width : initialWidth + "px"
 			height: initialheight + "px"
+			"-webkit-transition": "opacity 5000ms ease"
 		).appendTo(self.elements.firstImage)
 
 		differenceElementClone = differenceElement.clone().appendTo(self.elements.secondImage)
@@ -110,7 +113,7 @@ class exports.GameView extends View
 			width  : differenceRectangle.dimensions.width + "px"
 			height : differenceRectangle.dimensions.height + "px"
 		}, {
-			duration: 1000
+			duration: self.differenceElement.effectDuration
 		}
 
 		self
