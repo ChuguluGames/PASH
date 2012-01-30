@@ -81,6 +81,7 @@ class SeedJSONDownloader {
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_USERAGENT, 'PayboySpots');
     $data = curl_exec($ch);
     curl_close($ch);
@@ -164,8 +165,8 @@ class SeedJSONDownloader {
 
 $dl = new SeedJSONDownloader();
 $dl->setLocales(array('en', 'fr', 'es'));
-$dl->setBaseUrl("https://playboy-preprod.chugulu.com");
-$dl->setBasePackIds(array(450));
+$dl->setBaseUrl("https://spots-preprod.chugulu.com");
+$dl->setBasePackIds(array(1));
 $dl->download();
 
 ?>
