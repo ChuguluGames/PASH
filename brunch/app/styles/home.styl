@@ -1,3 +1,7 @@
+@font-face
+	font-family "Tektrron"
+	src local("Tektrron"), url(tektrron.ttf) format("truetype")
+
 #home-view
 	position relative
 	height 320px
@@ -7,6 +11,9 @@
 	background-position 0 0
 	background-repeat no-repeat
 	background-image url(../images/home/home_background@2x.jpg)
+
+	#custom-font
+		font-family "Tektrron", verdana, helvetica, sans-serif
 
 	.header
 		position absolute
@@ -63,5 +70,5 @@
 			background-image url(../images/home/home_btnplay_title@2x.png)
 			text-indent -5000px
 
-			&:active
-				background-position 0 -57px
+			//&:active
+			//	background-position 0 -57px

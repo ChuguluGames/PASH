@@ -29,6 +29,7 @@
 		4929C12C14BB4C37006F1804 /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4929C12B14BB4C37006F1804 /* Capture.bundle */; };
 		4929C12E14BB4C37006F1804 /* PhoneGap.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4929C12D14BB4C37006F1804 /* PhoneGap.plist */; };
 		4929C13214BB4C37006F1804 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4929C13114BB4C37006F1804 /* AppDelegate.m */; };
+		493DF02014D6B5F600FF3225 /* tektrron.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 493DF01F14D6B5F600FF3225 /* tektrron.ttf */; };
 		497CA56814BC9D2E0016EA5F /* web in Resources */ = {isa = PBXBuildFile; fileRef = 497CA56714BC9D2E0016EA5F /* web */; };
 		499E62A814D2E2A3004B5DF7 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 499E62A114D2E2A3004B5DF7 /* Icon-72.png */; };
 		499E62A914D2E2A3004B5DF7 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 499E62A214D2E2A3004B5DF7 /* Icon-Small-50.png */; };
@@ -68,6 +69,7 @@
 		4929C13114BB4C37006F1804 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
 		4929C13414BB4C37006F1804 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; name = README; path = Plugins/README; sourceTree = "<group>"; };
 		4929C13A14BB4CB3006F1804 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		493DF01F14D6B5F600FF3225 /* tektrron.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = tektrron.ttf; path = Resources/tektrron.ttf; sourceTree = "<group>"; };
 		497CA56714BC9D2E0016EA5F /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = web; sourceTree = SOURCE_ROOT; };
 		499E62A114D2E2A3004B5DF7 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "Resources/icons/Icon-72.png"; sourceTree = "<group>"; };
 		499E62A214D2E2A3004B5DF7 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "Resources/icons/Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 		4929C11614BB4C36006F1804 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				493DF01F14D6B5F600FF3225 /* tektrron.ttf */,
 				4929C12B14BB4C37006F1804 /* Capture.bundle */,
 				4929C11C14BB4C36006F1804 /* Localizable.strings */,
 				4929C11F14BB4C36006F1804 /* icons */,
@@ -292,6 +295,7 @@
 				499E62AC14D2E2A3004B5DF7 /* Icon.png in Resources */,
 				499E62AD14D2E2A3004B5DF7 /* Icon@2x.png in Resources */,
 				499E62AE14D2E2A3004B5DF7 /* iTunesArtwork.png in Resources */,
+				493DF02014D6B5F600FF3225 /* tektrron.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +405,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = /Users/Shared/PhoneGap/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -411,7 +419,7 @@
 					REMOTE_DEBUG,
 				);
 				INFOPLIST_FILE = "spots-container/spots-container-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -433,6 +441,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Chugulu SARL";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chugulu SARL";
 				COPY_PHASE_STRIP = YES;
@@ -442,7 +454,7 @@
 				GCC_PREFIX_HEADER = "spots-container/spots-container-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "PHONEGAP_FRAMEWORK=YES";
 				INFOPLIST_FILE = "spots-container/spots-container-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-weak_framework",

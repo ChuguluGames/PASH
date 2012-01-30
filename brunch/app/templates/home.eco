@@ -5,6 +5,7 @@
 	<div class="title"></div>
 </div>
 <!--<a href="test.html">TESTS</a>-->
+<div id="custom-font">zOMFG Custom Font lulz</div>
 <div class="button-play">
 	<a href="#/game">Play</a>
 </div>
