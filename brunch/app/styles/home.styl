@@ -3,10 +3,11 @@
 	height 320px
 	width 480px
 	background-color white
-	background-size 480px 320px
+	background-image url(../images/home/home_background@2x.jpg)
 	background-position 0 0
 	background-repeat no-repeat
-	background-image url(../images/home/home_background@2x.jpg)
+	-webkit-background-size contain
+	-webkit-backface-visibility hidden
 
 	.header
 		position absolute
@@ -19,7 +20,7 @@
 			margin auto
 			height 43px
 			width 253px
-			background-size 253px 43px
+			-webkit-background-size contain
 			background-position 0 0
 			background-repeat no-repeat
 			background-image url(../images/home/home_btncredit@2x.png)
@@ -35,7 +36,7 @@
 		margin auto
 		height 49px
 		width 405px
-		background-size 405px 49px
+		-webkit-background-size contain
 		background-position 0 0
 		background-repeat no-repeat
 		background-image url(../images/home/home_title@2x.png)
@@ -46,10 +47,14 @@
 		right 50px
 		height 58px
 		width 136px
-		background-size 136px 58px
+		-webkit-background-size contain
 		background-position 0 0
 		background-repeat no-repeat
 		background-image url(../images/home/home_btnplay@2x.png)
+
+		&.active
+			top 140px
+			right 60px
 
 		a
 			display block
@@ -57,11 +62,11 @@
 			width 136px
 			text-decoration none
 			color #fff
-			background-size 136px 117px
+			-webkit-background-size 100% 200%
 			background-position 0 0
 			background-repeat no-repeat
 			background-image url(../images/home/home_btnplay_title@2x.png)
 			text-indent -5000px
 
-			&:active
+			&:active, &.active
 				background-position 0 -57px

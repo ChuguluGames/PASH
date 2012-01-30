@@ -17,7 +17,7 @@ class exports.GameView extends View
 		self.elements.firstImage                = $(".first-image", self.el)
 		self.elements.secondImage               = $(".second-image", self.el)
 		self.elements.differencesFoundIndicator = $(".differences-status ul", self.el)
-		self.elements.scoreValue                = $(".score-value", self.el)
+		self.elements.scoreValue                = $(".score-value div", self.el)
 		self.elements.nextItemLink              = $(".button-next-item a", self.el)
 		self.elements.loading                   = $(".item-loading", self.el)
 
@@ -83,7 +83,6 @@ class exports.GameView extends View
 			top   : differenceRectangle.position.y + "px"
 			width : differenceRectangle.dimensions.width + "px"
 			height: differenceRectangle.dimensions.height + "px"
-			backgroundSize: differenceRectangle.dimensions.width + "px " + differenceRectangle.dimensions.height + "px"
 		)
 		differenceElementClone = differenceElement.clone()
 		self.elements.firstImage.append(differenceElement)
@@ -102,14 +101,21 @@ class exports.GameView extends View
 			top   : error.position.y + "px"
 			width : error.dimensions.width + "px"
 			height: error.dimensions.height + "px"
-			backgroundSize: error.dimensions.width + "px " + error.dimensions.height + "px"
 		)
 		errorElementClone = errorElement.clone()
 		self.elements.firstImage.append(errorElement)
 		self.elements.secondImage.append(errorElementClone)
 
-		errorElement.add(errorElementClone).fadeOut self.hideErrorAfter, ->
-			$(@this).remove()
+		errorElement.add(errorElementClone).animate {
+			opacity: 0
+		}, {
+			duration: self.hideErrorAfter
+			complete: ->
+				# fix ios 4.2-
+				setTimeout(->
+					$(@).remove()
+				, 1)
+		}
 
 	disableLinks: ->
 		self=@

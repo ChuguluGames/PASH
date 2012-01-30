@@ -4,7 +4,7 @@
 		<div class="toolbar-center">
 			<div class="score">
 				<div class="score-text">Score:</div>
-				<div class="score-value"> - </div>
+				<div class="score-value"><div> - </div></div>
 			</div>
 			<div class="timer"></div>
 			<div class="differences-status">
