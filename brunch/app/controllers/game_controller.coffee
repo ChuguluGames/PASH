@@ -270,7 +270,7 @@ class exports.GameController extends Controller
 
 		# show an error if no difference were found
 		if not differenceFound
-			errorBounds = app.helpers.polygoner.rectangleFromPointAndTarget relativePosition, event.currentTarget, self.errorDimensions
+			errorBounds = app.helpers.polygoner.rectangleFromPoint relativePosition, self.errorDimensions
 			self.view.showError errorBounds
 
 		return false
@@ -289,6 +289,6 @@ class exports.GameController extends Controller
 		rectangleCenter = app.helpers.polygoner.getRectangleCenter rectangle
 
 		# create the difference
-		differenceRectangle = app.helpers.polygoner.rectangleFromPointAndTarget rectangleCenter, target, self.differenceDimensions
+		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.differenceDimensions
 
 		self.view.showDifference(differenceRectangle) # display the difference position

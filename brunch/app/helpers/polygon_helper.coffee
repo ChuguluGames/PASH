@@ -58,7 +58,7 @@ class exports.PolygonHelper
 		center
 
 	# create a rectangle bound to the target and center relativly to the point
-	self.rectangleFromPointAndTarget = (point, target, dimensions) ->
+	self.rectangleFromPoint = (point, dimensions) ->
 		center =
 			x: point.x - dimensions.width / 2
 			y: point.y - dimensions.height / 2
