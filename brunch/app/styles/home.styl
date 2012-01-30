@@ -11,9 +11,6 @@
 	-webkit-background-size contain
 	-webkit-backface-visibility hidden
 
-	#custom-font
-		font-family "Tektrron", verdana, helvetica, sans-serif
-
 	.header
 		position absolute
 		top 0
@@ -66,12 +63,15 @@
 			height 58px
 			width 136px
 			text-decoration none
-			color #fff
 			-webkit-background-size 100% 200%
 			background-position 0 0
 			background-repeat no-repeat
-			background-image url(path home/home_btnplay_title@2x.png)
-			text-indent -5000px
+			font-size 23px
+			text-align center
+			line-height 58px
+			text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+			color rgb(255, 255, 255)
 
 			&:active, &.active
-				background-position 0 -57px
+				color rgb(255, 255, 25)
+				opacity .3

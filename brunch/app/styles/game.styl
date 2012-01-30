@@ -17,32 +17,38 @@
 			height 44px
 			position relative
 
-			.back
-				float left
+			.back, .button-next-item
 				height 41px
 				width 77px
 				-webkit-background-size contain
 				background-position 0 0
 				background-repeat no-repeat
-				background-image url(path ingame/ingame_btnback@2x.png)
-				margin-left 3px
 				margin-top 2px
 
 				a
 					display block
-					text-indent -5000px
 					height 41px
 					width 77px
-					-webkit-background-size 100% 200%
-					background-position 0 0
-					background-repeat no-repeat
-					background-image url(path ingame/ingame_btnback_title@2x.png)
+					font-size 13px
+					text-align center
+					line-height 41px
+					text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+					color rgb(255, 255, 255)
 
-					&:active
-						background-position 0 -41px
+					&:active, &.disabled
+						color rgb(255, 255, 25)
+						opacity .3
 
-					&.disabled
-						background-position 0 -41px
+
+			.back
+				float left
+				background-image url(path ingame/ingame_btnback@2x.png)
+				margin-left 3px
+
+			.button-next-item
+				float right
+				background-image url(path ingame/ingame_btnnext@2x.png)
+				margin-right 3px
 
 			.toolbar-center
 				margin-left 3px
@@ -64,11 +70,9 @@
 						float left
 						height 18px
 						width 54px
-						-webkit-background-size contain
-						background-position 0 0
-						background-repeat no-repeat
-						background-image url(path ingame/ingame_score@2x.png)
-						text-indent -5000px
+						font-size 10px
+						text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+						color rgb(255, 255, 255)
 
 					.score-value
 						width 65px
@@ -78,11 +82,9 @@
 							margin auto
 							height 18px
 							width 10px
-							-webkit-background-size contain
-							background-position 50% 0
-							background-repeat no-repeat
-							background-image url(path ingame/ingame_special@2x.png)
-							text-indent -5000px
+							font-size 10px
+							text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+							color rgb(254, 248, 177)
 
 				.timer
 					float left
@@ -92,6 +94,13 @@
 					background-position 0 0
 					background-repeat no-repeat
 					background-image url(path ingame/ingame_time@2x.png)
+
+				.timer
+					div
+						font-size 14px
+						text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+						color rgb(234, 112, 177)
+
 
 				.differences-status
 					float left
@@ -113,30 +122,6 @@
 
 							&.found
 								background-position 0 -23px
-
-			.button-next-item
-				float right
-				height 41px
-				width 77px
-				-webkit-background-size contain
-				background-position 0 0
-				background-repeat no-repeat
-				background-image url(path ingame/ingame_btnnext@2x.png)
-				margin-right 3px
-				margin-top 2px
-
-				a
-					display block
-					text-indent -5000px
-					height 41px
-					width 77px
-					-webkit-background-size 100% 200%
-					background-position 0 0
-					background-repeat no-repeat
-					background-image url(path ingame/ingame_btnnext_title@2x.png)
-
-					&:active, &.disabled
-						background-position 0 -41px
 
 	.item-wrapper
 		position relative
