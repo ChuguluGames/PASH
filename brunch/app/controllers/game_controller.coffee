@@ -207,6 +207,7 @@ class exports.GameController extends Controller
 			else self.itemNext = false
 
 		self.itemNextRoute = app.router.getItemRoute(self.itemNext, self.mode)
+
 		console.log "next route " + self.itemNextRoute
 
 		self.itemNext
