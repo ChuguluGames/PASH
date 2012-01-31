@@ -136,7 +136,7 @@ class exports.GameController extends Controller
 		self=@
 
 		# can't find the mode in the config array
-		if $.inArray(mode, self.modes) == -1
+		if $.inArray(mode, self.modes) is -1
 			app.helpers.log.error "unknown mode: " + mode, self.tag
 			return false
 
@@ -187,8 +187,7 @@ class exports.GameController extends Controller
 		self=@
 
 		# no more item
-		if not self.itemNext && not self.findNextItem()
-			# if practice mode, load the first one
+		if not self.itemNext and not self.findNextItem() # check again just in case
 
 			# else load the end game
 		# change the route
@@ -201,7 +200,7 @@ class exports.GameController extends Controller
 			self.itemNext = self.itemCurrent + 1
 		else
 			# mode practice is infinite
-			if self.mode == "practice"
+			if self.mode is "practice"
 				self.itemNext = 0
 			# can't go further
 			else self.itemNext = false
@@ -255,7 +254,7 @@ class exports.GameController extends Controller
 				differenceFound = true
 
 				# not already found
-				if not difference.isFound? || not difference.isFound
+				if not difference.isFound? or not difference.isFound
 					# activate it only if not already found
 					self.activateDifference difference, event.currentTarget
 
@@ -264,7 +263,7 @@ class exports.GameController extends Controller
 					self.view.updateDifferencesFoundIndicator(self.differencesFoundNumber) # update the difference indicator
 
 					# found all differences, load the next item
-					if self.differencesFoundNumber == self.item.differencesArray.length
+					if self.differencesFoundNumber is self.item.differencesArray.length
 						setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item
 						return true
 
