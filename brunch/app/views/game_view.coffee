@@ -69,11 +69,7 @@ class exports.GameView extends View
 
 		fadeInLi = (li, delay) ->
 			setTimeout ->
-				li.animate {
-					opacity: 1
-				}, {
-					duration: self.differencesIndicator.fadeInSpeed
-				}
+				li.fadeIn(self.differencesIndicator.fadeInSpeed)
 			, delay
 
 		for n in [0..differences.length - 1]
