@@ -19,6 +19,7 @@ modules = {
     'event'
     'collision'
     'seed'
+    'template'
   ]
   routers: [
     'main'
@@ -86,7 +87,7 @@ class exports.Application
     EventHelper        : true
 
   tag        : "Application"
-  config     : require('config').config
+  config     : require('config/config').config
   router     : null
   helpers    : {}
   models     : {}
@@ -96,8 +97,11 @@ class exports.Application
   constructor: ->
     self=@
 
+    self.router = MainRouter
+
     self.helpers.device = new DeviceHelper
     self.helpers.log    = LogHelper
+    self.helpers.log.verbose = self.verbose
 
     self.waitForDeviceReadyEvent()
 
@@ -137,9 +141,9 @@ class exports.Application
               navigator.splashscreen.hide()
             , 2000
         # router
-        self.router = MainRouter.init()
+        self.router.init()
         # fix for .init("/home") ("#/home" fired twice)
-        self.router.setRoute("/home") if self.router.getRoute()[0] is ""
+        self.router.setRoute(self.router.getHomeRoute()) if self.router.getRoute()[0] is ""
       , ->
         console.log "seed fail"
     , ->
@@ -163,6 +167,7 @@ class exports.Application
     self.helpers.event            = EventHelper
     self.helpers.seeder           = SeedHelper
     self.helpers.collision        = CollisionHelper
+    self.helpers.template         = TemplateHelper
 
     if self.helpers.device.isMobile()
       activateFastClicks()

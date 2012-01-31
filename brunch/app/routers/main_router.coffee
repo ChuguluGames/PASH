@@ -1,8 +1,29 @@
 Router::firstRoute = true
 Router::onFirstRoute = ->
 
+Router::getRoutes = ->
+	return {
+		game: @getGameRoute()
+		home: @getHomeRoute()
+	}
+
+Router::getBaseRoute = ->
+	"/" + app.helpers.locale.getLocale()
+
+Router::getGameRoute = ->
+	return @getBaseRoute() + "/game"
+
+Router::getItemRoute = (item, mode) ->
+	return @getBaseRoute() + "/game/" + item + "/mode/" + mode
+
+Router::getHomeRoute = ->
+	return @getBaseRoute() + "/home"
+
 exports.MainRouter = new Router(
 	routes:
+		"/:locale":
+			on: (locale) ->
+				app.helpers.locale.setLocale locale
 			"/home":
 				on: ->
 					console.log "in home"
@@ -16,8 +37,7 @@ exports.MainRouter = new Router(
 						@onFirstRoute()
 
 			"/game":
-				on: (item, mode) ->
-					console.log "in game"
+				on: (locale, item, mode) ->
 					# no current game
 					if not app.controllers.game? or not app.controllers.game.loaded
 						app.views.game = new GameView()

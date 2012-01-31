@@ -168,8 +168,6 @@ var Router = exports.Router = function (routes) {
 Router.prototype.init = function (r) {
   var self = this;
 
-  console.log("init")
-
   this.handler = function() {
     var hash = dloc.hash.replace(/^#/, '');
     self.dispatch('on', hash);
@@ -180,7 +178,6 @@ Router.prototype.init = function (r) {
   }
 
   if (dloc.hash.length > 0) {
-    console.log("handler")
     this.handler();
   }
 

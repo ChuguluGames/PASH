@@ -17,8 +17,7 @@ class exports.GameView extends View
 
 	render: (data) ->
 		self=@
-
-		$(self.el).html self.template
+		$(self.el).html app.helpers.template.generate self.template
 
 		self.elements.links                     = $(".topbar .back a, .topbar .button-next-item a", self.el)
 		self.elements.item                      = $(".item", self.el)

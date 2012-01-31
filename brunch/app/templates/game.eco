@@ -1,9 +1,9 @@
 <div class="topbar-wrapper">
 	<div class="topbar">
-		<div class="back"><a href="#/home">Pause</a></div>
+		<div class="back"><a href="#<%= @routes.home %>"><%= @strings.ingame.button_pause %></a></div>
 		<div class="toolbar-center">
 			<div class="score">
-				<div class="score-text">Score :</div>
+				<div class="score-text"><%= @strings.ingame.score %> :</div>
 				<div class="score-value"><div> - </div></div>
 			</div>
 			<div class="timer"></div>
@@ -11,7 +11,7 @@
 				<ul></ul>
 			</div>
 		</div>
-		<div class="button-next-item"><a href="#/game">Next</a></div>
+		<div class="button-next-item"><a href="#<%= @routes.game %>"><%= @strings.ingame.button_next %></a></div>
 	</div>
 </div>
 <div class="item-wrapper">

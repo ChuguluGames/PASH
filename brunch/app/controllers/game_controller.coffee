@@ -187,8 +187,9 @@ class exports.GameController extends Controller
 		self=@
 
 		# no more item
-		if !self.itemNext
+		if not self.itemNext && not self.findNextItem()
 			# if practice mode, load the first one
+
 			# else load the end game
 		# change the route
 		else
@@ -205,9 +206,10 @@ class exports.GameController extends Controller
 			# can't go further
 			else self.itemNext = false
 
-		self.itemNextRoute = "game/" + self.itemNext + "/mode/" + self.mode
-
+		self.itemNextRoute = app.router.getItemRoute(self.itemNext, self.mode)
 		console.log "next route " + self.itemNextRoute
+
+		self.itemNext
 
 	getPreviousItem: ->
 		self=@

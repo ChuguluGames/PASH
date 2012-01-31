@@ -1,10 +1,15 @@
 class exports.HomeView extends View
-	id: 			'home-view'
+	id      : 'home-view'
 	template: require 'templates/home'
 
 	render: ->
 		self=@
-		$(self.el).html self.template
+
+		console.log app.helpers.template.generate
+
+		$(self.el).html app.helpers.template.generate self.template, {
+			gameRoute: app.router.getGameRoute
+		}
 		$('#seed-btn', self.el).on 'click', (evt) ->
 				btn=@
 				btn.textContent = 'seeding...'
