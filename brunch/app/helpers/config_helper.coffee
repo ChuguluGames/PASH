@@ -19,6 +19,7 @@ class exports.ConfigHelper
 
   self.getTagsLocalSeedUrl = ->
     locale = app.helpers.locale.getLocale()
+    locale = 'en'
     'seed/json/' + locale + '/tags.json'
 
   self.getPacksUrl = ->
@@ -27,6 +28,7 @@ class exports.ConfigHelper
 
   self.getPacksLocalSeedUrl = ->
     locale = app.helpers.locale.getLocale()
+    locale = 'en'
     'seed/json/' + locale + '/packs.json'
 
   self.getItemsUrlForPackIdentity = (packIdentity) ->
@@ -38,6 +40,7 @@ class exports.ConfigHelper
 
   self.getItemsLocalSeedUrlForPackIdentity = (packIdentity) ->
     locale = app.helpers.locale.getLocale()
+    locale = 'en'
     'seed/json/' + locale + '/packs/' + packIdentity + '/items.json'
 
   self.getItemsLocalSeedUrlForPack = (pack) ->
