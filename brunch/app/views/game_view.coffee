@@ -5,14 +5,14 @@ class exports.GameView extends View
 
 	differenceElement:
 		initialRatio  : 7
-		effectDuration: 5000
+		effectDuration: 500
 
 	errorElement:
 		hideAfter: 500
 		hideIn   : 500
 
 	differencesIndicator:
-		fadeInSpeed: 400
+		fadeInSpeed           : 400
 		delayBetweenAppearance: 200
 
 	render: (data) ->
@@ -67,11 +67,21 @@ class exports.GameView extends View
 		self=@
 		indicator = self.elements.differencesFoundIndicator.empty() # empty the indicator container
 
+		fadeInLi = (li, delay) ->
+			setTimeout ->
+				li.animate {
+					opacity: 1
+				}, {
+					duration: self.differencesIndicator.fadeInSpeed
+				}
+			, delay
+
 		for n in [0..differences.length - 1]
 			li = $("<li />").appendTo(indicator)
 			li.addClass("found") if n < activatedNumber
-			li.delay(n * self.differencesIndicator.delayBetweenAppearance)
-				.fadeIn(self.differencesIndicator.fadeInSpeed)
+
+			console.log
+			fadeInLi(li, n * self.differencesIndicator.delayBetweenAppearance)
 
 	updateDifferencesFoundIndicator: (differencesFoundNumber) ->
 		self=@

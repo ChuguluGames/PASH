@@ -1,8 +1,8 @@
 @import "app/styles/config"
 
 #game-view
-	height 320px
-	width 480px
+	height 100%
+	width 100%
 	background-color white
 	-webkit-background-size contain
 	background-position 0 0
@@ -24,14 +24,14 @@
 				background-position 0 0
 				background-repeat no-repeat
 				margin-top 2px
+				text-align center
 
 				a
 					display block
-					height 41px
-					width 77px
+					height 100%
+					width 100%
 					font-size 13px
-					text-align center
-					line-height 41px
+					line-height 37px
 					text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
 					color rgb(255, 255, 255)
 
@@ -39,16 +39,24 @@
 						color rgb(255, 255, 25)
 						opacity .3
 
-
 			.back
 				float left
+
 				background-image url(path ingame/ingame_btnback@2x.png)
 				margin-left 3px
+
+				.wrapper
+					padding-right 10px
+					padding-left 13px
 
 			.button-next-item
 				float right
 				background-image url(path ingame/ingame_btnnext@2x.png)
 				margin-right 3px
+
+				.wrapper
+					padding-left 10px
+					padding-right 13px
 
 			.toolbar-center
 				margin-left 3px
@@ -60,10 +68,10 @@
 				background-repeat no-repeat
 				background-image url(path ingame/ingame_options@2x.png)
 				margin-top 2px
+				line-height 34px
 
 				.score
 					float left
-					margin-top 11px
 					margin-left 20px
 
 					.score-text
@@ -80,7 +88,6 @@
 
 						div
 							margin auto
-							height 18px
 							width 10px
 							font-size 10px
 							text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
@@ -95,7 +102,6 @@
 					background-repeat no-repeat
 					background-image url(path ingame/ingame_time@2x.png)
 
-				.timer
 					div
 						font-size 14px
 						text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
@@ -105,7 +111,7 @@
 				.differences-status
 					float left
 					height 23px
-					margin-top 9px
+					margin-top 7px
 
 					ul
 						list-style none
@@ -118,7 +124,7 @@
 							background-repeat no-repeat
 							background-image url(path ingame/ingame_lug@2x.png)
 							margin-right -4px
-							display none
+							opacity 0
 
 							&.found
 								background-position 0 -23px
@@ -191,4 +197,3 @@
 		.first-image
 			margin-left 2px
 			margin-right 2px
-0
