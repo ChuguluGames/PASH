@@ -14,7 +14,7 @@ Router::getGameRoute = ->
 	return @getBaseRoute() + "/game"
 
 Router::getItemRoute = (item, mode) ->
-	return @getBaseRoute() + "/game/" + item + "/mode/" + mode
+	return @getGameRoute() + "/" + item + "/mode/" + mode
 
 Router::getHomeRoute = ->
 	return @getBaseRoute() + "/home"
