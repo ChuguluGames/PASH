@@ -18,7 +18,6 @@ function activateFastClicks() {
 						// dispatch click event
 						$(this).trigger({
 							type: 	"click",
-							target: touch.target,
 							pageX: 	touch.pageX,
 							pageY: 	touch.pageY
 						});
