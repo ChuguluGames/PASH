@@ -15,7 +15,6 @@ class exports.PolygonHelper
 
 		app.helpers.log.info "the point", point, "is in the polygon", self.tag if inPolygon
 
-		console.log inPolygon
 		inPolygon
 
 	# get the extremity of the polygon and return a rectangle

@@ -43,7 +43,7 @@ class exports.PreloadHelper
 		image = document.createElement('img')
 		self.imagesCache.push(image)
 		self.currentImage = image
-		console.log image
+
 		$(image).load(->
 			app.helpers.log.info "loaded in " + (new Date().getTime() - self.startLoadingAt), self.tag
 			self.stopTimeoutChecker()

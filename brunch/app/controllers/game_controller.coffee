@@ -55,7 +55,6 @@ class exports.GameController extends Controller
 		console.log "load"
 
 		ItemModel.fetchSelected (items) ->
-			console.log items.length
 			self.items = items
 
 			self.loaded = true
@@ -98,7 +97,6 @@ class exports.GameController extends Controller
 	loadItem: ->
 		self=@
 
-		console.log self.rendered
 		self.render() if not self.rendered
 
 		console.log "loadItem"
@@ -143,7 +141,7 @@ class exports.GameController extends Controller
 	onGameLoaded: ->
 		self=@
 
-		console.log self.itemCurrent
+		# console.log self.itemCurrent
 
 		if self.items[self.itemCurrent]?
 			self.item = self.items[self.itemCurrent]
@@ -218,7 +216,9 @@ class exports.GameController extends Controller
 	onClickLink: (event) ->
 		self=@
 
-		return event.preventDefault() if self.disabledClicks
+		if self.disabledClicks
+			event.preventDefault()
+			return false
 
 		# call parent
 		GameController.__super__.onClickLink.call(self, event)
@@ -227,7 +227,9 @@ class exports.GameController extends Controller
 	onClickItem: (event) ->
 		self=@
 
-		return event.preventDefault() if self.disabledClicks
+		if self.disabledClicks
+			event.preventDefault()
+			return false
 
 		position=
 			x: event.pageX

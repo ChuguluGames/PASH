@@ -86,8 +86,6 @@ class exports.GameView extends View
 		for n in [0..differences.length - 1]
 			li = $("<li />").appendTo(indicator)
 			li.addClass("found") if n < activatedNumber
-
-			console.log
 			fadeInLi(li, n * self.differencesIndicator.delayBetweenAppearance)
 
 	updateDifferencesFoundIndicator: (differencesFoundNumber) ->
