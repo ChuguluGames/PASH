@@ -4,6 +4,12 @@ class exports.ConfigHelper
   self.getBaseUrl = ->
     app.config[window.env].base_url
 
+  self.getLocales = ->
+    app.config.locales
+
+  self.getLocaleStrings = (locale) ->
+    require "config/locales/" + locale
+
   self.getAssetsBaseUrl = ->
     self.getBaseUrl()
 

@@ -1,4 +1,12 @@
 exports.config =
+  locales:
+    accepted: [
+      'en'
+      'fr'
+      'es'
+    ]
+    default: 'en'
+
   test:
     database: 'pash_test'
     base_url: "https://spots-preprod.chugulu.com"

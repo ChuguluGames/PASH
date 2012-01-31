@@ -88,7 +88,7 @@ class exports.Application
 
   tag        : "Application"
   config     : require('config/config').config
-  router     : null
+  router     : MainRouter
   helpers    : {}
   models     : {}
   controllers: {}
@@ -97,10 +97,8 @@ class exports.Application
   constructor: ->
     self=@
 
-    self.router = MainRouter
-
-    self.helpers.device = new DeviceHelper
-    self.helpers.log    = LogHelper
+    self.helpers.device      = DeviceHelper
+    self.helpers.log         = LogHelper
     self.helpers.log.verbose = self.verbose
 
     self.waitForDeviceReadyEvent()
@@ -142,7 +140,7 @@ class exports.Application
             , 2000
         # router
         self.router.init()
-        # fix for .init("/home") ("#/home" fired twice)
+        # fix for .init("/home") ("#/home" fired twice)\
         self.router.setRoute(self.router.getHomeRoute()) if self.router.getRoute()[0] is ""
       , ->
         console.log "seed fail"
@@ -153,6 +151,7 @@ class exports.Application
     self=@
 
     # helpers
+    self.helpers.config           = ConfigHelper
     self.helpers.db               = DbHelper
     self.helpers.fs               = FileSystemHelper
     self.helpers.downloader       = DownloadHelper
@@ -162,12 +161,14 @@ class exports.Application
     self.helpers.preloader        = PreloadHelper
     self.helpers.polygoner        = PolygonHelper
     self.helpers.retina           = RetinaHelper
-    self.helpers.config           = ConfigHelper
-    self.helpers.locale           = LocaleHelper
     self.helpers.event            = EventHelper
     self.helpers.seeder           = SeedHelper
     self.helpers.collision        = CollisionHelper
     self.helpers.template         = TemplateHelper
+    self.helpers.locale           = LocaleHelper
+
+    self.helpers.locale.setConfig(self.helpers.config.getLocales())
+      .setLocale(self.helpers.device.getLocalization()) # override default locale by user localization setting
 
     if self.helpers.device.isMobile()
       activateFastClicks()
