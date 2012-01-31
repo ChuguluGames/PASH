@@ -3,12 +3,10 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
-	differenceDimensions: {width: 64, height: 64}
-	errorDimensions: {width: 36, height: 36}
-
-	toleranceAccuracy: 20
-
-	modes: ["practice", "survival", "challenge"]
+	differenceDimensions  : {width: 64, height: 64}
+	errorDimensions       : {width: 36, height: 36}
+	toleranceAccuracy     : 20
+	modes                 : ["practice", "survival", "challenge"]
 
 	loaded                : false
 	rendered              : false
@@ -85,10 +83,8 @@ class exports.GameController extends Controller
 		console.log "resume game"
 
 		self.render()
-
-		# self.view.reset() 			# reset visuals
+		self.view.reset() 			# reset visuals
 		self.view.showLoading() # show item loading
-			.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
 
 		# show the difference already found
 		for difference in self.item.differencesArray
@@ -117,6 +113,7 @@ class exports.GameController extends Controller
 		if self.item?
 			for difference in self.item.differencesArray
 				difference.isFound = false
+
 		# reset item
 		self.item = null
 		self.differencesFoundNumber = 0
@@ -163,12 +160,12 @@ class exports.GameController extends Controller
 		for difference in self.item.differencesArray
 			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
 
-		new app.helpers.preloader().load ->
-
+		new app.helpers.preloader().load (images) ->
 			# update the view
 			self.view.update(
-				item: self.item 									# update the item images
-				next: "#/" + self.itemNextRoute 	# update the next link
+				first_image : images[0]
+				second_image: images[1]
+				next        : "#" + self.itemNextRoute 	# update the next link
 			)
 				.hideLoading() # hide the loading indicator
 				.enableLinks() # enable links
