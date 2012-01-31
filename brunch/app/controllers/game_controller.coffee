@@ -81,10 +81,11 @@ class exports.GameController extends Controller
 			return
 
 		console.log "resume game"
-
+		self.disabledClicks = true # disable clicks
 		self.render()
 		self.view.reset() 			# reset visuals
 		self.view.showLoading() # show item loading
+			.disableLinks()
 
 		# show the difference already found
 		for difference in self.item.differencesArray
@@ -218,6 +219,7 @@ class exports.GameController extends Controller
 		self=@
 
 		return event.preventDefault() if self.disabledClicks
+
 		# call parent
 		GameController.__super__.onClickLink.call(self, event)
 

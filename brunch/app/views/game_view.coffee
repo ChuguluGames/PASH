@@ -69,8 +69,9 @@ class exports.GameView extends View
 
 	reset: ->
 		self=@
+		self.elements.firstImage.empty()
+		self.elements.secondImage.empty()
 		self.resetDifferencesFoundIndicator()
-		self.removeDifferencesAndErrorsElements()
 		self
 
 	initializeDifferencesFoundIndicator: (differences, activatedNumber) ->
