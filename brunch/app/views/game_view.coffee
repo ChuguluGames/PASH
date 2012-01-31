@@ -28,7 +28,7 @@ class exports.GameView extends View
 		self.elements.nextItemLink              = $(".button-next-item a", self.el)
 		self.elements.loading                   = $(".item-loading", self.el)
 
-		self.setLoadingAndroid() if app.helpers.device.isAndroid()
+		app.helpers.android_loading.setLoading(self.elements.loading) if app.helpers.device.isAndroid()
 
 		self.update data
 
@@ -36,7 +36,9 @@ class exports.GameView extends View
 
 	update: (data) ->
 		self=@
-		self.updateItem(data.item) if data.item?
+		self.updateFirstImage(data.first_image) if data.first_image?
+		self.updateSecondImage(data.second_image) if data.second_image?
+
 		self.updateNext(data.next) if data.next?
 		self.updateScore(data.score) if data.score?
 		self.updateDifferencesFoundIndicator(data.differencesFoundNumber) if data.differencesFoundNumber?
@@ -50,6 +52,14 @@ class exports.GameView extends View
 		self=@
 		self.elements.scoreValue.html score
 
+	updateFirstImage: (image) ->
+		self=@
+		self.elements.firstImage.prepend(image)
+
+	updateSecondImage: (image) ->
+		self=@
+		self.elements.secondImage.prepend(image)
+
 	updateItem: (item) ->
 		self=@
 		console.log item.first_image.getSrc()
@@ -60,7 +70,7 @@ class exports.GameView extends View
 	reset: ->
 		self=@
 		self.resetDifferencesFoundIndicator()
-		self.removeDifferencesElements()
+		self.removeDifferencesAndErrorsElements()
 		self
 
 	initializeDifferencesFoundIndicator: (differences, activatedNumber) ->
@@ -123,10 +133,10 @@ class exports.GameView extends View
 
 		self
 
-	removeDifferencesElements: ->
+	removeDifferencesAndErrorsElements: ->
 		self=@
-		self.elements.firstImage.empty()
-		self.elements.secondImage.empty()
+		self.elements.firstImage.find(".difference, .error").remove()
+		self.elements.secondImage.find(".difference, .error").remove()
 
 	showError: (error)->
 		self=@
@@ -169,43 +179,14 @@ class exports.GameView extends View
 
 	hideLoading: ->
 		self=@
-		self.stopLoadingAndroid() if app.helpers.device.isAndroid()
+		app.helpers.android_loading.stop() if app.helpers.device.isAndroid()
 		self.elements.loading.hide()
 		self.elements.item.show()
 		self
 
 	showLoading: ->
 		self=@
-		self.startLoadingAndroid() if app.helpers.device.isAndroid()
+		app.helpers.android_loading.start() if app.helpers.device.isAndroid()
 		self.elements.loading.show()
 		self.elements.item.hide()
-		self
-
-	startLoadingAndroid: ->
-		self=@
-
-		self.stopLoadingAndroid()
-		self.elements.loadingPoints.html "..."
-		self.loadingAndroidCurrentPoints = 3
-
-		self.loadingAndroidTimer = setInterval ->
-			console.log self.loadingAndroidCurrentPoints
-			if self.loadingAndroidCurrentPoints == 3
-				self.elements.loadingPoints.empty()
-				self.loadingAndroidCurrentPoints = 0
-			else
-				self.elements.loadingPoints.append $("<span />").html(".").fadeIn(200)
-				self.loadingAndroidCurrentPoints++
-		, 250
-
-	stopLoadingAndroid: ->
-		self=@
-		console.log "stoped"
-		clearInterval self.loadingAndroidTimer if self.loadingAndroidTimer?
-		self
-
-	setLoadingAndroid: ->
-		self=@
-		self.elements.loadingPoints = self.elements.loading.find(".points")
-		self.elements.loading.addClass("android")
 		self

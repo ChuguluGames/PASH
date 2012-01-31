@@ -2,6 +2,7 @@ window.app = {}
 
 modules = {
   helpers: [
+    'android_loading'
     'config'
     'locale'
     'device'
@@ -151,6 +152,7 @@ class exports.Application
     self=@
 
     # helpers
+    self.helpers.android_loading  = AndroidLoadingHelper
     self.helpers.config           = ConfigHelper
     self.helpers.db               = DbHelper
     self.helpers.fs               = FileSystemHelper

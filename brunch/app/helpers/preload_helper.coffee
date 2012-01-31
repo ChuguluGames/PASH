@@ -5,11 +5,16 @@ class exports.PreloadHelper
 	callbackSuccess: null
 	callbackError  : null
 	images         : null
-	image          : null
+
 	startLoadingAt : null
+
+	image          : null
+	imagesCache    : null
 
 	constructor: ->
 		self=@
+		self.imagesCache = []
+		self.currentImage = null
 		self
 
 	load: ->
@@ -23,18 +28,23 @@ class exports.PreloadHelper
 		@loadAll() # start the preloading
 
 	loadAll: ->
-		if @images.length == 0
-			@callbackSuccess()
-		else
+		self=@
+		if self.images.length == 0
+			self.callbackSuccess.call(self, self.imagesCache)
 
-			@loadOne @images.shift()
+		else
+			self.loadOne self.images.shift()
 
 	loadOne: (path) ->
 		self=@
 
 		self.startTimeoutChecker()
 
-		self.image = $("<img />").load(->
+		image = document.createElement('img')
+		self.imagesCache.push(image)
+		self.currentImage = image
+		console.log image
+		$(image).load(->
 			app.helpers.log.info "loaded in " + (new Date().getTime() - self.startLoadingAt), self.tag
 			self.stopTimeoutChecker()
 			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
@@ -67,6 +77,14 @@ class exports.PreloadHelper
 		self=@
 		if new Date().getTime() - self.startLoadingAt > self.timeout
 			self.stopTimeoutChecker() # stop timer
-			path = self.image.attr("src")
-			self.image.remove() # remove the image
+			path = $(self.currentImage).attr("src")
+			$(self.currentImage).remove() # remove the image
 			self.callbackError("Timeout during loading " + path) # throw error
+
+	cleanCache: ->
+		self=@
+
+		$(image).remove() for image in self.imagesCache
+		self.imagesCache = null
+		$(self.currentImage).remove()
+		self.currentImage = null
