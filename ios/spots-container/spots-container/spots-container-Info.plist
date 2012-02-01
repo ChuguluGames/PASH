@@ -21,6 +21,10 @@
 	</array>
 	<key>CFBundleIdentifier</key>
 	<string>com.chugulu.miaoumiaou</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>animeace_2.ttf</string>
+	</array>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

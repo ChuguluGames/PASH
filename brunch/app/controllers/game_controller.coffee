@@ -3,12 +3,10 @@ class exports.GameController extends Controller
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
-	differenceDimensions: {width: 64, height: 64}
-	errorDimensions: {width: 36, height: 36}
-
-	toleranceAccuracy: 20
-
-	modes: ["practice", "survival", "challenge"]
+	differenceDimensions  : {width: 64, height: 64}
+	errorDimensions       : {width: 36, height: 36}
+	toleranceAccuracy     : 20
+	modes                 : ["practice", "survival", "challenge"]
 
 	loaded                : false
 	rendered              : false
@@ -57,7 +55,6 @@ class exports.GameController extends Controller
 		console.log "load"
 
 		ItemModel.fetchSelected (items) ->
-			console.log items.length
 			self.items = items
 
 			self.loaded = true
@@ -83,12 +80,11 @@ class exports.GameController extends Controller
 			return
 
 		console.log "resume game"
-
+		self.disabledClicks = true # disable clicks
 		self.render()
-
-		# self.view.reset() 			# reset visuals
+		self.view.reset() 			# reset visuals
 		self.view.showLoading() # show item loading
-			.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber)
+			.disableLinks()
 
 		# show the difference already found
 		for difference in self.item.differencesArray
@@ -101,7 +97,6 @@ class exports.GameController extends Controller
 	loadItem: ->
 		self=@
 
-		console.log self.rendered
 		self.render() if not self.rendered
 
 		console.log "loadItem"
@@ -117,6 +112,7 @@ class exports.GameController extends Controller
 		if self.item?
 			for difference in self.item.differencesArray
 				difference.isFound = false
+
 		# reset item
 		self.item = null
 		self.differencesFoundNumber = 0
@@ -136,7 +132,7 @@ class exports.GameController extends Controller
 		self=@
 
 		# can't find the mode in the config array
-		if $.inArray(mode, self.modes) == -1
+		if $.inArray(mode, self.modes) is -1
 			app.helpers.log.error "unknown mode: " + mode, self.tag
 			return false
 
@@ -145,7 +141,7 @@ class exports.GameController extends Controller
 	onGameLoaded: ->
 		self=@
 
-		console.log self.itemCurrent
+		# console.log self.itemCurrent
 
 		if self.items[self.itemCurrent]?
 			self.item = self.items[self.itemCurrent]
@@ -163,12 +159,12 @@ class exports.GameController extends Controller
 		for difference in self.item.differencesArray
 			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
 
-		new app.helpers.preloader().load ->
-
+		new app.helpers.preloader().load (images) ->
 			# update the view
 			self.view.update(
-				item: self.item 									# update the item images
-				next: "#/" + self.itemNextRoute 	# update the next link
+				first_image : images[0]
+				second_image: images[1]
+				next        : "#" + self.itemNextRoute 	# update the next link
 			)
 				.hideLoading() # hide the loading indicator
 				.enableLinks() # enable links
@@ -187,8 +183,7 @@ class exports.GameController extends Controller
 		self=@
 
 		# no more item
-		if not self.itemNext && not self.findNextItem()
-			# if practice mode, load the first one
+		if not self.itemNext and not self.findNextItem() # check again just in case
 
 			# else load the end game
 		# change the route
@@ -201,7 +196,7 @@ class exports.GameController extends Controller
 			self.itemNext = self.itemCurrent + 1
 		else
 			# mode practice is infinite
-			if self.mode == "practice"
+			if self.mode is "practice"
 				self.itemNext = 0
 			# can't go further
 			else self.itemNext = false
@@ -221,7 +216,10 @@ class exports.GameController extends Controller
 	onClickLink: (event) ->
 		self=@
 
-		return event.preventDefault() if self.disabledClicks
+		if self.disabledClicks
+			event.preventDefault()
+			return false
+
 		# call parent
 		GameController.__super__.onClickLink.call(self, event)
 
@@ -229,7 +227,9 @@ class exports.GameController extends Controller
 	onClickItem: (event) ->
 		self=@
 
-		return event.preventDefault() if self.disabledClicks
+		if self.disabledClicks
+			event.preventDefault()
+			return false
 
 		position=
 			x: event.pageX
@@ -255,7 +255,7 @@ class exports.GameController extends Controller
 				differenceFound = true
 
 				# not already found
-				if not difference.isFound? || not difference.isFound
+				if not difference.isFound? or not difference.isFound
 					# activate it only if not already found
 					self.activateDifference difference, event.currentTarget
 
@@ -264,7 +264,7 @@ class exports.GameController extends Controller
 					self.view.updateDifferencesFoundIndicator(self.differencesFoundNumber) # update the difference indicator
 
 					# found all differences, load the next item
-					if self.differencesFoundNumber == self.item.differencesArray.length
+					if self.differencesFoundNumber is self.item.differencesArray.length
 						setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item
 						return true
 

@@ -4,8 +4,7 @@ class exports.TemplateHelper
 	self.generate = (template, data) ->
 		templateVars = {
 			routes : app.router.getRoutes()
-			strings: app.helpers.locale.getLocaleConfig()
-			locale : app.helpers.locale.getLocale()
+			strings: app.helpers.locale.getStrings()
 		}
 
 		data = if typeof data isnt "undefined" then $.merge(templateVars, data) else templateVars

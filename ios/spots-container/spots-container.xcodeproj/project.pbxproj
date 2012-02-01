@@ -37,6 +37,7 @@
 		499E62AC14D2E2A3004B5DF7 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 499E62A514D2E2A3004B5DF7 /* Icon.png */; };
 		499E62AD14D2E2A3004B5DF7 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 499E62A614D2E2A3004B5DF7 /* Icon@2x.png */; };
 		499E62AE14D2E2A3004B5DF7 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 499E62A714D2E2A3004B5DF7 /* iTunesArtwork.png */; };
+		49F1CE7F14D84E23007893C5 /* animeace_2.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49F1CE7E14D84E23007893C5 /* animeace_2.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,7 @@
 		499E62A514D2E2A3004B5DF7 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = Resources/icons/Icon.png; sourceTree = "<group>"; };
 		499E62A614D2E2A3004B5DF7 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "Resources/icons/Icon@2x.png"; sourceTree = "<group>"; };
 		499E62A714D2E2A3004B5DF7 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iTunesArtwork.png; path = Resources/icons/iTunesArtwork.png; sourceTree = "<group>"; };
+		49F1CE7E14D84E23007893C5 /* animeace_2.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = animeace_2.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +177,7 @@
 		4929C11614BB4C36006F1804 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				49F1CE7D14D84E23007893C5 /* fonts */,
 				4929C12B14BB4C37006F1804 /* Capture.bundle */,
 				4929C11C14BB4C36006F1804 /* Localizable.strings */,
 				4929C11F14BB4C36006F1804 /* icons */,
@@ -221,6 +224,15 @@
 				4929C13414BB4C37006F1804 /* README */,
 			);
 			name = Plugins;
+			sourceTree = "<group>";
+		};
+		49F1CE7D14D84E23007893C5 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				49F1CE7E14D84E23007893C5 /* animeace_2.ttf */,
+			);
+			name = fonts;
+			path = Resources/fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,6 +304,7 @@
 				499E62AC14D2E2A3004B5DF7 /* Icon.png in Resources */,
 				499E62AD14D2E2A3004B5DF7 /* Icon@2x.png in Resources */,
 				499E62AE14D2E2A3004B5DF7 /* iTunesArtwork.png in Resources */,
+				49F1CE7F14D84E23007893C5 /* animeace_2.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +455,7 @@
 					armv6,
 				);
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Chugulu SARL";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Chugulu SARL";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = /Users/Shared/PhoneGap/Frameworks;
@@ -463,8 +476,8 @@
 					/usr/lib/libSystem.B.dylib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "74062C65-44BB-449F-B88F-63A7B006096A";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "74062C65-44BB-449F-B88F-63A7B006096A";
+				PROVISIONING_PROFILE = "131A76CF-7216-49DE-9FD9-96297063CD8C";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

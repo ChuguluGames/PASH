@@ -1,26 +1,27 @@
 class exports.LocaleHelper
 	self=@
 
-	self.locales = [
-		'en'
-		'fr'
-	]
+	self.locales = null
+	self.locale = null
+	self.strings = {}
 
-	self.locale = 'en'
+	self.setConfig = (config) ->
+		self.setLocales(config.accepted)
+		self.setLocale(config.default)
+		self
 
-	self.config = {}
+	self.setLocales = (locales) ->
+		self.locales = locales
 
 	self.setLocale = (locale) ->
-		if $.inArray locale, self.locales isnt -1
+		if self.locale isnt locale and $.inArray(locale, self.locales) isnt -1
 			self.locale = locale
+			self.strings = app.helpers.config.getLocaleStrings(locale)
+
 		self.locale
 
 	self.getLocale = ->
 	  self.locale
 
-	self.getLocaleConfig = ->
-		locale = self.getLocale()
-		if not self.config[locale]?
-			self.config[locale] = require "config/locales/" + locale
-
-		self.config[locale]
+	self.getStrings = ->
+		self.strings

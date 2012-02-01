@@ -23,7 +23,7 @@ public class PASH extends DroidGap
 
 		super.setIntegerProperty("splashscreen", R.drawable.splash);
 
-		super.loadUrl("file:///android_asset/www/index.html#/home", 1000);
+		super.loadUrl("file:///android_asset/www/index.html", 1000);
 
 	}
 
