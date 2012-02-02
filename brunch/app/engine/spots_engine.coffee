@@ -94,9 +94,6 @@ class SpotsEngine
   itemFinished: ->
     @delegateDidFinishItem()
 
-  isGameOver: ->
-    @gameOver
-
   # delegate
   ## time
   delegateTimeDidChange: ->
@@ -151,7 +148,14 @@ class SpotsEngine
       @[key] = val
 
   toJSON: ->
-    {}
+    json = {}
+    for key, val of @
+      if typeof val is 'object'
+        if val.toJSON?
+          json[key] = val.toJSON()
+      else
+        json[key] = val
+    json
 
 class exports.ZenSpotsEngine extends SpotsEngine
   constructor: (delegate, json) ->
