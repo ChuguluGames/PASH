@@ -1,10 +1,27 @@
+# default values
+COMPILATION_MODE=debug
 TARGET=device
 LOG=debug
+PROJECT_NAME=PASH
 ACTIVITY=PASH
 PACKAGE=com.phonegap.pash
-COMPILATION_MODE=release
+
 # specific phonegap config
-PHONEGAP=true
-PHONEGAP_VERSION=1.3.0
 BUILDER=.pgt/builder
-WWW_FOLDER=../brunch/android/
+
+# release config
+KEY_PASS=false
+
+# apk names
+APK_DEBUG=PASH-debug.apk
+APK_DEBUG_UNSIGNED=PASH-debug-unsigned.apk
+APK_DEBUG_UNALIGNED=PASH-debug-unaligned.apk
+APK_RELEASE=PASH-release.apk
+APK_RELEASE_UNSIGNED=PASH-release-unsigned.apk
+APK_RELEASE_UNALIGNED=PASH-release-unaligned.apk
+
+# ant properties
+ANT_SOURCE_DIR=src
+ANT_OUT_DIR=bin
+ANT_KEY_STORE=release.keystore
+ANT_KEY_ALIAS=releasekey
