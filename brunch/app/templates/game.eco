@@ -1,8 +1,8 @@
 <div class="topbar-wrapper">
 	<div class="topbar">
-		<div class="back">
+		<div class="button back">
 			<div class="wrapper">
-				<a href="#<%= @routes.home %>"><%= @strings.ingame.button_pause %></a>
+				<a href="#<%= @routes.options %>"><%= @strings.ingame.button_pause %></a>
 			</div>
 		</div>
 		<div class="toolbar-center">
@@ -15,7 +15,7 @@
 				<ul></ul>
 			</div>
 		</div>
-		<div class="button-next-item">
+		<div class="button button-next-item">
 			<div class="wrapper">
 				<a href="#<%= @routes.game %>"><%= @strings.ingame.button_next %></a>
 			</div>
