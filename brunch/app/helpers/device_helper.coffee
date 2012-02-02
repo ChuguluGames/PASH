@@ -45,7 +45,11 @@ class exports.DeviceHelper
 		self._resolution ?= window.devicePixelRatio or 1
 
 	self.getLocalization = ->
-		self._localization ?= navigator.language.substr(0, 2)
+		if navigator.language?
+			self._localization ?= navigator.language.substr(0, 2)
+		else if navigator.browserLanguage?
+			self._localization ?= navigator.browserLanguage.substr(0, 2)
+		self._localization
 
 	self.userAgentMatch = (string) ->
 		self.getUserAgent().indexOf(string) > -1
