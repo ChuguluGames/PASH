@@ -1,6 +1,11 @@
 function Controller(attributes) {
 	var self = this;
 
+	if (attributes.view != "undefined") {
+		self.view = new attributes.view()
+		delete attributes.view
+	}
+
 	// add the new properties
 	for (var prop in attributes) {
 		self[prop] = attributes[prop];
@@ -10,6 +15,18 @@ function Controller(attributes) {
 }
 
 Controller.prototype.initialize = function() {};
+
+Controller.prototype.destroy = function() {
+	// TODO: remove events
+	this.onDestroy();
+};
+
+Controller.prototype.activate = function() {
+	this.onActivate();
+};
+
+Controller.prototype.onDestroy = function() {};
+Controller.prototype.onActivate = function() {};
 
 Controller.prototype.eventSplitter = /^(\S+)\s*(.*)$/;
 Controller.prototype.events = {};
@@ -30,6 +47,11 @@ Controller.prototype.delegateEvents = function() {
 
 Controller.prototype.delegateEvent = function(selector, el, eventName, method) {
 	var self = this;
+
+	if (selector == "document" || selector == "window") {
+		el = window[selector];
+		selector = "";
+	}
 
 	if (selector === '') {
 		$(el).on(eventName, function(evt) { return method.call(self, evt); });
