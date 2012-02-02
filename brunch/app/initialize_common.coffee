@@ -4,6 +4,7 @@ modules = {
   helpers: [
     'android_loading'
     'config'
+    'countdown'
     'locale'
     'device'
     'log'
@@ -156,6 +157,7 @@ class exports.Application
     # helpers
     self.helpers.android_loading  = AndroidLoadingHelper
     self.helpers.config           = ConfigHelper
+    self.helpers.countdown        = CountdownHelper
     self.helpers.db               = DbHelper
     self.helpers.fs               = FileSystemHelper
     self.helpers.downloader       = DownloadHelper
