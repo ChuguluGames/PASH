@@ -21,6 +21,7 @@ class exports.GameController extends Controller
 	mode                  : null
 	score                 : 0
 	differencesFoundNumber: 0
+	engine 								: null
 
 	initialize: ->
 		self=@
@@ -35,6 +36,10 @@ class exports.GameController extends Controller
 
 		self
 
+	initializeEngine: (lastGame) ->
+		self=@
+		self.engine = new (require('engine/spots_engine').ZenSpotsEngine)(self, lastGame)
+
 	onDestroy: ->
 		self=@
 		self.view.destroy() # destroy the view
@@ -44,8 +49,11 @@ class exports.GameController extends Controller
 
 	save: ->
 		self=@
+
+		console.log "saving game"
+
 		# save the engine data to localstorage
-		# localStorage.setItem('game_' + self.mode, self.engine.toJSON)
+		localStorage.setItem('game_' + self.mode, self.engine.toJSON())
 
 	load: (callback, itemsList, forceFetch) ->
 		self=@
@@ -69,7 +77,8 @@ class exports.GameController extends Controller
 	# start a new game
 	start: (mode) ->
 		self=@
-
+		self.initializeEngine(mode)
+		console.log(self.engine)
 		app.router.setRoute app.router.getItemRoute mode, 0
 
 	reset: ->
@@ -84,10 +93,11 @@ class exports.GameController extends Controller
 	play: (mode, itemIndex) ->
 		self=@
 
+		self.initializeEngine(mode) if not self.engine?
+
 		self.mode = mode
 		self.itemCurrent = parseInt(itemIndex)
 
-		console.log self.view
 		self.reset()
 
 		self.view.showLoading().disableLinks()  # and show loading and add disabled style on links
@@ -105,10 +115,7 @@ class exports.GameController extends Controller
 			# load the item
 			self.item.fetchAll ->
 
-				# order each differences polygon points
-				for difference in self.item.differencesArray
-					app.helpers.polygoner.orderPoints(difference.differencePointsArray)
-
+				self.engine.itemStarted(self.item.differencesArray)
 				# prealoding the images
 				new app.helpers.preloader().load (images) ->
 					# update the view
@@ -119,7 +126,7 @@ class exports.GameController extends Controller
 					)
 						.hideLoading() # hide the loading indicator
 						.enableLinks() # enable links
-						.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber) # initialize difference indicator
+						.initializeDifferencesFoundIndicator(self.item.differencesArray, self.engine.differenceCount) # initialize difference indicator
 
 					self.disabledClicks = false # enable clicks
 
@@ -134,23 +141,30 @@ class exports.GameController extends Controller
 	resume: (mode) ->
 		self=@
 
+		console.log "resume"
+
 		# get last game from local storage
 		lastGame = localStorage.getItem('game_' + mode)
 
-		# load engine from last game lastGame
+		if lastGame?
+			# load engine from last game lastGame
+			self.initializeEngine(lastGame)
 
-		self.load ->
+			# load the items
+			self.load ->
 
-			# find the item index
-			for index, item in self.items
-				if item.id is lastGame.itemCurrentID
-					self.play(mode, index)
-					self.showDifferencesAlreadyFound(item.differencesArray) if lastGame.differencesFoundNumber > 0
-					break
+				# find the item index
+				for index, item in self.items
+					if item.id is lastGame.itemCurrentID
+						self.play(mode, index)
+						self.showDifferencesAlreadyFound(item.differencesArray) if lastGame.differencesFoundNumber > 0
+						break
 
-			self.play(mode, 0) # not found, start from scratch
+				self.play(mode, 0) # not found, start from scratch
 
-		, lastGame.items, true
+			, lastGame.items, true
+
+		else self.start(mode)
 
 	showDifferencesAlreadyFound: (differences) ->
 		self=@
@@ -222,8 +236,7 @@ class exports.GameController extends Controller
 		if self.disabledClicks
 			event.preventDefault()
 			return false
-
-		GameController.__super__.onClickLink.call(self, event) # call parent
+		super
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
@@ -249,39 +262,51 @@ class exports.GameController extends Controller
 			center: retinaPosition
 			radius: self.toleranceAccuracy
 
-		# for each difference of the item
-		for difference in self.item.differencesArray
-
-			# touch in the difference polygon.difference_points
-			if app.helpers.collision.circleCollisionToPolygon(circle, difference.differencePointsArray)
-				differenceFound = true
-
-				# not already found
-				if not difference.isFound? or not difference.isFound
-					# activate it only if not already found
-					self.activateDifference difference, event.currentTarget
-
-					difference.isFound = true
-					self.differencesFoundNumber++
-					self.view.updateDifferencesFoundIndicator(self.differencesFoundNumber) # update the difference indicator
-
-					# found all differences, load the next item
-					if self.differencesFoundNumber is self.item.differencesArray.length
-						setTimeout (-> self.loadNextItem()), 1000 # temporize the loading of the next item
-						return true
-
-				# break to let the user find one difference by one
-				# return true
+		@engine.findDifference(circle)
 
 		# show an error if no difference were found
-		if not differenceFound
-			errorBounds = app.helpers.polygoner.rectangleFromPoint relativePosition, self.errorDimensions
-			self.view.showError errorBounds
-
+	#		if not differenceFound
+	#			errorBounds = app.helpers.polygoner.rectangleFromPoint relativePosition, self.errorDimensions
+	#			self.view.showError errorBounds
+	#
 		return false
+
+	## delegate
+	timeDidChange: (time) -> console.log "timeDidChange"
+
+	timeBonus: (bonus, time) -> console.log "timeBonus"
+
+	timePenalty: (penalty, time) -> console.log "timePenalty"
+
+	## score
+	scoreDidChange: (score) -> console.log "scoreDidChange"
+
+	scoreBonus: (bonus, score) -> console.log "scoreBonus"
+
+	scorePenalty: (penalty, score) -> console.log "scorePenalty"
+
+	## clues
+	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
+
+	## difference
+	didFindDifference: (difference, differenceCount) ->
+		console.log difference
+		@activateDifference difference
+		@view.updateDifferencesFoundIndicator(differenceCount) # update the difference indicator
+
+	## game over
+	didFinishItem: ->
+		setTimeout =>
+			@loadNextItem()
+		, 1000 # temporize the loading of the next item
+
+	timeOut: -> console.log "timeOut"
+	## delegate
 
 	activateDifference: (difference, target) ->
 		self=@
+
+		console.log difference
 
 		if not target?
 			target = self.view.elements.firstImage

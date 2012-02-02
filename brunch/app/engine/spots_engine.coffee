@@ -17,11 +17,7 @@ class SpotsEngine
   config           : {}
 
   constructor: (@mode, @delegate, json) ->
-    @reloadConfigForCurrentMode()
-    if json?
-      @fromJSON(json)
-    else
-      @reset()
+
 
   reloadConfigForCurrentMode: ->
     @config = require('config/spots_engine_config').config[@mode]
@@ -56,18 +52,16 @@ class SpotsEngine
       @clueCount--
       @differenceCount--
       for difference in @differences # get the first unfound difference
-        do (difference) ->
-          if not difference.isFound and not difference.isClued
-            difference.isClued = true
-            @delegateDidUseClue(difference)
-            break
+        if not difference.isFound and not difference.isClued
+          difference.isClued = true
+          @delegateDidUseClue(difference)
+          break
 
   findDifference: (spotCircle) ->
     for difference in @differences
-      do (difference) ->
-        if not difference.isFound and not difference.isClued
-          if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
-            return @didFindDifference(difference)
+      if not difference.isFound and not difference.isClued
+        if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
+          return @didFindDifference(difference)
     @didNotFindDifference()
 
   didFindDifference: (difference) ->
@@ -88,6 +82,10 @@ class SpotsEngine
     @comboCount        = 0
     @errorCount        = 0
     @timeSinceLastSpot = 0
+    for difference in differences
+      difference.isFound = false
+      difference.isClued = false
+      app.helpers.polygoner.orderPoints(difference.differencePointsArray)
     @differences       = differences
     @differenceCount   = differences.length
 
@@ -97,7 +95,7 @@ class SpotsEngine
   # delegate
   ## time
   delegateTimeDidChange: ->
-    @delegate.timeDidChange @time if delegate? and @delegate.timeDidChange?
+    @delegate.timeDidChange @time if @delegate? and @delegate.timeDidChange?
 
   delegateTimeBonus: (bonus) ->
     @delegate.timeBonus(bonus, @time) if @delegate? and @delegate.timeBonus?
@@ -107,7 +105,7 @@ class SpotsEngine
 
   ## score
   delegateScoreDidChange: ->
-    @delegate.scoreDidChange @score if delegate? and @delegate.scoreDidChange?
+    @delegate.scoreDidChange @score if @delegate? and @delegate.scoreDidChange?
 
   delegateScoreBonus: (bonus) ->
     @delegate.scoreBonus(bonus, @score) if @delegate? and @delegate.scoreBonus?
@@ -121,6 +119,7 @@ class SpotsEngine
 
   ## difference
   delegateDidFindDifference: (difference) ->
+    console.log(@delegate)
     @delegate.didFindDifference(difference, @differenceCount) if @delegate? and @delegate.didFindDifference?
 
   ## game over
@@ -144,18 +143,24 @@ class SpotsEngine
 
   # json
   fromJSON: (json) ->
-    for key, val of json
-      @[key] = val
+    object = JSON.parse json
+    for prop, val of object
+      @[prop] = val
+
+  filterObject: (object) ->
+    # todo: filter proto properties (ie: hasOwnProperty)
+    filtered = {}
+    for prop, val of object
+      console.log prop
+      if typeof val is 'object'
+        filtered[prop] = @filterObject(val)
+      else if typeof val isnt 'function'
+         filtered[prop] = val
+    filtered
 
   toJSON: ->
-    json = {}
-    for key, val of @
-      if typeof val is 'object'
-        if val.toJSON?
-          json[key] = val.toJSON()
-      else
-        json[key] = val
-    json
+    filteredObject = @filterObject(@)
+    JSON.stringify filteredObject
 
 class exports.ZenSpotsEngine extends SpotsEngine
   constructor: (delegate, json) ->
