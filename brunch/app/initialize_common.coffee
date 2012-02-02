@@ -136,7 +136,7 @@ class exports.Application
     self.helpers.fs.init ->
       self.helpers.seeder.seed ->
         # temp workaround for dismissing splash once the home is loaded
-        if navigator and navigator.splashscreen
+        if navigator? and navigator.splashscreen?
           MainRouter.onFirstRoute = ->
             setTimeout ->
               navigator.splashscreen.hide()
