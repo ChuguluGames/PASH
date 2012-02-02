@@ -28,10 +28,12 @@ modules = {
   controllers: [
     'home'
     'game'
+    'options'
   ]
   views: [
     'home'
     'game'
+    'options'
   ]
   models: [
     'player'
