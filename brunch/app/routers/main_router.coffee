@@ -1,10 +1,13 @@
+Router::currentController = null
 Router::firstRoute = true
+
 Router::onFirstRoute = ->
 
 Router::getRoutes = ->
 	return {
-		game: @getGameRoute()
-		home: @getHomeRoute()
+		game   : @getGameRoute()
+		home   : @getHomeRoute()
+		options: @getOptionsRoute()
 	}
 
 Router::getBaseRoute = ->
@@ -13,47 +16,77 @@ Router::getBaseRoute = ->
 Router::getGameRoute = ->
 	return @getBaseRoute() + "/game"
 
-Router::getItemRoute = (item, mode) ->
-	return @getGameRoute() + "/" + item + "/mode/" + mode
+Router::getItemRoute = (mode, item ) ->
+	return @getGameRoute() + "/mode/" + mode + "/item/" + item
 
 Router::getHomeRoute = ->
 	return @getBaseRoute() + "/home"
 
+Router::getOptionsRoute = ->
+	return @getBaseRoute() + "/options"
+
+Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
+	# same controller
+	if onResume? and @currentController? and @currentController.constructor is controllerClass
+		onResume.apply(@currentController)
+
+	# new controller
+	else
+		# remove last controller
+		if @currentController?
+			@currentController.destroy()
+
+		# create the new one
+		newController = new controllerClass(view: viewClass)
+		newController.initialize()
+		onCreate.apply(newController)
+
+		@currentController = newController
+
 exports.MainRouter = new Router(
 	routes:
+		"":
+			on: ->
+				if @firstRoute
+					@firstRoute = false
+					@onFirstRoute()
+
 		"/:locale":
 			on: (locale) ->
 				app.helpers.locale.setLocale locale
 			"/home":
 				on: ->
-					console.log "in home"
-					app.controllers.game.rendered = false if app.controllers.game?
+					@changeController HomeController, HomeView, -> @show()
 
-					app.views.home       = new HomeView()
-					app.controllers.home = new HomeController(view: app.views.home)
-					app.controllers.home.show()
-					if @firstRoute
-						@firstRoute = false
-						@onFirstRoute()
+			"/options":
+				on: ->
+					console.log "in options"
 
-			"/game":
-				on: (locale, item, mode) ->
-					# no current game
-					if not app.controllers.game? or not app.controllers.game.loaded
-						app.views.game = new GameView()
-						app.controllers.game = new GameController(view: app.views.game).start(item, mode)
-					# guess it's a resume
-					else if not item?
-						app.controllers.game.resume()
-					# load from the arguments
-					else app.controllers.game.loadItem(item, mode)
+					@changeController OptionsController, OptionsView, -> @show()
 
-				"/:item":
-					on: ->
-					"/mode":
-						on: ->
-						"/:mode":
-							on: ->
+			"/game/start/:mode":
+				on: (locale, mode) ->
+
+					@changeController GameController, GameView, ->
+						@start(mode)
+					, ->
+						@reset().start(mode)
+
+			"/game/resume/:mode":
+				on: (locale, mode) ->
+
+					@changeController GameController, GameView, ->
+						@resume(mode)
+					, ->
+						@reset().resume(mode)
+
+			"/game/mode/:mode/item/:item":
+				on: (locale, mode, itemIndex) ->
+
+					@changeController GameController, GameView, ->
+						@play(mode, itemIndex)
+					, ->
+						@reset().play(mode, itemIndex)
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 

@@ -4,6 +4,7 @@ modules = {
   helpers: [
     'android_loading'
     'config'
+    'countdown'
     'locale'
     'device'
     'log'
@@ -28,10 +29,12 @@ modules = {
   controllers: [
     'home'
     'game'
+    'options'
   ]
   views: [
     'home'
     'game'
+    'options'
   ]
   models: [
     'player'
@@ -134,7 +137,7 @@ class exports.Application
     self.helpers.fs.init ->
       self.helpers.seeder.seed ->
         # temp workaround for dismissing splash once the home is loaded
-        if navigator and navigator.splashscreen
+        if navigator? and navigator.splashscreen?
           MainRouter.onFirstRoute = ->
             setTimeout ->
               navigator.splashscreen.hide()
@@ -154,6 +157,7 @@ class exports.Application
     # helpers
     self.helpers.android_loading  = AndroidLoadingHelper
     self.helpers.config           = ConfigHelper
+    self.helpers.countdown        = CountdownHelper
     self.helpers.db               = DbHelper
     self.helpers.fs               = FileSystemHelper
     self.helpers.downloader       = DownloadHelper

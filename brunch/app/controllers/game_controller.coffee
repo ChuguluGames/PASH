@@ -9,116 +9,155 @@ class exports.GameController extends Controller
 	modes                 : ["practice", "survival", "challenge"]
 
 	loaded                : false
-	rendered              : false
 	disabledClicks        : true
 
 	items                 : []
 	item                  : null
 	itemCurrent           : 0
-	itemNext              : 0
-	itemNextRoute         : null
+	itemNext              : false
+	itemNextRoute         : false
+	itemPrevious          : false
+	itemPreviousRoute     : false
 	mode                  : null
 	score                 : 0
 	differencesFoundNumber: 0
 
-	start: ->
+	initialize: ->
 		self=@
 
-		console.log "new game"
-		self.getArguments.apply(self, arguments)
-
-		self.on("change:loaded", self.onGameLoaded)
-		self.render().load()
-
-	render: ->
-		self=@
-
-		console.log "render"
-
-		# render the view
+		# create the view
 		$("body").html self.view.render(
 			score: self.score
 		).el
 
-		self.view.showLoading().disableLinks() # disable link until item is loaded
-
 		# initiate events
 		self.delegateEvents()
 
-		self.rendered = true
-
 		self
 
-	load: ->
+	onDestroy: ->
 		self=@
-
-		console.log "load"
-
-		ItemModel.fetchSelected (items) ->
-			self.items = items
-
-			self.loaded = true
-
+		self.view.destroy() # destroy the view
+		self.save()
+		self.reset()
 		self
 
-	getArguments: (itemCurrent, mode) ->
+	save: ->
 		self=@
-		console.log "getArguments"
-		self.itemCurrent = if not itemCurrent? or not self.validateItemID(itemCurrent) then 0 else parseInt(itemCurrent)
-		console.log "tested id"
-		self.mode = if not mode? or not self.validateMode(mode) then self.modes[0] else mode
-		console.log "tested mode"
+		# save the engine data to localstorage
+		# localStorage.setItem('game_' + self.mode, self.engine.toJSON)
 
-	# resume game
-	resume: ->
+	load: (callback, itemsList, forceFetch) ->
 		self=@
 
-		# can also be a previous from game, so let's check it!
-		if self.rendered and self.itemCurrent > 0
-			self.itemCurrent = self.getPreviousItem()
-			self.loadItem()
-			return
+		if not self.loaded or (forceFetch? and forceFetch)
+			if not itemsList? or itemsList.length == 0
+				ItemModel.fetchSelected (items) ->
+					self.items = items
+					self.loaded = true
+					callback()
 
-		console.log "resume game"
-		self.disabledClicks = true # disable clicks
-		self.render()
-		self.view.reset() 			# reset visuals
-		self.view.showLoading() # show item loading
-			.disableLinks()
+			else
+				ItemModel.fetchFromList itemsList, (items) ->
+					self.items = items
+					self.loaded = true
+					callback()
 
-		# show the difference already found
-		for difference in self.item.differencesArray
-			do (difference) ->
-				self.activateDifference(difference) if difference.isFound? and difference.isFound
+		else callback()
+		self
 
-		self.onItemFetched() 		# item should be already fetched
-
-	# load a new item
-	loadItem: ->
+	# start a new game
+	start: (mode) ->
 		self=@
 
-		self.render() if not self.rendered
+		app.router.setRoute app.router.getItemRoute mode, 0
 
-		console.log "loadItem"
-
-		self.getArguments.apply(self, arguments)
+	reset: ->
+		self=@
 
 		self.view.reset() # reset visuals
-			.showLoading()  # and show loading
-			.disableLinks()
 		self.disabledClicks = true # disable clicks
-
-		# reset item differences
-		if self.item?
-			for difference in self.item.differencesArray
-				difference.isFound = false
-
-		# reset item
-		self.item = null
 		self.differencesFoundNumber = 0
+		self
 
-		# wait until the game is loaded to load the item
-		if not self.loaded then self.on("change:loaded", self.onGameLoaded) else self.onGameLoaded()
+	# play a game
+	play: (mode, itemIndex) ->
+		self=@
+
+		self.mode = mode
+		self.itemCurrent = parseInt(itemIndex)
+
+		console.log self.view
+		self.reset()
+
+		self.view.showLoading().disableLinks()  # and show loading and add disabled style on links
+
+		self.load ->
+			if self.items[self.itemCurrent]?
+				self.item = self.items[self.itemCurrent]
+			else
+				alert "error, no item at " + self.itemCurrent
+				return false
+
+			# get prev/next item
+			self.getPreviousAndNextItems()
+
+			# load the item
+			self.item.fetchAll ->
+
+				# order each differences polygon points
+				for difference in self.item.differencesArray
+					app.helpers.polygoner.orderPoints(difference.differencePointsArray)
+
+				# prealoding the images
+				new app.helpers.preloader().load (images) ->
+					# update the view
+					self.view.update(
+						first_image : images[0]
+						second_image: images[1]
+						next        : "#" + self.itemNextRoute 	# update the next link
+					)
+						.hideLoading() # hide the loading indicator
+						.enableLinks() # enable links
+						.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber) # initialize difference indicator
+
+					self.disabledClicks = false # enable clicks
+
+				, (error) ->
+					alert error
+					# load next item
+					self.loadNextItem()
+
+				, self.item.first_image.getSrc(), self.item.second_image.getSrc()
+
+	# resume a game
+	resume: (mode) ->
+		self=@
+
+		# get last game from local storage
+		lastGame = localStorage.getItem('game_' + mode)
+
+		# load engine from last game lastGame
+
+		self.load ->
+
+			# find the item index
+			for index, item in self.items
+				if item.id is lastGame.itemCurrentID
+					self.play(mode, index)
+					self.showDifferencesAlreadyFound(item.differencesArray) if lastGame.differencesFoundNumber > 0
+					break
+
+			self.play(mode, 0) # not found, start from scratch
+
+		, lastGame.items, true
+
+	showDifferencesAlreadyFound: (differences) ->
+		self=@
+
+		for difference in differences
+			do (difference) ->
+				self.activateDifference(difference) if difference.isFound? and difference.isFound
 
 	validateItemID: (itemCurrent) ->
 		self=@
@@ -138,80 +177,44 @@ class exports.GameController extends Controller
 
 		true
 
-	onGameLoaded: ->
+	getPreviousAndNextItems: ->
 		self=@
+		self.getNextItem()
+		self.getPreviousItem()
 
-		# console.log self.itemCurrent
-
-		if self.items[self.itemCurrent]?
-			self.item = self.items[self.itemCurrent]
-		else
-			alert "error, no item at " + self.itemCurrent
-			return false
-
-		self.findNextItem()
-		self.item.fetchAll -> self.onItemFetched() # get the data of the item
-
-	onItemFetched: ->
+	getNextItem: ->
 		self=@
+		# get index
+		if self.itemCurrent + 1 < self.items.length
+			self.itemNext = self.itemCurrent + 1
+		else if self.mode is "practice"
+			self.itemNext = 0
+		else self.itemNext = false
 
-		# order each differences polygon points
-		for difference in self.item.differencesArray
-			app.helpers.polygoner.orderPoints(difference.differencePointsArray)
+		# get the route
+		self.itemNextRoute = if self.itemNext isnt false then app.router.getItemRoute(self.mode, self.itemNext) else false
+		self.itemNext
 
-		new app.helpers.preloader().load (images) ->
-			# update the view
-			self.view.update(
-				first_image : images[0]
-				second_image: images[1]
-				next        : "#" + self.itemNextRoute 	# update the next link
-			)
-				.hideLoading() # hide the loading indicator
-				.enableLinks() # enable links
-				.initializeDifferencesFoundIndicator(self.item.differencesArray, self.differencesFoundNumber) # initialize difference indicator
-
-			self.disabledClicks = false # enable clicks
-
-		, (error) ->
-			alert error
-			# load next item
-			self.loadNextItem()
-
-		, self.item.first_image.getSrc(), self.item.second_image.getSrc() # preload the item images
+	getPreviousItem: ->
+		self=@
+		# get index
+		if self.itemCurrent > 0
+			self.itemPrevious = self.itemCurrent - 1
+		else if self.mode is "practice"
+			self.itemPrevious = self.items.length - 1
+		else self.itemPrevious = false
+		# get the route
+		self.itemPreviousRoute = if self.itemPrevious isnt false then app.router.getItemRoute(self.mode, self.itemPrevious) else false
+		self.itemPrevious
 
 	loadNextItem: ->
 		self=@
 
 		# no more item
-		if not self.itemNext and not self.findNextItem() # check again just in case
-
+		if self.itemNext is no and self.getNextItem() is no # check again just in case
 			# else load the end game
 		# change the route
-		else
-			app.router.setRoute self.itemNextRoute
-
-	findNextItem: ->
-		self=@
-		if self.itemCurrent + 1 < self.items.length
-			self.itemNext = self.itemCurrent + 1
-		else
-			# mode practice is infinite
-			if self.mode is "practice"
-				self.itemNext = 0
-			# can't go further
-			else self.itemNext = false
-
-		self.itemNextRoute = app.router.getItemRoute(self.itemNext, self.mode)
-
-		console.log "next route " + self.itemNextRoute
-
-		self.itemNext
-
-	getPreviousItem: ->
-		self=@
-		if self.itemCurrent > 0
-			return self.itemCurrent - 1
-		else return 0
+		else app.router.setRoute self.itemNextRoute
 
 	onClickLink: (event) ->
 		self=@
@@ -220,8 +223,7 @@ class exports.GameController extends Controller
 			event.preventDefault()
 			return false
 
-		# call parent
-		GameController.__super__.onClickLink.call(self, event)
+		GameController.__super__.onClickLink.call(self, event) # call parent
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->

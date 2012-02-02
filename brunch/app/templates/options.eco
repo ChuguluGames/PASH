@@ -1,0 +1,15 @@
+<div class="topbar-wrapper">
+	<div class="topbar">
+		<div class="button back">
+			<div class="wrapper">
+				<a href="#<%= @routes.home %>"><%= @strings.options.button_back %></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<a href="#/en/game/start/practice">practice</a>
+
+<a href="#/en/game/start/survival">survival</a>
+
+<a href="#/en/game/start/challenge">challenge</a>

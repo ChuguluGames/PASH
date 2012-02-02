@@ -15,4 +15,17 @@ echo "\n"
 echo "Replace web files version"
 cp -rf .web/vendor/ vendor/
 
+# come back to android folder
 cd ../android
+
+echo "Cleaning assets/www"
+# delete wwww
+rm -rf assets/www/
+# create www
+mkdir assets/www/
+
+if [ ! "../brunch/android/" = false ]; then
+	echo "Updating assets/www"
+	# copy all files in assets/www
+	cp -r ../brunch/android/* assets/www/
+fi
