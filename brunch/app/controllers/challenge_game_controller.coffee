@@ -21,5 +21,8 @@ class exports.ChallengeGameController extends GameController
 	## clues
 	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
 
+	didFindAllDifferences: ->
+		console.log "found everything, a winner is you, kthx"
+
 	timeOut: -> console.log "timeOut"
 	## delegate

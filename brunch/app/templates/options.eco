@@ -8,8 +8,8 @@
 	</div>
 </div>
 
-<a href="#/en/game/start/zen">zen</a>
+<a href="#<%= @routes.game.start.zen %>">zen</a>
 
-<a href="#/en/game/start/survival">survival</a>
+<a href="#<%= @routes.game.start.survival %>">survival</a>
 
-<a href="#/en/game/start/challenge">challenge</a>
+<a href="#<%= @routes.game.start.challenge %>">challenge</a>
