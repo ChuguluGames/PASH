@@ -12,6 +12,7 @@ class exports.SpotsEngine
   config           : {}
 
   constructor: (@mode, @delegate, json) ->
+    @reloadConfigForCurrentMode()
     if json?
       @fromJSON(json)
     else
