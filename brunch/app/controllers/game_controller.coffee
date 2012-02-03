@@ -114,7 +114,7 @@ class exports.GameController extends Controller
 	# start a new game
 	start: (mode) ->
 		self=@
-		self.initializeEngine(mode)
+		self.initializeEngine()
 		console.log(self.engine)
 		app.router.setRoute app.router.getItemRoute mode, 0
 

@@ -12,7 +12,10 @@ class exports.SpotsEngine
   config           : {}
 
   constructor: (@mode, @delegate, json) ->
-
+    if json?
+      @fromJSON(json)
+    else
+      @reset()
 
   reloadConfigForCurrentMode: ->
     @config = require('config/spots_engine_config').config[@mode]
