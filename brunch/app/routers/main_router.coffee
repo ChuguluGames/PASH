@@ -4,8 +4,15 @@ Router::firstRoute = true
 Router::onFirstRoute = ->
 
 Router::getRoutes = ->
+	modeRoutes =
+		start : {}
+		resume: {}
+	modes = app.helpers.config.getSpotsModes()
+	for key,mode of modes
+		modeRoutes.start[mode]  = @getGameStartRoute(mode)
+		modeRoutes.resume[mode] = @getGameStartRoute(mode)
 	return {
-		game   : @getGameRoute()
+		game   : modeRoutes
 		home   : @getHomeRoute()
 		options: @getOptionsRoute()
 	}
@@ -24,6 +31,9 @@ Router::getHomeRoute = ->
 
 Router::getOptionsRoute = ->
 	return @getBaseRoute() + "/options"
+
+Router::getGameStartRoute = (mode) ->
+	@getGameRoute() + '/start/' + mode
 
 Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 	# same controller
@@ -44,10 +54,11 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 		@currentController = newController
 
 Router::getGameController = (mode) ->
+	modes = app.helpers.config.getSpotsModes()
 	switch mode
-		when "zen" then gameController = ZenGameController
-		when "survival" then gameController = SurvivalGameController
-		when "challenge" then gameController = ChallengeGameController
+		when modes.ZEN then gameController = ZenGameController
+		when modes.SURVIVAL then gameController = SurvivalGameController
+		when modes.CHALLENGE then gameController = ChallengeGameController
 		else gameController = ZenGameController
 
 	gameController
