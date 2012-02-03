@@ -19,7 +19,10 @@ class exports.SurvivalGameController extends GameController
 	scorePenalty: (penalty, score) -> console.log "scorePenalty"
 
 	## clues
-	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
+	didUseClue: (difference, clueCount, differenceCount) ->
+		self=@
+
+		self.activateDifference "found", difference
 
 	## game over
 	timeOut: -> console.log "timeOut"

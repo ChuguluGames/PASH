@@ -42,6 +42,7 @@
 class exports.GameController extends Controller
 	events:
 		"click a"                                      : "onClickLink"
+		"click .button-clues a"                        : "onClickClues"
 		"click .item .first-image, .item .second-image": "onClickItem"
 
 	differenceDimensions  : {width: 64, height: 64}
@@ -130,7 +131,7 @@ class exports.GameController extends Controller
 	play: (mode, itemIndex) ->
 		self=@
 
-		self.initializeEngine(mode) if not self.engine?
+		self.initializeEngine() if not self.engine?
 
 		self.mode = mode
 		self.itemCurrent = parseInt(itemIndex)
@@ -209,7 +210,7 @@ class exports.GameController extends Controller
 		self.view.topbar.updateDifferencesIndicator(differences) # update indicators
 		for difference in differences
 			do (difference) ->
-				self.activateDifference(difference) if difference.isFound? and difference.isFound
+				self.activateDifference("found", difference) if difference.isFound? and difference.isFound
 
 	validateItemID: (itemCurrent) ->
 		self=@
@@ -267,6 +268,10 @@ class exports.GameController extends Controller
 			return false
 		super
 
+	onClickClues: ->
+		self=@
+		self.engine.useClue()
+
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
 		self=@
@@ -302,7 +307,7 @@ class exports.GameController extends Controller
 	## delegate
 	## difference
 	didFindDifference: (difference, differenceCount) ->
-		@activateDifference difference
+		@activateDifference "found", difference
 		@view.topbar.updateDifferenceIndicator(difference) # update the difference indicator
 
 	didNotFindDifference: (spotCircle) ->
@@ -317,10 +322,8 @@ class exports.GameController extends Controller
 		, 1000 # temporize the loading of the next item
 	## delegate
 
-	activateDifference: (difference, target) ->
+	activateDifference: (type, difference, target) ->
 		self=@
-
-		console.log difference
 
 		if not target?
 			target = self.view.item.elements.firstImage
@@ -335,4 +338,4 @@ class exports.GameController extends Controller
 		# create the difference
 		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.differenceDimensions
 
-		self.view.item.showIndicator "found", differenceRectangle # display the difference position
+		self.view.item.showIndicator type, differenceRectangle # display the difference position

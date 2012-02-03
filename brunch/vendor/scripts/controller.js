@@ -66,7 +66,7 @@ Controller.prototype.onClickLink = function(event) {
 
 	if (route.substr(0, 1) == "#" && route.length > 1) {
 		app.router.setRoute(route.substr(2)); // get ride of #/
-	} else if (route !== "") {
+	} else if (route !== "" && route !== "#") {
 		window.location.href = route;
 	}
 	return false;
