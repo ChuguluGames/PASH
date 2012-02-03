@@ -18,9 +18,6 @@ class exports.ChallengeGameController extends GameController
 
 	scorePenalty: (penalty, score) -> console.log "scorePenalty"
 
-	## clues
-	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
-
 	didFindAllDifferences: ->
 		console.log "found everything, a winner is you, kthx"
 

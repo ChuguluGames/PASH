@@ -42,8 +42,12 @@
 class exports.GameController extends Controller
 	events:
 		"click a"                                      : "onClickLink"
-		"click .button-clues a"                        : "onClickClues"
 		"click .item .first-image, .item .second-image": "onClickItem"
+
+	indicatorsDimensions:
+		found: {width: 64, height: 64}
+		error: {width: 36, height: 36}
+		clue : {width: 64, height: 64}
 
 	differenceDimensions  : {width: 64, height: 64}
 	errorDimensions       : {width: 36, height: 36}
@@ -207,10 +211,16 @@ class exports.GameController extends Controller
 
 	showCurrentIndicators: (differences) ->
 		self=@
+
 		self.view.topbar.updateDifferencesIndicator(differences) # update indicators
 		for difference in differences
-			do (difference) ->
-				self.activateDifference("found", difference) if difference.isFound? and difference.isFound
+			if difference.isFound? and difference.isFound
+				className = "found"
+			else if difference.isClued? and difference.isClued
+				className = "clued"
+			else continue
+
+			self.activateDifferenceIndicator className, difference
 
 	validateItemID: (itemCurrent) ->
 		self=@
@@ -266,11 +276,12 @@ class exports.GameController extends Controller
 		if self.disabledClicks
 			event.preventDefault()
 			return false
-		super
 
-	onClickClues: ->
-		self=@
-		self.engine.useClue()
+		if $(event.target).hasClass("action-showClue")
+			self.engine.useClue()
+			return false
+
+		super
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
@@ -299,31 +310,38 @@ class exports.GameController extends Controller
 
 		@engine.findDifference(circle)
 
-		# show an error if no difference were found
-		# if not differenceFound
-
 		return false
 
 	## delegate
+
 	## difference
 	didFindDifference: (difference, differenceCount) ->
-		@activateDifference "found", difference
-		@view.topbar.updateDifferenceIndicator(difference) # update the difference indicator
+		@activateDifferenceIndicator "found", difference
 
-	didNotFindDifference: (spotCircle) ->
-		self=@
-		errorBounds = app.helpers.polygoner.rectangleFromPoint spotCircle.relativePosition, self.errorDimensions
-		self.view.item.showIndicator "error", errorBounds
+	didNotFindDifference: (spotCircle) -> @activateDifferenceIndicator "error", spotCircle.relativePosition
 
 	## game over
 	didFinishItem: ->
 		setTimeout =>
 			@loadNextItem()
 		, 1000 # temporize the loading of the next item
+
+	## clues
+	didUseClue: (difference, clueCount, differenceCount) ->
+		self=@
+		self.activateDifferenceIndicator "clue", difference
+
 	## delegate
 
-	activateDifference: (type, difference, target) ->
+	activateDifferenceIndicator: (type, difference, target) ->
 		self=@
+
+		if type is "error"
+			errorBounds = app.helpers.polygoner.rectangleFromPoint difference, self.indicatorsDimensions.error
+			self.view.item.showIndicator "error", errorBounds
+			return self
+
+		self.view.topbar.updateDifferenceIndicator difference # update the difference indicator
 
 		if not target?
 			target = self.view.item.elements.firstImage
@@ -336,6 +354,8 @@ class exports.GameController extends Controller
 		rectangleCenter = app.helpers.polygoner.getRectangleCenter rectangle
 
 		# create the difference
-		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.differenceDimensions
+		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.indicatorsDimensions[type]
 
 		self.view.item.showIndicator type, differenceRectangle # display the difference position
+
+		self
