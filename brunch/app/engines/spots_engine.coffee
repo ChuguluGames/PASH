@@ -11,6 +11,7 @@ class exports.SpotsEngine
   delegate         : null
   config           : {}
   timer            : null
+  excludedProps    : ['mode', 'delegate', 'excludedProps', 'config']
 
   constructor: (@mode, @delegate, json) ->
     @timer = new app.helpers.countdown @time, @
@@ -144,9 +145,6 @@ class exports.SpotsEngine
     closestObject = null
     difference = -1
 
-    console.log config
-    console.log someValue
-
     for value, object of config
       if value <= someValue or difference < 0
         tmpDifference = someValue - value
@@ -159,12 +157,13 @@ class exports.SpotsEngine
   fromJSON: (json) ->
     object = JSON.parse json
     for prop, val of object
-      @[prop] = val
+      @[prop] = val if $.inArray(prop, @excludedProps) == -1
 
   filterObject: (object) ->
     # todo: filter proto properties (ie: hasOwnProperty)
     filtered = {}
     for prop, val of object
+      continue if $.inArray(prop, @excludedProps) != -1
       console.log prop
       if typeof val is 'object'
         filtered[prop] = @filterObject(val)
