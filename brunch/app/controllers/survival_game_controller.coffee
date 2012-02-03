@@ -21,5 +21,6 @@ class exports.SurvivalGameController extends GameController
 	## clues
 	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
 
+	## game over
 	timeOut: -> console.log "timeOut"
 	## delegate
