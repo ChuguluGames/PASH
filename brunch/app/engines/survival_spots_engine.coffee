@@ -3,7 +3,6 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
 
   constructor: (delegate, json) ->
     console.log delegate
-    #@timer = new app.helpers.countdown @time, @tick, @delegateTimeOut
     super(app.helpers.config.getSpotsModes().SURVIVAL, delegate, json)
 
   reset: ->
@@ -41,8 +40,7 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
       @delegateTimePenalty(penalty)
     else
       @time = 0
-    @timer.setTimeLeft(@time)
-    #@delegateTimeOut() if @time < 1
+    @timer.setTimeLeft @time
 
   itemStarted: (differences) ->
     super
@@ -51,6 +49,7 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
     @clueCount = limit.clues
     @time      = limit.time
     @timer.setTimeLeft @time
+    @delegateTimeDidChange()
     @timer.resume()
 
   itemFinished: ->

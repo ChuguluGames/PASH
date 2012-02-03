@@ -14,11 +14,11 @@ class exports.SpotsEngine
 
   constructor: (@mode, @delegate, json) ->
     @timer = new app.helpers.countdown @time, @
+    @reloadConfigForCurrentMode()
     if json?
       @fromJSON(json)
     else
       @reset()
-    @reloadConfigForCurrentMode()
 
   reloadConfigForCurrentMode: ->
     @config = require('config/spots_engine_config').config[@mode]
@@ -38,7 +38,6 @@ class exports.SpotsEngine
   onTimeUpdate: (timeLeft) ->
     #@time-- if @time > 0
     @time = timeLeft
-    console.log 'time left: ' + @time
     @delegateTimeDidChange()
     @timeSinceLastSpot++ if @errorCount < 1
 
@@ -77,6 +76,7 @@ class exports.SpotsEngine
     difference.isFound = true
     @delegateDidFindDifference(difference)
     @differenceCount-- if @differenceCount > 0
+    @itemFinished() if @differenceCount < 1
 
   didNotFindDifference: (spotCircle) ->
     @errorCount++
@@ -137,7 +137,6 @@ class exports.SpotsEngine
     @delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
 
   delegateTimeOut: ->
-    console.log "its over dude " + @delegate
     @delegate.timeOut() if @delegate? and @delegate.timeOut?
 
   # config helper method

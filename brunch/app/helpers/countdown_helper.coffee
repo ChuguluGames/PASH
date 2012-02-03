@@ -26,7 +26,6 @@ class exports.CountdownHelper
 			@delegateOnOver()
 		else
 			@timer = setTimeout =>
-				console.log "update"
 				@timeout() if @update() isnt 0 # continue if some time is left
 			, updateIn
 

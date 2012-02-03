@@ -2,7 +2,6 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
   totalDifferencesToFind : 0
 
   constructor: (delegate, json) ->
-    #@timer = new app.helpers.countdown @time, @tick, @delegateTimeOut
     super(app.helpers.config.getSpotsModes().CHALLENGE, delegate, json)
 
   reset: ->
@@ -10,6 +9,7 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
     @time                   = @config.time_limit
     @totalDifferencesToFind = @config.differences_to_find
     @timer.setTimeLeft @time
+    @delegateTimeDidChange()
 
   pause: ->
     super
@@ -48,7 +48,6 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
     else
       @time = 0
     @timer.setTimeLeft @time
-    #@delegateTimeOut() if @time < 1
 
   itemStarted: (differences) ->
     super
