@@ -7,7 +7,7 @@ class exports.CountdownHelper
 	updatedAt      : null
 	pauseAt        : null
 
-	constructor: (timeLeft) ->
+	constructor: (timeLeft, @onUpdate, @onOver) ->
 		@setTimeLeft(timeLeft)
 
 	start: (updateIn) ->
