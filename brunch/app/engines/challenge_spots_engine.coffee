@@ -20,7 +20,7 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
   useClue: ->
     super
     penalty = @config.clue_penalty_points
-    if penalty < @score
+    if penalty <= @score
       @score -= penalty
       @delegateScorePenalty(penalty)
     else
@@ -42,7 +42,7 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
   didNotFindDifference: ->
     super
     penalty = @getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
-    if @time > penalty
+    if @time >= penalty
       @time -= penalty
       @delegateTimePenalty(penalty)
     else

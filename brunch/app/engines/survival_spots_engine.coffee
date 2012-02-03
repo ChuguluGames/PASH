@@ -36,7 +36,7 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
   didNotFindDifference: ->
     super
     penalty = @getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
-    if @time > penalty
+    if @time >= penalty
       @time -= penalty
       @delegateTimePenalty(penalty)
     else

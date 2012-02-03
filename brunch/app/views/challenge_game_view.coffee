@@ -1,4 +1,4 @@
-class exports.ChallengeGameView extends View
+class exports.ChallengeGameView extends GameView
 	# override default configuration
 	configuration:
 		score: true

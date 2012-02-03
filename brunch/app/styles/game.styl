@@ -14,7 +14,7 @@
 		.topbar
 			.button-next-item, .button-clues
 				float right
-				background-image url(path ingame/ingame_btnnext@2x.png)
+				background-image url(path ingame/topbar_btnnext@2x.png)
 				margin-right 3px
 
 				.wrapper
@@ -29,7 +29,7 @@
 				-webkit-background-size contain
 				background-position 0 0
 				background-repeat no-repeat
-				background-image url(path ingame/ingame_options@2x.png)
+				background-image url(path ingame/topbar_background@2x.png)
 				margin-top 2px
 				line-height 34px
 
@@ -53,7 +53,8 @@
 
 						div
 							margin auto
-							width 10px
+							width 100%
+							text-align center
 							font-size 10px
 							text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
 							color rgb(254, 248, 177)
@@ -65,10 +66,13 @@
 					-webkit-background-size contain
 					background-position 0 0
 					background-repeat no-repeat
-					background-image url(path ingame/ingame_time@2x.png)
+					background-image url(path ingame/topbar_timer_background@2x.png)
 
-					div
-						font-size 14px
+					.timer-value
+						padding-left 4px
+						font-size 16px
+						font-weight bold
+						line-height 38px
 						text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
 						color rgb(234, 112, 177)
 
@@ -84,15 +88,18 @@
 							float left
 							height 23px
 							width 23px
-							-webkit-background-size 100% 200%
-							background-position 0 0
+							-webkit-background-size 100% 300%
+							background-position 0 -23px
 							background-repeat no-repeat
-							background-image url(path ingame/ingame_lug@2x.png)
+							background-image url(path ingame/topbar_indicators@2x.png)
 							margin-right -4px
 							opacity 0
 
 							&.found
-								background-position 0 -23px
+								background-position 0 -46px
+
+							&.clued
+								background-position 0 0
 
 	.item-wrapper
 		position relative
@@ -108,7 +115,7 @@
 		-webkit-background-size 70px
 		background-position 50% 50%
 		background-repeat no-repeat
-		background-image url(path ingame/image_spinner.gif)
+		background-image url(path ingame/item_spinner.gif)
 		text-indent -5000px
 
 		&.android
@@ -165,14 +172,14 @@
 				-webkit-background-size contain
 
 			.founds div
-				background-image url(path ingame/ingame_circle01@2x.png)
+				background-image url(path ingame/item_indicator_found@2x.png)
 				opacity 0
 
 			.errors div
-				background-image url(path ingame/ingame_spot_fail@2x.png)
+				background-image url(path ingame/item_indicator_error@2x.png)
 
 			.clues div
-				background-image url(path ingame/ingame_spot_fail@2x.png)
+				background-image url(path ingame/item_indicator_clue@2x.png)
 
 		.first-image
 			margin-left 2px

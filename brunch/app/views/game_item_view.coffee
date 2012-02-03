@@ -41,28 +41,7 @@ class exports.GameItemView extends View
 	showIndicator: (type, rectangle) ->
 		self=@
 
-		switch type
-			when "found" then self.showDifference rectangle
-			when "error" then self.showError rectangle
-			when "clue" then self.showClue rectangle
-
-	createIndicatorElement: (type, rectangle) ->
-		self=@
-		containerClass = type + "s"
-
-		differenceElement = $("<div />").css(
-			left  : rectangle.left + "px"
-			top   : rectangle.top + "px"
-			width : rectangle.width + "px"
-			height: rectangle.height + "px"
-			"-webkit-transition": "opacity 5000ms ease"
-		).appendTo($("." + containerClass, self.elements.firstImage))
-		differenceElementClone = differenceElement.clone().appendTo($("." + containerClass, self.elements.secondImage))
-
-		differenceElement.add(differenceElementClone)
-
-	showDifference: (rectangle) ->
-		self=@
+		return self.showIndicatorError(rectangle) if type is "error"
 
 		initialRectangle = {}
 		initialRectangle.width = rectangle.dimensions.width * self.differenceElement.initialRatio
@@ -70,7 +49,7 @@ class exports.GameItemView extends View
 		initialRectangle.left = rectangle.position.x + rectangle.dimensions.width / 2 - initialRectangle.width / 2
 		initialRectangle.top = rectangle.position.y + rectangle.dimensions.height / 2 - initialRectangle.height / 2
 
-		indicators = self.createIndicatorElement "found", initialRectangle
+		indicators = self.createIndicatorElement type, initialRectangle
 
 		indicators.animate {
 			opacity: 1
@@ -84,12 +63,7 @@ class exports.GameItemView extends View
 
 		self
 
-	removeDifferencesAndErrorsElements: ->
-		self=@
-		# self.elements.firstImage.find(".found, .error").remove()
-		# self.elements.secondImage.find(".found, .error").remove()
-
-	showError: (rectangle) ->
+	showIndicatorError: (rectangle) ->
 		self=@
 
 		indicators = self.createIndicatorElement "error",
@@ -112,6 +86,28 @@ class exports.GameItemView extends View
 					, 10)
 			}
 		, self.errorElement.hideAfter)
+
+		self
+
+	createIndicatorElement: (type, rectangle) ->
+		self=@
+		containerClass = type + "s"
+
+		differenceElement = $("<div />").css(
+			left  : rectangle.left + "px"
+			top   : rectangle.top + "px"
+			width : rectangle.width + "px"
+			height: rectangle.height + "px"
+			"-webkit-transition": "opacity 5000ms ease"
+		).appendTo($("." + containerClass, self.elements.firstImage))
+		differenceElementClone = differenceElement.clone().appendTo($("." + containerClass, self.elements.secondImage))
+
+		differenceElement.add(differenceElementClone)
+
+	removeDifferencesAndErrorsElements: ->
+		self=@
+		# self.elements.firstImage.find(".found, .error").remove()
+		# self.elements.secondImage.find(".found, .error").remove()
 
 	hideLoading: ->
 		self=@
