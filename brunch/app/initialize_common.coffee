@@ -70,7 +70,7 @@ for type, list of modules
   for name in list
     moduleFileName = name + "_" + typeOdd
     modulePath = typePath + moduleFileName
-    moduleClass = moduleFileName.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
+    moduleClass = moduleFileName.toPascalCase()
     window[moduleClass] = require(modulePath)[moduleClass]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
