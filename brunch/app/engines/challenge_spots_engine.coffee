@@ -2,22 +2,20 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
   totalDifferencesToFind : 0
 
   constructor: (delegate, json) ->
+    #@timer = new app.helpers.countdown @time, @tick, @delegateTimeOut
     super(app.helpers.config.getSpotsModes().CHALLENGE, delegate, json)
 
   reset: ->
     super
     @time                   = @config.time_limit
     @totalDifferencesToFind = @config.differences_to_find
+    @timer.setTimeLeft @time
 
   pause: ->
     super
 
   resume: ->
     super
-
-  tick: ->
-    super
-    @delegateTimeOut() if @time < 1
 
   useClue: ->
     super
@@ -49,19 +47,23 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
       @delegateTimePenalty(penalty)
     else
       @time = 0
+    @timer.setTimeLeft @time
     #@delegateTimeOut() if @time < 1
 
   itemStarted: (differences) ->
     super
+    @timer.resume()
     @clueCount = differences.length
 
   itemFinished: ->
+    @timer.pause()
     bonusObject = @getClosestObjectInConfig @config.bonus_per_unused_clue, @clueCount
     scoreBonus  = bonusObject.points
     if @totalDifferencesToFind < 1 # did finish the game
       scoreBonus += @config.final_score_time_left_multiplier * @time
     @score += scoreBonus
     @time  += bonusObject.time
+    @timer.setTimeLeft @time
     @delegateTimeDidChange()
     @delegateScoreDidChange()
     if @totalDifferencesToFind < 1

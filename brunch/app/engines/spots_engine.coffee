@@ -10,8 +10,10 @@ class exports.SpotsEngine
   mode             : null
   delegate         : null
   config           : {}
+  timer            : null
 
   constructor: (@mode, @delegate, json) ->
+    @timer = new app.helpers.countdown @time, @
     if json?
       @fromJSON(json)
     else
@@ -33,9 +35,15 @@ class exports.SpotsEngine
     @timeSinceLastSpot = 0
 
   # scheduled method (each second)
-  tick: ->
-    @time-- if @time > 0
+  onTimeUpdate: (timeLeft) ->
+    #@time-- if @time > 0
+    @time = timeLeft
+    console.log 'time left: ' + @time
+    @delegateTimeDidChange()
     @timeSinceLastSpot++ if @errorCount < 1
+
+  onTimeOut: ->
+    @delegateTimeOut()
 
   # unschedule timers
   pause: ->
@@ -54,6 +62,7 @@ class exports.SpotsEngine
         if not difference.isFound and not difference.isClued
           difference.isClued = true
           @delegateDidUseClue(difference)
+          @itemFinished() if @differenceCount < 1
           break
 
   findDifference: (spotCircle) ->
@@ -68,7 +77,6 @@ class exports.SpotsEngine
     difference.isFound = true
     @delegateDidFindDifference(difference)
     @differenceCount-- if @differenceCount > 0
-    @itemFinished() if @differenceCount < 1
 
   didNotFindDifference: (spotCircle) ->
     @errorCount++
@@ -129,6 +137,7 @@ class exports.SpotsEngine
     @delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
 
   delegateTimeOut: ->
+    console.log "its over dude " + @delegate
     @delegate.timeOut() if @delegate? and @delegate.timeOut?
 
   # config helper method

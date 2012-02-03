@@ -1,13 +1,14 @@
 class exports.CountdownHelper
 	timer          : null
-	frequenceUpdate: 200
+	frequenceUpdate: 1000
 	_timeLeft      : 0
 	timeLeft       : 0
 	startAt        : null
 	updatedAt      : null
 	pauseAt        : null
+	delegate 			 : null
 
-	constructor: (timeLeft, @onUpdate, @onOver) ->
+	constructor: (timeLeft, @delegate) ->
 		@setTimeLeft(timeLeft)
 
 	start: (updateIn) ->
@@ -22,7 +23,7 @@ class exports.CountdownHelper
 			updateIn = if @frequenceUpdate > @timeLeft then @timeLeft else @frequenceUpdate
 
 		if updateIn is 0
-			@onOver()
+			@delegateOnOver()
 		else
 			@timer = setTimeout =>
 				console.log "update"
@@ -30,6 +31,7 @@ class exports.CountdownHelper
 			, updateIn
 
 	resume: ->
+		return @start() if not startAt?
 		diffSinceLastPause = if @pauseAt? then CountdownHelper.now() - @pauseAt else 0
 		@start(diffSinceLastPause)
 
@@ -53,27 +55,31 @@ class exports.CountdownHelper
 
 	update: ->
 		diffTimeSinceLastUpdate = CountdownHelper.now() - @updatedAt
-		@removeTime(diffTimeSinceLastUpdate)
+		@removeTime(diffTimeSinceLastUpdate / 1000)
 
-	setTimeLeft: (@timeLeft) ->
+	setTimeLeft: (timeLeft) ->
+		@timeLeft = timeLeft * 1000
 		@_timeLeft = @timeLeft
 
 	addTime: (duration) ->
+		duration *= 1000
 		@timeLeft += duration
-		@onUpdate(@timeLeft)
+		@delegateOnUpdate(Math.round(@timeLeft / 1000))
 		@timeLeft
 
 	removeTime: (duration) ->
-		@timeLeft = Math.max 0, @timeLeft - duration
-
-		@onUpdate(@timeLeft)
-		@onOver() if @timeLeft is 0
+		@timeLeft = Math.max 0, @timeLeft - duration * 1000
+		@delegateOnUpdate(Math.round(@timeLeft / 1000))
+		@delegateOnOver() if @timeLeft is 0
 
 		@timeLeft
 
 	# delegates
-	onUpdate: ->
-	onOver: ->
+	delegateOnUpdate: (timeLeft) ->
+		@delegate.onTimeUpdate(timeLeft) if @delegate? and @delegate.onTimeUpdate?
+
+	delegateOnOver: ->
+		@delegate.onTimeOut() if @delegate? and @delegate.onTimeOut?
 
 	# statics methods
 	@now = ->
