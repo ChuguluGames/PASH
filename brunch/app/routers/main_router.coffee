@@ -10,7 +10,7 @@ Router::getRoutes = ->
 	modes = app.helpers.config.getSpotsModes()
 	for key,mode of modes
 		modeRoutes.start[mode]  = @getGameStartRoute(mode)
-		modeRoutes.resume[mode] = @getGameStartRoute(mode)
+		modeRoutes.resume[mode] = @getGameResumeRoute(mode)
 	return {
 		game   : modeRoutes
 		home   : @getHomeRoute()
@@ -34,6 +34,9 @@ Router::getOptionsRoute = ->
 
 Router::getGameStartRoute = (mode) ->
 	@getGameRoute() + '/start/' + mode
+
+Router::getGameResumeRoute = (mode) ->
+	@getGameRoute() + '/resume/' + mode
 
 Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 	# same controller
