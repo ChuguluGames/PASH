@@ -40,7 +40,6 @@
 					height 18px
 
 					.score-text
-						display none
 						float left
 						height 18px
 						width 54px
@@ -49,7 +48,6 @@
 						color rgb(255, 255, 255)
 
 					.score-value
-						display none
 						width 65px
 						float left
 
@@ -149,25 +147,31 @@
 			overflow hidden
 			-webkit-backface-visibility hidden
 
-			img
+			.img, .img img, .founds, .errors, .clues
 				position absolute
-				top 0
-				left 0
 				width 100%
 				height 100%
 
-			.difference, .error
+			.img
+				img
+					top 0
+					left 0
+
+			.founds div, .errors div, .clues div
 				position absolute
 				background-position 0 0
 				background-repeat no-repeat
 				background-color transparent
 				-webkit-background-size contain
 
-			.difference
+			.founds div
 				background-image url(path ingame/ingame_circle01@2x.png)
 				opacity 0
 
-			.error
+			.errors div
+				background-image url(path ingame/ingame_spot_fail@2x.png)
+
+			.clues div
 				background-image url(path ingame/ingame_spot_fail@2x.png)
 
 		.first-image

@@ -131,6 +131,10 @@ class exports.SpotsEngine
   getClosestObjectInConfig: (config, someValue) ->
     closestObject = null
     difference = -1
+
+    console.log config
+    console.log someValue
+
     for value, object of config
       if value <= someValue or difference < 0
         tmpDifference = someValue - value

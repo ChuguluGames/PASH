@@ -37,6 +37,13 @@ modules = {
   views: [
     'home'
     'game'
+    'game_item'
+    'game_score'
+    'game_timer'
+    'game_topbar'
+    'challenge_game'
+    'survival_game'
+    'zen_game'
     'options'
   ]
   models: [

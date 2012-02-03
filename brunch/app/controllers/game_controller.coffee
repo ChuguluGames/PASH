@@ -80,7 +80,7 @@ class exports.GameController extends Controller
 	onDestroy: ->
 		self=@
 		self.view.destroy() # destroy the view
-		self.save()
+		# self.save()
 		self.reset()
 		self
 
@@ -137,7 +137,8 @@ class exports.GameController extends Controller
 
 		self.reset()
 
-		self.view.showLoading().disableLinks()  # and show loading and add disabled style on links
+		self.view.topbar.disableButtons() # add disabled style on links
+		self.view.item.showLoading()  # show loading
 
 		self.load ->
 			if self.items[self.itemCurrent]?
@@ -161,9 +162,9 @@ class exports.GameController extends Controller
 						second_image: images[1]
 						next        : "#" + self.itemNextRoute 	# update the next link
 					)
-						.hideLoading() # hide the loading indicator
-						.enableLinks() # enable links
-						.initializeDifferencesFoundIndicator(self.item.differencesArray, self.engine.differenceCount) # initialize difference indicator
+					self.view.item.hideLoading() # hide the loading indicator
+					self.view.topbar.enableButtons() # enable links
+					self.view.topbar.initializeDifferencesIndicator(self.item.differencesArray) # initialize difference indicator
 
 					self.disabledClicks = false # enable clicks
 
@@ -194,7 +195,7 @@ class exports.GameController extends Controller
 				for index, item in self.items
 					if item.id is lastGame.itemCurrentID
 						self.play(mode, index)
-						self.showDifferencesAlreadyFound(item.differencesArray) if lastGame.differencesFoundNumber > 0
+						self.showCurrentIndicators(item.differencesArray)
 						break
 
 				self.play(mode, 0) # not found, start from scratch
@@ -203,9 +204,9 @@ class exports.GameController extends Controller
 
 		else self.start(mode)
 
-	showDifferencesAlreadyFound: (differences) ->
+	showCurrentIndicators: (differences) ->
 		self=@
-
+		self.view.topbar.updateDifferencesIndicator(differences) # update indicators
 		for difference in differences
 			do (difference) ->
 				self.activateDifference(difference) if difference.isFound? and difference.isFound
@@ -302,12 +303,12 @@ class exports.GameController extends Controller
 	## difference
 	didFindDifference: (difference, differenceCount) ->
 		@activateDifference difference
-		@view.updateDifferencesFoundIndicator(differenceCount) # update the difference indicator
+		@view.topbar.updateDifferenceIndicator(difference) # update the difference indicator
 
 	didNotFindDifference: (spotCircle) ->
 		self=@
 		errorBounds = app.helpers.polygoner.rectangleFromPoint spotCircle.relativePosition, self.errorDimensions
-		self.view.showError errorBounds
+		self.view.item.showIndicator "error", errorBounds
 
 	## game over
 	didFinishItem: ->
@@ -322,7 +323,7 @@ class exports.GameController extends Controller
 		console.log difference
 
 		if not target?
-			target = self.view.elements.firstImage
+			target = self.view.item.elements.firstImage
 
 		# create the rectangle that wrap the polygon
 		rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
@@ -334,4 +335,4 @@ class exports.GameController extends Controller
 		# create the difference
 		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.differenceDimensions
 
-		self.view.showDifference(differenceRectangle) # display the difference position
+		self.view.item.showIndicator "found", differenceRectangle # display the difference position
