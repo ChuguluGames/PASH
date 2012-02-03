@@ -105,7 +105,7 @@ class exports.GameItemView extends View
 				duration: self.errorElement.hideIn
 				complete: ->
 					# put the left the errors
-					indicators.css({left: -indicators.dimensions.width + "px"})
+					indicators.css({left: -rectangle.dimensions.width + "px"})
 					# remove them after a little while...
 					setTimeout(->
 						indicators.remove()
