@@ -43,9 +43,9 @@ class exports.GameTopbarView extends View
 
 	update: (data) ->
 		self=@
-		self.updateDifferencesIndicator(data.differences)
-		self.timer.update(data) if self.timer
-		self.score.update(data) if self.score
+		self.updateDifferencesIndicator(data.differences) if data.differences?
+		self.timer.update(data.timer) if self.timer and data.timer?
+		self.score.update(data.score) if self.score and data.score?
 		self.updateNext(data.next) if self.next and data.next?
 		self
 

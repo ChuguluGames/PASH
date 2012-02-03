@@ -320,6 +320,20 @@ class exports.GameController extends Controller
 
 	didNotFindDifference: (spotCircle) -> @activateDifferenceIndicator "error", spotCircle.relativePosition
 
+	## time
+	timeDidChange: (time) -> @view.topbar.timer.update(timeLeft: time)
+
+	timeBonus: (bonus, time) -> @view.topbar.timer.update(timeLeft: time)
+
+	timePenalty: (penalty, time) -> @view.topbar.timer.update(timeLeft: time)
+
+	## score
+	scoreDidChange: (score) -> @view.topbar.score.update(scoreValue: score)
+
+	scoreBonus: (bonus, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: bonus)
+
+	scorePenalty: (penalty, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: penalty)
+
 	## game over
 	didFinishItem: ->
 		setTimeout =>

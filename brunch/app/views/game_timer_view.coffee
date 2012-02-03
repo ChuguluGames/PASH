@@ -1,29 +1,32 @@
 class exports.GameTimerView extends View
-	className   : "timer"
-	elements: {}
+	template : require "templates/game_timer"
+	className: "timer"
+	elements : {}
 
 	render: ->
 		self=@
+		$(self.el).html app.helpers.template.generate self.template
+		self.initializeElements()
 		self
 
 	initializeElements: ->
 		self=@
-		self.elements.timer = $(".button-next-item a", self.el)
-		self.elements.timerEvents = $(".button-next-item a", self.el)
+		self.elements.value = $(".timer-value", self.el)
+		self.elements.events = $(".timer-events", self.el)
 
 	update: (data) ->
 		self=@
 
-		self.updateTimerTimeLeft(data.timer) if data.timer?
-		self.updateTimerEvents(data.timerEvents) if data.timerEvents?
+		self.updateTimeLeft(data.timeLeft) if data.timeLeft?
+		self.addTimeEvent(data.timeEvent) if data.timeEvent?
 
 	updateTimeLeft: (timeLeft) ->
 		self=@
-		self.elements.timer.html timeLeft
+		self.elements.value.html timeLeft
 
-	updateEvents: (timeLeftDifference) ->
+	addTimeEvent: (event) ->
 		self=@
-		self.elements.timerEvents.append timeLeftDifference
+		# self.elements.events.append timeLeftDifference
 
 	reset: ->
 
