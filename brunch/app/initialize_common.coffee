@@ -29,6 +29,9 @@ modules = {
   controllers: [
     'home'
     'game'
+    'challenge_game'
+    'survival_game'
+    'zen_game'
     'options'
   ]
   views: [
@@ -44,6 +47,12 @@ modules = {
     'difference'
     'difference_point'
     'image'
+  ]
+  engines: [
+    'spots'
+    'challenge_spots'
+    'survival_spots'
+    'zen_spots'
   ]
 }
 

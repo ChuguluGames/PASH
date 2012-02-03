@@ -1,3 +1,44 @@
+
+	# 	# devices events
+	# 	"pause document": "onDevicePause"
+	# 	"resume document": "onDeviceResume"
+
+	# onDeviceResume: ->
+	# 	console.log "onDeviceResume"
+
+	# onDevicePause: ->
+	# 	console.log "onDevicePause"
+
+		# timer = new app.helpers.countdown(3000)
+
+		# timer.onUpdate = (timeLeft) ->
+		# 	console.log "time left: " + timeLeft
+
+		# timer.onOver = ->
+		# 	console.log "countdown over"
+
+		# timer.start()
+
+		# setTimeout ->
+		# 	console.log "timer pause"
+		# 	timer.pause()
+
+		# 	setTimeout ->
+		# 		console.log "timer resume"
+		# 		timer.resume()
+
+		# 		setTimeout ->
+		# 			console.log "timer stop"
+		# 			timer.stop()
+
+		# 			timer.start()
+
+		# 		, 320
+
+		# 	, 500
+
+		# , 788
+
 class exports.GameController extends Controller
 	events:
 		"click a"                                      : "onClickLink"
@@ -6,7 +47,7 @@ class exports.GameController extends Controller
 	differenceDimensions  : {width: 64, height: 64}
 	errorDimensions       : {width: 36, height: 36}
 	toleranceAccuracy     : 20
-	modes                 : ["practice", "survival", "challenge"]
+	modes                 : ["zen", "survival", "challenge"]
 
 	loaded                : false
 	disabledClicks        : true
@@ -35,10 +76,6 @@ class exports.GameController extends Controller
 		self.delegateEvents()
 
 		self
-
-	initializeEngine: (lastGame) ->
-		self=@
-		self.engine = new (require('engine/spots_engine').ZenSpotsEngine)(self, lastGame)
 
 	onDestroy: ->
 		self=@
@@ -199,26 +236,17 @@ class exports.GameController extends Controller
 	getNextItem: ->
 		self=@
 		# get index
-		if self.itemCurrent + 1 < self.items.length
-			self.itemNext = self.itemCurrent + 1
-		else if self.mode is "practice"
-			self.itemNext = 0
-		else self.itemNext = false
+		self.itemNext = if self.itemCurrent + 1 < self.items.length then self.itemCurrent + 1 else -1
 
-		# get the route
-		self.itemNextRoute = if self.itemNext isnt false then app.router.getItemRoute(self.mode, self.itemNext) else false
+		self.itemNextRoute = if self.itemNext isnt -1 then app.router.getItemRoute(self.mode, self.itemNext) else null
 		self.itemNext
 
 	getPreviousItem: ->
 		self=@
 		# get index
-		if self.itemCurrent > 0
-			self.itemPrevious = self.itemCurrent - 1
-		else if self.mode is "practice"
-			self.itemPrevious = self.items.length - 1
-		else self.itemPrevious = false
+		self.itemPrevious = if self.itemCurrent > 0 then self.itemCurrent - 1 else self.itemPrevious = -1
 		# get the route
-		self.itemPreviousRoute = if self.itemPrevious isnt false then app.router.getItemRoute(self.mode, self.itemPrevious) else false
+		self.itemPreviousRoute = if self.itemPrevious isnt -1 then app.router.getItemRoute(self.mode, self.itemPrevious) else null
 		self.itemPrevious
 
 	loadNextItem: ->
@@ -259,48 +287,33 @@ class exports.GameController extends Controller
 
 		# create a circle from the position and the given tolerance accuracy
 		circle =
-			center: retinaPosition
-			radius: self.toleranceAccuracy
+			relativePosition: relativePosition
+			center          : retinaPosition
+			radius          : self.toleranceAccuracy
 
 		@engine.findDifference(circle)
 
 		# show an error if no difference were found
-	#		if not differenceFound
-	#			errorBounds = app.helpers.polygoner.rectangleFromPoint relativePosition, self.errorDimensions
-	#			self.view.showError errorBounds
-	#
+		# if not differenceFound
+
 		return false
 
 	## delegate
-	timeDidChange: (time) -> console.log "timeDidChange"
-
-	timeBonus: (bonus, time) -> console.log "timeBonus"
-
-	timePenalty: (penalty, time) -> console.log "timePenalty"
-
-	## score
-	scoreDidChange: (score) -> console.log "scoreDidChange"
-
-	scoreBonus: (bonus, score) -> console.log "scoreBonus"
-
-	scorePenalty: (penalty, score) -> console.log "scorePenalty"
-
-	## clues
-	didUseClue: (difference, clueCount, differenceCount) -> console.log "didUseClue"
-
 	## difference
 	didFindDifference: (difference, differenceCount) ->
-		console.log difference
 		@activateDifference difference
 		@view.updateDifferencesFoundIndicator(differenceCount) # update the difference indicator
+
+	didNotFindDifference: (spotCircle) ->
+		self=@
+		errorBounds = app.helpers.polygoner.rectangleFromPoint spotCircle.relativePosition, self.errorDimensions
+		self.view.showError errorBounds
 
 	## game over
 	didFinishItem: ->
 		setTimeout =>
 			@loadNextItem()
 		, 1000 # temporize the loading of the next item
-
-	timeOut: -> console.log "timeOut"
 	## delegate
 
 	activateDifference: (difference, target) ->

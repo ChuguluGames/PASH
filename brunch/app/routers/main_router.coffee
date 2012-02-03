@@ -43,6 +43,15 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 
 		@currentController = newController
 
+Router::getGameController = (mode) ->
+	switch mode
+		when "zen" then gameController = ZenGameController
+		when "survival" then gameController = SurvivalGameController
+		when "challenge" then gameController = ChallengeGameController
+		else gameController = ZenGameController
+
+	gameController
+
 exports.MainRouter = new Router(
 	routes:
 		"":
@@ -67,7 +76,7 @@ exports.MainRouter = new Router(
 			"/game/start/:mode":
 				on: (locale, mode) ->
 
-					@changeController GameController, GameView, ->
+					@changeController @getGameController(mode), GameView, ->
 						@start(mode)
 					, ->
 						@reset().start(mode)
@@ -75,7 +84,7 @@ exports.MainRouter = new Router(
 			"/game/resume/:mode":
 				on: (locale, mode) ->
 
-					@changeController GameController, GameView, ->
+					@changeController @getGameController(mode), GameView, ->
 						@resume(mode)
 					, ->
 						@reset().resume(mode)
@@ -83,7 +92,7 @@ exports.MainRouter = new Router(
 			"/game/mode/:mode/item/:item":
 				on: (locale, mode, itemIndex) ->
 
-					@changeController GameController, GameView, ->
+					@changeController @getGameController(mode), GameView, ->
 						@play(mode, itemIndex)
 					, ->
 						@reset().play(mode, itemIndex)
