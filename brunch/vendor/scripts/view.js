@@ -28,6 +28,7 @@ View.prototype.make = function() {
 	var el = document.createElement(self.tagName);
 	if (attributes) $(el).attr(attributes);
 	self.el = el;
+	return self;
 },
 
 View.prototype.initialize = function() {};
