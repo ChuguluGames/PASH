@@ -1,18 +1,19 @@
 class exports.DeviceHelper
 	self=@
 
-	self.tag          = "DeviceHelper"
-	self._userAgent   = null
-	self._windowSize  = null
-	self._isMobile    = null
-	self._isAndroid   = null
-	self._isIOS       = null
-	self._isIpad      = null
-	self._isIPhone    = null
-	self._isIPod      = null
-	self._isRetina    = null
-	self._resolution  = null
-	self._localization= null
+	self.tag            = "DeviceHelper"
+	self._userAgent      = null
+	self._windowSize     = null
+	self._isMobile       = null
+	self._isAndroid      = null
+	self._isIOS          = null
+	self._isIpad         = null
+	self._isIPhone       = null
+	self._isIPod         = null
+	self._isRetina       = null
+	self._resolution     = null
+	self._localization   = null
+	self._animationGrade = null
 
 	self.getWindowSize = ->
 		self._windowSize ?= {width : $(window).width(), height: $(window).height()}
@@ -56,3 +57,21 @@ class exports.DeviceHelper
 
 	self.getUserAgent = ->
 		self._userAgent ?= navigator.userAgent.toLowerCase()
+
+	self.getAnimationGrade = (callback) ->
+		if not self._animationGrade?
+			# check local storage
+			_restoreGrade = localStorage.getItem('device_animation_grade')
+			if not _restoreGrade?
+				return app.helpers.benchmark.test (grade) ->
+					self._animationGrade = grade
+					localStorage.setItem('device_animation_grade', grade)
+					callback(self._animationGrade) if typeof callback isnt "undefined"
+			else
+				self._animationGrade = _restoreGrade
+
+		callback(self._animationGrade) if typeof callback isnt "undefined"
+		self._animationGrade
+
+	self.canPerformAnimation = ->
+		self._animationGrade < 2

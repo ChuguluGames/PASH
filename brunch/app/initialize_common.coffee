@@ -3,6 +3,7 @@ window.app = {}
 modules = {
   helpers: [
     'android_loading'
+    'benchmark'
     'config'
     'countdown'
     'locale'
@@ -173,6 +174,7 @@ class exports.Application
 
     # helpers
     self.helpers.android_loading  = AndroidLoadingHelper
+    self.helpers.benchmark        = BenchmarkHelper
     self.helpers.config           = ConfigHelper
     self.helpers.countdown        = CountdownHelper
     self.helpers.db               = DbHelper
@@ -199,7 +201,8 @@ class exports.Application
 
     self.helpers.model_downloader = ModelDownloadHelper
 
-    # wait for database
-    self.helpers.db.createPASHDatabase -> self.onDatabaseReady()
+    self.helpers.device.getAnimationGrade ->
+      # wait for database
+      self.helpers.db.createPASHDatabase -> self.onDatabaseReady()
 
 window.app = new exports.Application()
