@@ -16,9 +16,9 @@
 		<% if @content or @content isnt no: %>
 		<div class="content">
 			<div class="padding">
-			<% if @content is true: %>
+			<% if @content: %>
 			<%= @strings.popups[@name].content %>
-			<% else: %>
+			<% else if @content isnt no: %>
 			<%= @content %>
 			<% end %>
 			</div>

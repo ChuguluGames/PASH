@@ -17,6 +17,12 @@ class exports.PopupView extends View
 		# override defaults
 		@settings = $.extend settings, attributes.options
 
+		# check locale
+		strings = app.helpers.locale.getStrings()
+		if not strings.popups[@settings.name]?
+			@settings.title = false if @settings.title is true
+			@settings.content = false if @settings.content is true
+
 		@settings.activateClose = true if @settings.onClose?
 
 		@className = "popup"
