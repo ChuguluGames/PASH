@@ -7,7 +7,7 @@ function activateFastClicks() {
 		// Special event definition.
 		$.event.special.click = {
 			setup: function() {
-				console.log("setup")
+				console.log("setup fastclick on element " + this.tagName)
 				if(typeof $(this).data("fastclick_activated") === undefined || $(this).data("fastclick_activated") !== true) {
 
 					// listen to touchstart event
