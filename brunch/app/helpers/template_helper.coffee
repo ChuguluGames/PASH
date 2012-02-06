@@ -7,6 +7,6 @@ class exports.TemplateHelper
 			strings: app.helpers.locale.getStrings()
 		}
 
-		data = if typeof data isnt "undefined" then $.merge(templateVars, data) else templateVars
+		data = if typeof data isnt "undefined" then $.extend(templateVars, data) else templateVars
 
 		template data
