@@ -47,9 +47,11 @@ class exports.SpotsEngine
 
   # unschedule timers
   pause: ->
+    @timer.pause() if @timer?
 
   # reschedule timers
   resume: ->
+    @timer.resume() if @timer?
 
   # differences
   useClue: ->
