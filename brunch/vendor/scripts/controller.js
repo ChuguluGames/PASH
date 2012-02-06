@@ -29,7 +29,9 @@ Controller.prototype.onDestroy = function() {};
 Controller.prototype.onActivate = function() {};
 
 Controller.prototype.eventSplitter = /^(\S+)\s*(.*)$/;
-Controller.prototype.events = {};
+Controller.prototype.events = {
+	"click a": "onClickLink"
+};
 
 Controller.prototype.delegateEvents = function() {
 	var self = this,
