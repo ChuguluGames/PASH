@@ -1,0 +1,41 @@
+<div class="overlay"></div>
+<div class="background">
+	<div class="padding">
+		<div class="header">
+			<div class="padding">
+				<% if @activateClose: %>
+				<div class="button close"><a href=""></a></div>
+				<% end %>
+				<% if @title: %>
+				<div class="title"><%= @strings.popups[@name].title %></div>
+				<% else if @title isnt no: %>
+				<div class="title"><%= @title %></div>
+				<% end %>
+			</div>
+		</div>
+		<% if @content or @content isnt no: %>
+		<div class="content">
+			<div class="padding">
+			<% if @content is true: %>
+			<%= @strings.popups[@name].content %>
+			<% else: %>
+			<%= @content %>
+			<% end %>
+			</div>
+		</div>
+		<% end %>
+		<div class="footer">
+			<div class="center">
+				<% if @buttons.resume? and @buttons.resume: %>
+				<div class="button resume"><a href="#"><%= @strings.popups.common.resume %></a></div>
+				<% end %>
+				<% if @buttons.back? and @buttons.back: %>
+				<div class="button back"><a href="#"><%= @strings.popups.common.back %></a></div>
+				<% end %>
+				<% if @buttons.new? and @buttons.new: %>
+				<div class="button new"><a href="#"><%= @strings.popups.common.new %></a></div>
+				<% end %>
+			</div>
+		</div>
+	</div>
+</div>

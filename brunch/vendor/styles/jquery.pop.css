@@ -1,0 +1,51 @@
+.animating {
+	outline: none;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.in, .out {
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-duration:350ms;
+}
+
+.pop {
+	-webkit-transform-origin: 50% 50%;
+}
+
+.pop.in, .pop.out.reverse {
+	-webkit-transform: scale(1);
+  opacity: 1;
+	-webkit-animation-name: popin;
+	z-index: 10;
+}
+
+.pop.in.reverse, .pop.out {
+	-webkit-transform: scale(.2);
+	opacity: 0;
+	-webkit-animation-name: popout;
+	z-index: 0;
+}
+
+@-webkit-keyframes popin {
+    from {
+        -webkit-transform: scale(.2);
+        opacity: 0;
+    }
+    to {
+        -webkit-transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes popout {
+    from {
+        -webkit-transform: scale(1);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: scale(.2);
+        opacity: 0;
+    }
+}

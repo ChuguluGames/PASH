@@ -42,6 +42,7 @@ modules = {
     'game_timer'
     'game_topbar'
     'challenge_game'
+    'popup'
     'survival_game'
     'zen_game'
     'options'

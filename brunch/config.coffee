@@ -38,6 +38,7 @@ exports.config =
           'vendor/scripts/persistence/persistence.store.memory.js'
           'vendor/scripts/persistence/persistence.store.websql.js'
           'vendor/scripts/persistence/persistence.sync.js'
+          'vendor/scripts/jquery.pop.js'
         ]
 
     'styles/app.css':
@@ -45,4 +46,8 @@ exports.config =
         '\.css$': languages.CSSLanguage
         '\.styl$': languages.StylusLanguage
       order:
-        before: ['vendor/styles/reset.styl', 'app/styles/fonts.styl', 'app/styles/main.styl']
+        before: [
+          'vendor/styles/reset.styl',
+          'app/styles/fonts.styl',
+          'app/styles/main.styl'
+        ]
