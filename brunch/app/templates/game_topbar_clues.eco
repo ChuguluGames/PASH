@@ -1,0 +1,5 @@
+<div class="button button-clues">
+	<div class="wrapper">
+		<a href="#" class="action-showClue"><%= @strings.ingame.button_clues %></a>
+	</div>
+</div>

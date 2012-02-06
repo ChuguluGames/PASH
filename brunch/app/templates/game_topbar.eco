@@ -1,0 +1,12 @@
+<div class="topbar">
+	<div class="button back">
+		<div class="wrapper">
+			<a href="#<%= @routes.options %>"><%= @strings.ingame.button_pause %></a>
+		</div>
+	</div>
+	<div class="toolbar-center">
+		<div class="differences-status">
+			<ul></ul>
+		</div>
+	</div>
+</div>

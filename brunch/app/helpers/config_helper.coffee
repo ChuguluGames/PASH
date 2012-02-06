@@ -51,3 +51,6 @@ class exports.ConfigHelper
 
   self.getBasePackIds = ->
     app.config[window.env].base_pack_ids
+
+  self.getSpotsModes = ->
+    app.config.spots_modes

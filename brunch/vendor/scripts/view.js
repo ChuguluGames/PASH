@@ -9,7 +9,7 @@ function View(attributes) {
 	// create the element
 	self.make();
 
-	self.initialize();
+	self.initialize(attributes);
 
 	return self;
 }

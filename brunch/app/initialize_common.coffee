@@ -29,11 +29,21 @@ modules = {
   controllers: [
     'home'
     'game'
+    'challenge_game'
+    'survival_game'
+    'zen_game'
     'options'
   ]
   views: [
     'home'
     'game'
+    'game_item'
+    'game_score'
+    'game_timer'
+    'game_topbar'
+    'challenge_game'
+    'survival_game'
+    'zen_game'
     'options'
   ]
   models: [
@@ -45,6 +55,12 @@ modules = {
     'difference_point'
     'image'
   ]
+  engines: [
+    'spots'
+    'challenge_spots'
+    'survival_spots'
+    'zen_spots'
+  ]
 }
 
 # executes window.SomeType = require('types/some_type').SomeType for each class
@@ -54,7 +70,7 @@ for type, list of modules
   for name in list
     moduleFileName = name + "_" + typeOdd
     modulePath = typePath + moduleFileName
-    moduleClass = moduleFileName.replace(/(?:^|\s|_|\-)+\w/g, (match) -> match.toUpperCase()).replace(/_+/g, '')
+    moduleClass = moduleFileName.toPascalCase()
     window[moduleClass] = require(modulePath)[moduleClass]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)

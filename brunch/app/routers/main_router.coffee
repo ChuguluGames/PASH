@@ -4,8 +4,15 @@ Router::firstRoute = true
 Router::onFirstRoute = ->
 
 Router::getRoutes = ->
+	modeRoutes =
+		start : {}
+		resume: {}
+	modes = app.helpers.config.getSpotsModes()
+	for key,mode of modes
+		modeRoutes.start[mode]  = @getGameStartRoute(mode)
+		modeRoutes.resume[mode] = @getGameResumeRoute(mode)
 	return {
-		game   : @getGameRoute()
+		game   : modeRoutes
 		home   : @getHomeRoute()
 		options: @getOptionsRoute()
 	}
@@ -25,6 +32,12 @@ Router::getHomeRoute = ->
 Router::getOptionsRoute = ->
 	return @getBaseRoute() + "/options"
 
+Router::getGameStartRoute = (mode) ->
+	@getGameRoute() + '/start/' + mode
+
+Router::getGameResumeRoute = (mode) ->
+	@getGameRoute() + '/resume/' + mode
+
 Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 	# same controller
 	if onResume? and @currentController? and @currentController.constructor is controllerClass
@@ -42,6 +55,12 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 		onCreate.apply(newController)
 
 		@currentController = newController
+
+Router::getGameClassesName = (mode) ->
+	return {
+		controller: window[(mode + "_game_controller").toPascalCase()]
+		view      : window[(mode + "_game_view").toPascalCase()]
+	}
 
 exports.MainRouter = new Router(
 	routes:
@@ -66,24 +85,27 @@ exports.MainRouter = new Router(
 
 			"/game/start/:mode":
 				on: (locale, mode) ->
+					classesName = @getGameClassesName(mode)
 
-					@changeController GameController, GameView, ->
+					@changeController classesName.controller, classesName.view, ->
 						@start(mode)
 					, ->
 						@reset().start(mode)
 
 			"/game/resume/:mode":
 				on: (locale, mode) ->
+					classesName = @getGameClassesName(mode)
 
-					@changeController GameController, GameView, ->
+					@changeController classesName.controller, classesName.view, ->
 						@resume(mode)
 					, ->
 						@reset().resume(mode)
 
 			"/game/mode/:mode/item/:item":
 				on: (locale, mode, itemIndex) ->
+					classesName = @getGameClassesName(mode)
 
-					@changeController GameController, GameView, ->
+					@changeController classesName.controller, classesName.view, ->
 						@play(mode, itemIndex)
 					, ->
 						@reset().play(mode, itemIndex)
