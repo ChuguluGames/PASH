@@ -11,7 +11,7 @@ class exports.SpotsEngine
   delegate         : null
   config           : {}
   timer            : null
-  excludedProps    : ['mode', 'delegate', 'excludedProps', 'config']
+  excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'timer', 'differences']
 
   constructor: (@mode, @delegate, json) ->
     @timer = new app.helpers.countdown @time, @
@@ -94,7 +94,7 @@ class exports.SpotsEngine
     for difference in differences
       difference.isFound = false
       difference.isClued = false
-      app.helpers.polygoner.orderPoints(difference.differencePointsArray)
+      #app.helpers.polygoner.orderPoints(difference.differencePointsArray)
     @differences       = differences
     @differenceCount   = differences.length
 
@@ -163,14 +163,21 @@ class exports.SpotsEngine
     # todo: filter proto properties (ie: hasOwnProperty)
     filtered = {}
     for prop, val of object
-      continue if $.inArray(prop, @excludedProps) != -1
-      console.log prop
-      if typeof val is 'object'
-        filtered[prop] = @filterObject(val)
-      else if typeof val isnt 'function'
-         filtered[prop] = val
+      if $.inArray(prop, @excludedProps) == -1
+        #console.log prop
+        if typeof val is 'object'# Entity (persistencejs)
+          if val.toJSON?
+            filtered[prop] = val.toJSON()
+          else
+            filtered[prop] = @filterObject(val)
+          #continue#filtered[prop] = @filterObject(val)
+        else if typeof val isnt 'function'
+          filtered[prop] = val
     filtered
 
   toJSON: ->
     filteredObject = @filterObject(@)
+    filteredObject.differences = @differences
+    #for difference in @differences
+    #  filteredObject.differences.push difference.toJSON()
     JSON.stringify filteredObject
