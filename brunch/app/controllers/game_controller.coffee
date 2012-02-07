@@ -157,8 +157,6 @@ class exports.GameController extends Controller
 
 			# load the item
 			self.item.fetchAll ->
-
-				self.engine.itemStarted(self.item.differencesArray)
 				# prealoding the images
 				new app.helpers.preloader().load (images) ->
 					# update the view
@@ -173,6 +171,8 @@ class exports.GameController extends Controller
 
 					self.disabledClicks = false # enable clicks
 
+					self.engine.itemStarted(self.item.differencesArray)
+					console.log self.engine.toJSON()
 				, (error) ->
 					alert error
 					# load next item
