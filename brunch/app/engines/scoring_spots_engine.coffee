@@ -14,6 +14,11 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 			@delegateTimeDidChange()
 			@delegateScoreDidChange()
 
+	destroy: ->
+		super
+		@timer.destroy()
+		@timer = null
+
 	# reset counters while keeping the same game mode (ex: restart the game in the same mode)
 	reset: ->
 		super
@@ -30,6 +35,7 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 		@timeSinceLastSpot++ if @errorCount < 1
 
 	onTimeOut: ->
+		@endGame()
 		@delegateTimeOut()
 
 	# unschedule timers

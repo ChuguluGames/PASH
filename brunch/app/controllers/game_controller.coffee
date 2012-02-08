@@ -43,6 +43,8 @@ class exports.GameController extends Controller
 	events:
 		"click a"                                      : "onClickLink"
 		"click .item .first-image, .item .second-image": "onClickItem"
+		"pause document"                               : "onDevicePause"
+		"resume document"                              : "onDeviceResume"
 
 	indicatorsDimensions:
 		found: {width: 64, height: 64}
@@ -71,11 +73,23 @@ class exports.GameController extends Controller
 		self
 
 	onDestroy: ->
+		console.log "destroying game"
 		self=@
 		self.view.destroy() # destroy the view
-		# self.save()
+		self.save()
+		self.engine.destroy()
+		self.engine          = null
+		self.selectedItemIDs = null
 		self.reset()
 		self
+
+	onDeviceResume: ->
+		console.log "onDeviceResume"
+
+	onDevicePause: ->
+		console.log "onDevicePause"
+		@save()
+		app.router.setRoute(app.router.getOptionsRoute())
 
 	toJSON: ->
 		json =
@@ -93,10 +107,10 @@ class exports.GameController extends Controller
 		self=@
 		console.log "saving game"
 		# save the engine data to localstorage
-		#if gameover # dont save / reset old data
-		# localStorage.setItem('game_' + self.engine.mode, '')
-		#else # save
-		localStorage.setItem('game_' + self.engine.mode, JSON.stringify(self.toJSON()))
+		if self.engine.isGameOver() || self.getNextItemIndex() == -1 # if gameover or no more items => remove old data
+			localStorage.removeItem('game_' + self.engine.mode)
+		else # save
+			localStorage.setItem('game_' + self.engine.mode, JSON.stringify(self.toJSON()))
 
 	load: (callback) ->
 		self=@
@@ -119,7 +133,6 @@ class exports.GameController extends Controller
 
 	reset: ->
 		self=@
-
 		self.view.reset() # reset visuals
 		self.disabledClicks = true # disable clicks
 		self
@@ -274,7 +287,6 @@ class exports.GameController extends Controller
 	didFindDifference: (difference, differenceCount) ->
 		@activateDifferenceIndicator "found", difference
 		@view.topbar.updateDifferenceCounterWithDifference difference
-		@save() # ! pause/resume testing puposes !
 
 	didNotFindDifference: (spotCircle) ->
 		@activateDifferenceIndicator "error", spotCircle.relativePosition

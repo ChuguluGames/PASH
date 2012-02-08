@@ -1,12 +1,13 @@
 class exports.SpotsEngine
-	differenceCount  : 0
-	clueCount        : 0
-	differences      : null
-	mode             : null
-	delegate         : null
-	currentItemIndex : 0
-	config           : {}
-	excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'differences']
+	differenceCount : 0
+	clueCount       : 0
+	differences     : null
+	mode            : null
+	delegate        : null
+	currentItemIndex: 0
+	gameOver        : false
+	config          : {}
+	excludedProps   : ['mode', 'delegate', 'excludedProps', 'config', 'differences', 'gameOver']
 
 	constructor: (@mode, @delegate, json) ->
 		@reloadConfigForCurrentMode()
@@ -17,6 +18,13 @@ class exports.SpotsEngine
 
 	reloadConfigForCurrentMode: ->
 		@config = require('config/spots_engine_config').config[@mode]
+
+	destroy: ->
+		config        = null
+		excludedProps = null
+		differences   = null
+		mode          = null
+		delegate      = null
 
 	# reset counters while keeping the same game mode (ex: restart the game in the same mode)
 	reset: ->
@@ -67,6 +75,12 @@ class exports.SpotsEngine
 
 	itemFinished: ->
 		@delegateDidFinishItem()
+
+	isGameOver: ->
+		@gameOver
+
+	endGame: ->
+		@gameOver = true
 
 	# delegate
 	## difference

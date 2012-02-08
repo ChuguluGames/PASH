@@ -11,6 +11,12 @@ class exports.CountdownHelper
 	constructor: (timeLeft, @delegate) ->
 		@setTimeLeft(timeLeft)
 
+	destroy: ->
+		@stop()
+		@timer    = null
+		@delegate = null
+		@reset()
+
 	start: (updateIn) ->
 		@reset()
 		@startAt = CountdownHelper.now()

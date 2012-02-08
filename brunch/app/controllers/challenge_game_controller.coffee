@@ -6,4 +6,5 @@ class exports.ChallengeGameController extends ScoringGameController
 
 	## delegate
 	didFindAllDifferences: ->
+		@endGame()
 		console.log "found everything, a winner is you, kthx"
