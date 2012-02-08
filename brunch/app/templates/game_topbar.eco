@@ -1,12 +1,18 @@
 <div class="topbar">
+	<div class="topbarpad"></div>
+
 	<div class="button back">
-		<div class="wrapper">
-			<a href="#<%= @routes.options %>"><%= @strings.ingame.button_pause %></a>
+		<a href="#<%= @routes.options %>" class="vcenterw">
+			<span class="vcenter"><%= @strings.ingame.button_pause %></span>
+		</a>
+	</div>
+
+	<div class="topbar-center-wrapper">
+		<div class="topbar-center">
+			<div class="score-container vcenterw"></div>
+			<div class="timer-container"></div>
+			<div class="indicators vcenterw"><ul class="vcenter"></ul></div>
 		</div>
 	</div>
-	<div class="toolbar-center">
-		<div class="differences-status">
-			<ul></ul>
-		</div>
-	</div>
+
 </div>

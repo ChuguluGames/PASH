@@ -1,5 +1,5 @@
 <div class="button button-next-item">
-	<div class="wrapper">
-		<a href="#<%= @routes.game %>"><%= @strings.ingame.button_next %></a>
-	</div>
+	<a href="#<%= @routes.game %>" class="vcenterw">
+		<span class="vcenter"><%= @strings.ingame.button_next %></span>
+	</a>
 </div>

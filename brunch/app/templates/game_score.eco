@@ -1,3 +1,3 @@
-<div class="score-text"><%= @strings.ingame.score %> :</div>
-<div class="score-value"><div> - </div></div>
-<div class="score-events"></div>
+<div class="text-wrapper vcenterw"><span class="text vcenter"><%= @strings.ingame.score %>:</span></div>
+<div class="value-wrapper vcenterw"><span class="value vcenter"> - </span></div>
+<div class="events"></div>

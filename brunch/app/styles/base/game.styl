@@ -1,0 +1,170 @@
+@import "app/styles/base/config"
+
+#game-view
+	background-color white
+	-webkit-background-size contain
+	background-position 0 0
+	background-repeat repeat-x
+	background-image url(path ingame/ingame_background@2x.jpg)
+	-webkit-backface-visibility hidden
+
+	.topbar-wrapper
+		.topbar
+			.button-next-item, .button-clues
+				float right
+				background-image url(path ingame/topbar_btnnext@2x.png)
+
+			.topbar-center-wrapper
+				float left
+
+				.topbar-center
+
+					-webkit-background-size cover
+					background-position 0 0
+					background-repeat no-repeat
+					background-image url(path ingame/topbar_background@2x.png)
+
+					.score
+						.text
+							color rgb(255, 255, 255)
+
+						.value
+							display inlign-block
+							text-align center
+							color rgb(254, 248, 177)
+
+					.timer
+						-webkit-background-size cover
+						background-position 0 0
+						background-repeat no-repeat
+						background-image url(path ingame/topbar_timer_background@2x.png)
+
+						.timer-value
+							text-align center
+							font-weight bold
+							color rgb(234, 112, 177)
+
+
+					.indicators
+						ul
+							list-style none
+							li
+								float left
+								-webkit-background-size 100% 300%
+								background-position 0 -33%
+								background-repeat no-repeat
+								background-image url(path ingame/topbar_indicators@2x.png)
+								opacity 0
+
+								&.found
+									background-position 0 -66%
+
+								&.clued
+									background-position 0 0
+
+	.item-wrapper
+		position relative
+
+	.item-loading
+		position absolute
+		top 0
+		left 0
+		z-index 10
+		text-indent -5000px
+
+		.loading-image
+			margin auto
+			-webkit-background-size cover
+			background-position 50% 50%
+			background-repeat no-repeat
+			background-image url(path ingame/item_spinner.gif)
+
+		&.android
+			height auto
+			background none
+			text-indent 0
+			color #EC72E4
+			font-weigth bold
+			z-index 99
+
+			.loading-image
+				display none
+
+			div
+				text-align left
+				margin auto
+				font-family times
+
+				.points
+					span
+						opacity 0
+
+	.item
+		position absolute
+		top 0
+		left 0
+		z-index 9
+
+		.first-image
+			float left
+
+		.second-image
+			float right
+
+		.first-image, .second-image
+			position relative
+			overflow hidden
+			-webkit-backface-visibility hidden
+
+			.img, .img img, .founds, .errors, .clues
+				position absolute
+
+			.img
+				img
+					top 0
+					left 0
+
+			.founds div, .errors div, .clues div
+				position absolute
+				background-position 0 0
+				background-repeat no-repeat
+				background-color transparent
+				-webkit-background-size contain
+
+			.founds div
+				background-image url(path ingame/item_indicator_found@2x.png)
+
+			.errors div
+				background-image url(path ingame/item_indicator_error@2x.png)
+
+			.clues div
+				background-image url(path ingame/item_indicator_clue@2x.png)
+
+			.founds div, .clues div
+				opacity 0
+				-webkit-transform-origin: 50% 50%
+				-webkit-transform: scale(10)
+				-webkit-animation-fill-mode: forwards // leave the animation in the state of the last frame
+				-webkit-animation-timing-function: ease-in
+				-webkit-animation-duration: 350ms
+
+				&.indicator_popout
+					-webkit-animation-name: indicator_popout
+
+			.errors div
+				opacity: 1
+				-webkit-animation-fill-mode: forwards // leave the animation in the state of the last frame
+				-webkit-animation-timing-function: linear
+				-webkit-animation-duration: 250ms
+
+				&.indicator_error_fadeout
+					-webkit-animation-name: indicator_error_fadeout
+
+@css {
+	@-webkit-keyframes indicator_error_fadeout {
+		from {
+		} to {
+			opacity: 0;
+		}
+	}
+}

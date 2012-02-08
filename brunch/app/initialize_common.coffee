@@ -6,6 +6,7 @@ modules = {
     'benchmark'
     'config'
     'countdown'
+    'dynamic_screen'
     'locale'
     'device'
     'log'
@@ -21,6 +22,7 @@ modules = {
     'model_download'
     'event'
     'collision'
+    'scale'
     'seed'
     'template'
   ]
@@ -178,6 +180,7 @@ class exports.Application
     self.helpers.config           = ConfigHelper
     self.helpers.countdown        = CountdownHelper
     self.helpers.db               = DbHelper
+    self.helpers.dynamic_screen   = DynamicScreenHelper
     self.helpers.fs               = FileSystemHelper
     self.helpers.downloader       = DownloadHelper
     self.helpers.image_downloader = ImageDownloadHelper
@@ -194,6 +197,8 @@ class exports.Application
 
     self.helpers.locale.setConfig(self.helpers.config.getLocales())
       .setLocale(self.helpers.device.getLocalization()) # override default locale by user localization setting
+
+    self.helpers.dynamic_screen.initialize self.helpers.config.getDynamicScreen()
 
     if self.helpers.device.isMobile()
       activateFastClicks()

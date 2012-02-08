@@ -40,17 +40,17 @@
 		# , 788
 
 class exports.GameController extends Controller
-	events:
-		"click a"                                      : "onClickLink"
-		"click .item .first-image, .item .second-image": "onClickItem"
-
-	indicatorsDimensions:
+	# -- static --
+	@indicatorsDimensions =
 		found: {width: 64, height: 64}
 		error: {width: 36, height: 36}
 		clue : {width: 64, height: 64}
+	# -- static --
 
-	differenceDimensions  : {width: 64, height: 64}
-	errorDimensions       : {width: 36, height: 36}
+	events:
+		"click a"                                      : "onClickLink"
+		"click .item .first-image .image-padding, .item .second-image .image-padding": "onClickItem"
+
 	toleranceAccuracy     : 20
 	modes                 : ["zen", "survival", "challenge"]
 
@@ -298,14 +298,15 @@ class exports.GameController extends Controller
 		# make the position relative to the item
 		relativePosition = app.helpers.positioner.getRelativePosition event.currentTarget, position
 
-		# make the position adapt to the retina
-		retinaPosition = app.helpers.retina.positionToRetina(relativePosition)
+		# make the position adapt the used scale
+		scaledPosition = ScaleHelper.scalePositionTo relativePosition, 2 / DynamicScreenHelper.itemScale
+
 		differenceFound = false
 
 		# create a circle from the position and the given tolerance accuracy
 		circle =
-			relativePosition: relativePosition
-			center          : retinaPosition
+			relativePosition: relativePosition # needed for activateDifferenceIndicator difference center
+			center          : scaledPosition
 			radius          : self.toleranceAccuracy
 
 		@engine.findDifference(circle)
@@ -351,7 +352,7 @@ class exports.GameController extends Controller
 		self=@
 
 		if type is "error"
-			errorBounds = app.helpers.polygoner.rectangleFromPoint difference, self.indicatorsDimensions.error
+			errorBounds = app.helpers.polygoner.rectangleFromPoint difference, GameController.indicatorsDimensions.error
 			self.view.item.showIndicator "error", errorBounds
 			return self
 
@@ -361,14 +362,14 @@ class exports.GameController extends Controller
 			target = self.view.item.elements.firstImage
 
 		# create the rectangle that wrap the polygon
-		rectangleRetina = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
-		rectangle = app.helpers.retina.rectangleRetinaToNonRetina(rectangleRetina)
+		unscaledRectangle = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
+		scaledRectangle = ScaleHelper.scaleRectangleTo unscaledRectangle, 1 / (2 / DynamicScreenHelper.itemScale)
 
 		# find the center point of the rectangle
-		rectangleCenter = app.helpers.polygoner.getRectangleCenter rectangle
+		rectangleCenter = app.helpers.polygoner.getRectangleCenter scaledRectangle
 
 		# create the difference
-		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, self.indicatorsDimensions[type]
+		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, GameController.indicatorsDimensions[type]
 
 		self.view.item.showIndicator type, differenceRectangle # display the difference position
 

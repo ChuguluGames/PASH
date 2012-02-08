@@ -1,6 +1,6 @@
 class exports.GameScoreView extends View
 	template : require "templates/game_score"
-	className: "score"
+	className: "score vcenter"
 	elements : {}
 
 	render: ->
@@ -11,8 +11,8 @@ class exports.GameScoreView extends View
 
 	initializeElements: ->
 		self=@
-		self.elements.value = $(".score-value div", self.el)
-		self.elements.events = $(".score-events", self.el)
+		self.elements.value = $(".value", self.el)
+		self.elements.events = $(".events", self.el)
 
 	update: (data) ->
 		self=@

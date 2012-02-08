@@ -1,15 +1,22 @@
-<div class="item-loading"><div class="loading-text"><span class="points">...</span></div></div>
+<div class="item-loading vcenterw">
+	<div class="loading-image vcenter"></div>
+	<div class="loading-text"><span class="points">...</span></div>
+</div>
 <div class="item">
 	<div class="first-image">
-		<div class="img"></div>
-		<div class="founds"></div>
-		<div class="errors"></div>
-		<div class="clues"></div>
+		<div class="image-padding" style="<%= @padding %>">
+			<div class="img"></div>
+			<div class="founds"></div>
+			<div class="errors"></div>
+			<div class="clues"></div>
+		</div>
 	</div>
 	<div class="second-image">
-		<div class="img"></div>
-		<div class="founds"></div>
-		<div class="errors"></div>
-		<div class="clues"></div>
+		<div class="image-padding" style="<%= @padding %>">
+			<div class="img"></div>
+			<div class="founds"></div>
+			<div class="errors"></div>
+			<div class="clues"></div>
+		</div>
 	</div>
 </div>

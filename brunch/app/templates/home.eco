@@ -6,5 +6,7 @@
 </div>
 <!--<a href="test.html">TESTS</a>-->
 <div class="button-play">
-	<a href="#<%= @routes.options %>"><%= @strings.home.button_play %></a>
+	<a href="#<%= @routes.options %>" class="vcenterw">
+		<span class="vcenter"><%= @strings.home.button_play %></span>
+	</a>
 </div>

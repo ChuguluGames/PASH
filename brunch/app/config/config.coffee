@@ -26,3 +26,12 @@ exports.config =
     ZEN       : 'zen'
     CHALLENGE : 'challenge'
     SURVIVAL  : 'survival'
+
+  dynamic_screen:
+    baseWindowSize:
+      width : 480
+      height: 320
+    baseItemSize:
+      width : 238
+      height: 273
+    scaleFontSize: .35
