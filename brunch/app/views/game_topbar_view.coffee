@@ -26,10 +26,12 @@ class exports.GameTopbarView extends View
 	render: ->
 		self=@
 		$(self.el).html app.helpers.template.generate self.template
-		$(".toolbar-center", self.el).prepend(self.timer.render().el) if self.timer
-		$(".toolbar-center", self.el).prepend(self.score.render().el) if self.score
-		$(".toolbar-center", self.el).after(app.helpers.template.generate require "templates/game_topbar_next") if self.next
-		$(".toolbar-center", self.el).after(app.helpers.template.generate require "templates/game_topbar_clues") if self.clues
+
+		toolbarCenterWrapper = $(".topbar-center-wrapper", self.el)
+		$(".topbar-center .timer-container", self.el).html(self.timer.render().el) if self.timer
+		$(".topbar-center .score-container", self.el).html(self.score.render().el) if self.score
+		toolbarCenterWrapper.after(app.helpers.template.generate require "templates/game_topbar_next") if self.next
+		toolbarCenterWrapper.after(app.helpers.template.generate require "templates/game_topbar_clues") if self.clues
 
 		self.initializeElements()
 
@@ -37,7 +39,7 @@ class exports.GameTopbarView extends View
 
 	initializeElements: ->
 		self=@
-		self.elements.differencesIndicator = $(".differences-status ul", self.el)
+		self.elements.differencesIndicator = $(".indicators ul", self.el)
 		self.elements.next = $(".button-next-item", self.el) if self.next
 		self.elements.clues = $(".button-clues", self.el) if self.clues
 

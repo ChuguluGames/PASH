@@ -15,7 +15,7 @@
 }
 
 .pop.in, .pop.out.reverse {
-	-webkit-transform: scale(1);
+    -webkit-transform: scale(1);
   opacity: 1;
 	-webkit-animation-name: popin;
 	z-index: 10;

@@ -11,8 +11,8 @@ class exports.GameTimerView extends View
 
 	initializeElements: ->
 		self=@
-		self.elements.value = $(".timer-value", self.el)
-		self.elements.events = $(".timer-events", self.el)
+		self.elements.value = $(".value", self.el)
+		self.elements.events = $(".events", self.el)
 
 	update: (data) ->
 		self=@

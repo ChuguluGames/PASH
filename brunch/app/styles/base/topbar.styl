@@ -1,0 +1,23 @@
+@import "app/styles/base/config"
+
+.topbar-wrapper
+	.topbar
+
+		position relative
+
+		.button
+			-webkit-background-size cover
+			background-position 0 0
+			background-repeat no-repeat
+			text-align center
+
+			a
+				color rgb(255, 255, 255)
+
+				&:active, &.disabled
+					color rgb(255, 255, 25)
+					opacity .3
+
+		.back
+			float left
+			background-image url(path topbar/topbar_btnback@2x.png)

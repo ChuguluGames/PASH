@@ -82,7 +82,6 @@ class BenchmarkTestMove extends BenchmarkTest
 			position: "absolute"
 			top: 0
 			left: 0
-			background: "red"
 		})
 
 		div.appendTo("body").animate {
@@ -103,7 +102,6 @@ class BenchmarkTestMoveResize extends BenchmarkTest
 			position: "absolute"
 			top: 0
 			left: 0
-			background: "red"
 		})
 
 		div.appendTo("body").animate {
@@ -118,6 +116,8 @@ class BenchmarkTestMoveResize extends BenchmarkTest
 				@finish()
 		}
 
+# TODO:class BenchmarkTestCSS3Animation extends BenchmarkTest
+
 class BenchmarkTestFade extends BenchmarkTest
 	start: ->
 		div = $("<div />").css({
@@ -126,7 +126,6 @@ class BenchmarkTestFade extends BenchmarkTest
 			position: "absolute"
 			top: 0
 			left: 0
-			background: "red"
 			opacity: 0
 		})
 
@@ -145,7 +144,6 @@ class BenchmarkTestPop extends BenchmarkTest
 			position: "absolute"
 			top: "100px"
 			left: "100px"
-			background: "red"
 		})
 
 		div.appendTo("body").popIn 1000, =>

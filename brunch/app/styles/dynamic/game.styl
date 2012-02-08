@@ -1,0 +1,147 @@
+#game-view
+	.topbar-wrapper
+		height 15%
+		.topbar
+			height 100%
+			width 100%
+
+			.topbarpad
+				height 13%
+				width 100%
+
+			.button
+				height 87%
+				width 16%
+
+				a
+					height 79%
+					font-size 0.4em
+
+					span
+						text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+
+			.back
+				a
+					padding-right 13%
+					padding-left 17%
+
+			.button-next-item, .button-clues
+				a
+					padding-left 13%
+					padding-right 17%
+
+			.topbar-center-wrapper
+				width 68%
+				height 87%
+
+				.topbar-center
+					height 100%
+					width 96%
+					margin auto
+					position relative
+
+					.score-container
+						float left
+						width 40%
+						height 79%
+
+						.score
+							width 100%
+
+							.text-wrapper
+								float left
+								width 55%
+								text-align right
+
+							.value-wrapper
+								float left
+								width 45%
+								text-align center
+
+							.text
+								width 100%
+								display block
+								font-size 0.4em
+								text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+
+							.value
+								display block
+								width 100%
+								font-size 0.4em
+								text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+
+					.timer-container
+						width 20%
+						height 100%
+						float left
+
+						.timer
+							width 100%
+							height 115%
+
+							.value-wrapper
+								height 64%;
+								width 66%
+								text-align center
+
+								.value
+									font-size 0.6em
+									text-shadow 2px 2px 2px rgba(0, 0, 0, .75)
+
+					.indicators
+						float left
+						height 90%
+						width 40%
+
+						ul
+							height 56%
+							width 100%
+							list-style none
+							li
+								height 100%
+								width 17%
+								background-position 0 50%
+
+								&.found
+									background-position 0 100%
+
+								&.clued
+									background-position 0 0
+
+	.item-wrapper
+		height 85%
+
+	.item-loading
+		width 100%
+		height 100%
+
+		.loading-image
+			width 3em
+			height 3em
+
+		&.android
+			font-size 1em
+			line-height 1em
+
+			div
+				width 170px
+
+	.item
+		width 100%
+		height 100%
+
+		.first-image, .second-image
+			height 100%
+			width 50%
+			position relative
+
+			.image-padding
+				position absolute
+				top 2px
+				left 2px
+				right 2px
+				bottom 2px
+
+				.img, .img img, .founds, .errors, .clues
+					width 100%
+					height 100%

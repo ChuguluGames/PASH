@@ -1,2 +1,2 @@
-<div class="timer-value"></div>
-<div class="timer-events"></div>
+<div class="value-wrapper vcenterw"><span class="value vcenter">0</span><div>
+<div class="events"></div>

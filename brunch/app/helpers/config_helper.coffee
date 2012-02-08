@@ -13,6 +13,9 @@ class exports.ConfigHelper
   self.getAssetsBaseUrl = ->
     self.getBaseUrl()
 
+  self.getDynamicScreen = ->
+    app.config.dynamic_screen
+
   self.getTagsUrl = ->
     locale = app.helpers.locale.getLocale()
     self.getBaseUrl() + '/' + locale + '/tags.js'
