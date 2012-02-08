@@ -17,7 +17,7 @@ function Controller(attributes) {
 Controller.prototype.initialize = function() {};
 
 Controller.prototype.destroy = function() {
-	// TODO: remove events
+	this.delegateEvents('off');
 	this.onDestroy();
 };
 
@@ -33,7 +33,10 @@ Controller.prototype.events = {
 	"click a": "onClickLink"
 };
 
-Controller.prototype.delegateEvents = function() {
+Controller.prototype.delegateEvents = function(action) {
+	if (typeof action == 'undefined') {
+		action = 'on';
+	}
 	var self = this,
 			el = self.view.el,
 			key, method, match, eventName;
@@ -43,22 +46,28 @@ Controller.prototype.delegateEvents = function() {
 		match = key.match(this.eventSplitter);
 		eventName = match[1], selector = match[2];
 
-		self.delegateEvent(selector, el, eventName, method);
+		self.delegateEvent(selector, el, eventName, method, action);
 	}
 };
 
-Controller.prototype.delegateEvent = function(selector, el, eventName, method) {
+Controller.prototype.delegateEvent = function(selector, el, eventName, method, action) {
 	var self = this;
 
 	if (selector == "document" || selector == "window") {
 		el = window[selector];
 		selector = "";
 	}
-
+	// TODO: find a way to link anonymous function (off)
 	if (selector === '') {
-		$(el).on(eventName, function(evt) { return method.call(self, evt); });
+		if (action == "off")
+				$(el).off(eventName);
+		else
+			$(el).on(eventName, function(evt) { return method.call(self, evt); });
 	} else {
-		$(selector, el).on(eventName, function(evt) { return method.call(self, evt); });
+		if (action == "off")
+				$(el).off(eventName);
+		else		
+			$(selector, el).on(eventName, function(evt) { return method.call(self, evt); });
 	}
 };
 
