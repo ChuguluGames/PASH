@@ -48,6 +48,6 @@ exports.config =
       order:
         before: [
           'vendor/styles/reset.styl',
-          'app/styles/fonts.styl',
-          'app/styles/main.styl'
+          'app/styles/base/fonts.styl',
+          'app/styles/base/main.styl'
         ]
