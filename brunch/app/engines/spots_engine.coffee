@@ -1,185 +1,128 @@
 class exports.SpotsEngine
-  score            : 0
-  time             : 0
-  timeSinceLastSpot: 0
-  clueCount        : 0
-  errorCount       : 0
-  comboCount       : 0
-  differenceCount  : 0
-  differences      : []
-  mode             : null
-  delegate         : null
-  config           : {}
-  timer            : null
-  excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'timer', 'differences']
+	differenceCount  : 0
+	clueCount        : 0
+	differences      : null
+	mode             : null
+	delegate         : null
+	itemIdentities 	 : null
+	currentItemIndex : 0
+	config           : {}
+	excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'differences', 'itemIdentities']
 
-  constructor: (@mode, @delegate, json) ->
-    @timer = new app.helpers.countdown @time, @
-    @reloadConfigForCurrentMode()
-    if json?
-      @fromJSON(json)
-    else
-      @reset()
+	constructor: (@mode, @delegate, json) ->
+		@reloadConfigForCurrentMode()
+		if json?
+			@fromJSON(json)
+		else
+			@reset()
 
-  reloadConfigForCurrentMode: ->
-    @config = require('config/spots_engine_config').config[@mode]
+	reloadConfigForCurrentMode: ->
+		@config = require('config/spots_engine_config').config[@mode]
 
-  # reset counters while keeping the same game mode (ex: restart the game in the same mode)
-  reset: ->
-    @time              = 0
-    @score             = 0
-    @clueCount         = 0
-    @comboCount        = 0
-    @errorCount        = 0
-    @differences       = []
-    @differenceCount   = 0
-    @timeSinceLastSpot = 0
+	# reset counters while keeping the same game mode (ex: restart the game in the same mode)
+	reset: ->
+		@clueCount         = 0
+		@differences       = null
+		@differenceCount   = 0
 
-  # scheduled method (each second)
-  onTimeUpdate: (timeLeft) ->
-    #@time-- if @time > 0
-    @time = timeLeft
-    @delegateTimeDidChange()
-    @timeSinceLastSpot++ if @errorCount < 1
+	pause: ->
 
-  onTimeOut: ->
-    @delegateTimeOut()
+	resume: ->
 
-  # unschedule timers
-  pause: ->
-    @timer.pause() if @timer?
+	# differences
+	useClue: ->
+		if @clueCount > 0 and @differenceCount > 0
+			@clueCount--
+			@differenceCount--
+			for difference in @differences # get the first unfound difference
+				if not difference.isFound and not difference.isClued
+					difference.isClued = true
+					@delegateDidUseClue(difference)
+					@itemFinished() if @differenceCount < 1
+					break
 
-  # reschedule timers
-  resume: ->
-    @timer.resume() if @timer?
+	findDifference: (spotCircle) ->
+		for difference in @differences
+			if not difference.isFound and not difference.isClued
+				if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
+					return @didFindDifference(difference)
+		@didNotFindDifference(spotCircle)
 
-  # differences
-  useClue: ->
-    @timeSinceLastSpot = 0
-    @comboCount        = 0
-    if @clueCount > 0 and @differenceCount > 0
-      @clueCount--
-      @differenceCount--
-      for difference in @differences # get the first unfound difference
-        if not difference.isFound and not difference.isClued
-          difference.isClued = true
-          @delegateDidUseClue(difference)
-          @itemFinished() if @differenceCount < 1
-          break
+	didFindDifference: (difference) ->
+		difference.isFound = true
+		@delegateDidFindDifference(difference)
+		@differenceCount-- if @differenceCount > 0
+		@itemFinished() if @differenceCount < 1
 
-  findDifference: (spotCircle) ->
-    for difference in @differences
-      if not difference.isFound and not difference.isClued
-        if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
-          return @didFindDifference(difference)
-    @didNotFindDifference(spotCircle)
+	didNotFindDifference: (spotCircle) ->
+		@delegateDidNotFindDifference(spotCircle)
 
-  didFindDifference: (difference) ->
-    @errorCount        = 0
-    difference.isFound = true
-    @delegateDidFindDifference(difference)
-    @differenceCount-- if @differenceCount > 0
-    @itemFinished() if @differenceCount < 1
+	# item
+	itemStarted: (differences) ->
+		@clueCount         = 0
+		for difference in differences
+			difference.isFound = false
+			difference.isClued = false
+		@differences       = differences
+		@differenceCount   = differences.length
 
-  didNotFindDifference: (spotCircle) ->
-    @errorCount++
-    @comboCount        = 0
-    @timeSinceLastSpot = 0
-    @delegateDidNotFindDifference(spotCircle)
+	itemFinished: ->
+		@delegateDidFinishItem()
 
-  # item
-  itemStarted: (differences) ->
-    @clueCount         = 0
-    @comboCount        = 0
-    @errorCount        = 0
-    @timeSinceLastSpot = 0
-    for difference in differences
-      difference.isFound = false
-      difference.isClued = false
-      #app.helpers.polygoner.orderPoints(difference.differencePointsArray)
-    @differences       = differences
-    @differenceCount   = differences.length
+	# delegate
+	## difference
+	delegateDidFindDifference: (difference) ->
+		@delegate.didFindDifference(difference, @differenceCount) if @delegate? and @delegate.didFindDifference?
 
-  itemFinished: ->
-    @delegateDidFinishItem()
+	delegateDidNotFindDifference: (spotCircle) ->
+		@delegate.didNotFindDifference(spotCircle) if @delegate? and @delegate.didNotFindDifference?
 
-  # delegate
-  ## time
-  delegateTimeDidChange: ->
-    @delegate.timeDidChange @time if @delegate? and @delegate.timeDidChange?
+	## clues
+	delegateDidUseClue: (difference) ->
+		@delegate.didUseClue(difference, @clueCount, @differenceCount) if @delegate? and @delegate.didUseClue?
 
-  delegateTimeBonus: (bonus) ->
-    @delegate.timeBonus(bonus, @time) if @delegate? and @delegate.timeBonus?
+	## game over
+	delegateDidFinishItem: ->
+		@delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
 
-  delegateTimePenalty: (penalty) ->
-    @delegate.timePenalty(penalty, @time) if @delegate? and @delegate.timePenalty?
+	# json
+	fromJSON: (json) ->
+		for prop, val of json
+			@[prop] = val if $.inArray(prop, @excludedProps) == -1
+		@differences    = json.differences if json.differences?
+		@itemIdentities = json.itemIdentities if json.itemIdentities?
 
-  ## score
-  delegateScoreDidChange: ->
-    @delegate.scoreDidChange @score if @delegate? and @delegate.scoreDidChange?
+	toJSON: ->
+		filteredObject                = SpotsEngine.filterObject(@)
+		filteredObject.differences    = @differences
+		filteredObject.itemIdentities = @itemIdentities
+		filteredObject
 
-  delegateScoreBonus: (bonus) ->
-    @delegate.scoreBonus(bonus, @score) if @delegate? and @delegate.scoreBonus?
+	# static helper methods
+	## config helper
+	@getClosestObjectInConfig = (config, someValue) ->
+		closestObject = null
+		difference = -1
 
-  delegateScorePenalty: (penalty) ->
-    @delegate.scorePenalty(penalty, @score) if @delegate? and @delegate.scorePenalty?
+		for value, object of config
+			if value <= someValue or difference < 0
+				tmpDifference = someValue - value
+				if tmpDifference < difference or difference < 0
+					difference    = tmpDifference
+					closestObject = object
+		closestObject
 
-  ## clues
-  delegateDidUseClue: (difference) ->
-    @delegate.didUseClue(difference, @clueCount, @differenceCount) if @delegate? and @delegate.didUseClue?
-
-  ## difference
-  delegateDidFindDifference: (difference) ->
-    @delegate.didFindDifference(difference, @differenceCount) if @delegate? and @delegate.didFindDifference?
-
-  delegateDidNotFindDifference: (spotCircle) ->
-    @delegate.didNotFindDifference(spotCircle) if @delegate? and @delegate.didNotFindDifference?
-
-  ## game over
-  delegateDidFinishItem: ->
-    @delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
-
-  delegateTimeOut: ->
-    @delegate.timeOut() if @delegate? and @delegate.timeOut?
-
-  # config helper method
-  getClosestObjectInConfig: (config, someValue) ->
-    closestObject = null
-    difference = -1
-
-    for value, object of config
-      if value <= someValue or difference < 0
-        tmpDifference = someValue - value
-        if tmpDifference < difference or difference < 0
-          difference    = tmpDifference
-          closestObject = object
-    closestObject
-
-  # json
-  fromJSON: (json) ->
-    object = JSON.parse json
-    for prop, val of object
-      @[prop] = val if $.inArray(prop, @excludedProps) == -1
-
-  filterObject: (object) ->
-    # todo: filter proto properties (ie: hasOwnProperty)
-    filtered = {}
-    for prop, val of object
-      if $.inArray(prop, @excludedProps) == -1
-        #console.log prop
-        if typeof val is 'object'# Entity (persistencejs)
-          if val.toJSON?
-            filtered[prop] = val.toJSON()
-          else
-            filtered[prop] = @filterObject(val)
-          #continue#filtered[prop] = @filterObject(val)
-        else if typeof val isnt 'function'
-          filtered[prop] = val
-    filtered
-
-  toJSON: ->
-    filteredObject = @filterObject(@)
-    filteredObject.differences = @differences
-    #for difference in @differences
-    #  filteredObject.differences.push difference.toJSON()
-    JSON.stringify filteredObject
+	## filter helper
+	@filterObject = (object, excludedProps) ->
+		excludedProps = object.excludedProps if !excludedProps? and object.excludedProps?
+		filtered      = {}
+		for prop, val of object
+			if $.inArray(prop, excludedProps) == -1
+				if typeof val is 'object'# Entity (persistencejs)
+					if val.toJSON?
+						filtered[prop] = val.toJSON()
+					else
+						filtered[prop] = SpotsEngine.filterObject(val)
+				else if typeof val isnt 'function'
+					filtered[prop] = val
+		filtered
