@@ -8,8 +8,17 @@
 	</div>
 </div>
 
-<a href="#<%= @routes.game.start.zen %>">zen</a>
+<div>
+zen
+<a href="#<%= @routes.game.start.zen %>">new</a> | <a href="#<%= @routes.game.resume.zen %>">resume</a>
+</div>
 
-<a href="#<%= @routes.game.start.survival %>">survival</a>
+<div>
+survival
+<a href="#<%= @routes.game.start.survival %>">new</a> | <a href="#<%= @routes.game.resume.survival %>">resume</a>
+</div>
 
-<a href="#<%= @routes.game.start.challenge %>">challenge</a>
+<div>
+challenge
+<a href="#<%= @routes.game.start.challenge %>">new</a> | <a href="#<%= @routes.game.resume.challenge %>">resume</a>
+</div>
