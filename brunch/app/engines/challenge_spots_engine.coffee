@@ -43,7 +43,7 @@ class exports.ChallengeSpotsEngine extends ScoringSpotsEngine
       @time = 0
     @timer.setTimeLeft @time
 
-  itemStarted: (differences) ->
+  newItem: (differences) ->
     super
     @timer.resume()
     @clueCount = differences.length

@@ -52,7 +52,6 @@ class exports.GameController extends Controller
 	differenceDimensions: {width: 64, height: 64}
 	errorDimensions     : {width: 36, height: 36}
 	toleranceAccuracy   : 20
-	modes               : ["zen", "survival", "challenge"]
 	loaded              : false
 	disabledClicks      : true
 	selectedItemIDs     : null
@@ -156,10 +155,10 @@ class exports.GameController extends Controller
 				self.view.item.hideLoading() # hide the loading indicator
 				self.view.topbar.enableButtons() # enable links
 
-				if resumedGame # if new game => inject item's differences
+				if resumedGame
 					self.engine.resume()
 				else
-					self.engine.itemStarted(item.differencesArray)
+					self.engine.newItem(item.differencesArray)
 
 				self.view.topbar.initializeDifferenceCounter(self.engine.differences) # initialize difference indicator
 				self.showDifferenceIndicators(self.engine.differences)
@@ -192,30 +191,12 @@ class exports.GameController extends Controller
 
 		for difference in differences
 			if difference.isFound? and difference.isFound
-				differenceType = "found"
+				indicatorType = "found"
 			else if difference.isClued? and difference.isClued
-				differenceType = "clue"
+				indicatorType = "clue"
 			else continue
 
-			self.activateDifferenceIndicator differenceType, difference
-
-	validateItemID: (itemCurrentIndex) ->
-		self=@
-		if not app.helpers.formater.isInt itemCurrentIndex
-			console.log "Invalid itemID format"
-			return false
-
-		true
-
-	validateMode: (mode) ->
-		self=@
-
-		# can't find the mode in the config array
-		if $.inArray(mode, self.modes) is -1
-			app.helpers.log.error "unknown mode: " + mode, self.tag
-			return false
-
-		true
+			self.activateDifferenceIndicator indicatorType, difference
 
 	getNextItemRoute: ->
 		nextIndex = @getNextItemIndex()

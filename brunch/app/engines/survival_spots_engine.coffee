@@ -32,7 +32,7 @@ class exports.SurvivalSpotsEngine extends ScoringSpotsEngine
       @time = 0
     @timer.setTimeLeft @time
 
-  itemStarted: (differences) ->
+  newItem: (differences) ->
     super
     @level++
     limit      = SurvivalSpotsEngine.getClosestObjectInConfig @config.difficulty_per_item, @level

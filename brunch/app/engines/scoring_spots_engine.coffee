@@ -55,7 +55,7 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 		@timeSinceLastSpot = 0
 		super
 
-	itemStarted: (differences) ->
+	newItem: (differences) ->
 		@comboCount        = 0
 		@errorCount        = 0
 		@timeSinceLastSpot = 0

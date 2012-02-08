@@ -57,7 +57,7 @@ class exports.SpotsEngine
 		@delegateDidNotFindDifference(spotCircle)
 
 	# item
-	itemStarted: (differences) ->
+	newItem: (differences) ->
 		@clueCount         = 0
 		for difference in differences
 			difference.isFound = false
