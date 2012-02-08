@@ -61,6 +61,17 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 		@timeSinceLastSpot = 0
 		super
 
+	# item navigation
+	getNextItemIndex: (itemCount) ->
+		next = @getCurrentItemIndex() + 1
+		next = -1 if next >= itemCount
+		next
+
+	getPreviousItemIndex: (itemCount) ->
+		prev = @getCurrentItemIndex() - 1
+		prev = -1 if prev < -1
+		prev
+
 	# delegate
 	## time
 	delegateTimeDidChange: ->

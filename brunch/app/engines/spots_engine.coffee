@@ -4,10 +4,9 @@ class exports.SpotsEngine
 	differences      : null
 	mode             : null
 	delegate         : null
-	itemIdentities 	 : null
 	currentItemIndex : 0
 	config           : {}
-	excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'differences', 'itemIdentities']
+	excludedProps    : ['mode', 'delegate', 'excludedProps', 'config', 'differences']
 
 	constructor: (@mode, @delegate, json) ->
 		@reloadConfigForCurrentMode()
@@ -85,17 +84,45 @@ class exports.SpotsEngine
 	delegateDidFinishItem: ->
 		@delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
 
+	# item navigation: by default loop through the items
+	## indexes
+	setCurrentItemIndex: (newIndex) ->
+		newIndex = parseInt(newIndex)
+		newIndex = 0 if isNaN(newIndex)
+		@currentItemIndex = newIndex
+
+	getCurrentItemIndex: ->
+		@currentItemIndex
+
+	getNextItemIndex: (itemCount) ->
+		(@getCurrentItemIndex() + 1) % itemCount
+
+	getPreviousItemIndex: (itemCount) ->
+		(@getCurrentItemIndex() + itemCount - 1) + itemCount
+
+#	## identities
+#	getCurrentItemIdentity: ->
+#		@itemIdentities[@getCurrentItemIndex()]
+#
+#	getNextItemIdentity: ->
+#		nextIndex = @getNextItemIndex()
+#		return null if nextIndex == -1
+#		@itemIdentities[nextIndex]
+#
+#	getPreviousItemIdentity: ->
+#		prevIndex = @getPreviousItemIndex()
+#		return null if prevIndex == -1
+#		@itemIdentities[prevIndex]
+
 	# json
 	fromJSON: (json) ->
 		for prop, val of json
 			@[prop] = val if $.inArray(prop, @excludedProps) == -1
 		@differences    = json.differences if json.differences?
-		@itemIdentities = json.itemIdentities if json.itemIdentities?
 
 	toJSON: ->
 		filteredObject                = SpotsEngine.filterObject(@)
 		filteredObject.differences    = @differences
-		filteredObject.itemIdentities = @itemIdentities
 		filteredObject
 
 	# static helper methods
