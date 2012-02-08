@@ -36,7 +36,7 @@ class exports.CountdownHelper
 			, updateIn
 
 	resume: ->
-		return @start(@updateInterval) if not startAt?
+		return @start(@updateInterval) if not @startAt?
 		diffSinceLastPause = if @pauseAt? then CountdownHelper.now() - @pauseAt else 0
 		@start(diffSinceLastPause)
 
