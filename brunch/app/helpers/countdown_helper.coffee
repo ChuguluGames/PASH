@@ -1,15 +1,21 @@
 class exports.CountdownHelper
-	timer          : null
-	frequenceUpdate: 1000
-	_timeLeft      : 0
-	timeLeft       : 0
-	startAt        : null
-	updatedAt      : null
-	pauseAt        : null
-	delegate 			 : null
+	timer         : null
+	updateInterval: 1000 # in ms
+	_timeLeft     : 0
+	timeLeft      : 0
+	startAt       : null
+	updatedAt     : null
+	pauseAt       : null
+	delegate      : null
 
 	constructor: (timeLeft, @delegate) ->
 		@setTimeLeft(timeLeft)
+
+	destroy: ->
+		@stop()
+		@timer    = null
+		@delegate = null
+		@reset()
 
 	start: (updateIn) ->
 		@reset()
@@ -19,8 +25,8 @@ class exports.CountdownHelper
 	timeout: (updateIn) ->
 		@updatedAt = CountdownHelper.now()
 
-		if not updateIn? or updateIn > @frequenceUpdate
-			updateIn = if @frequenceUpdate > @timeLeft then @timeLeft else @frequenceUpdate
+		if not updateIn? or updateIn > @updateInterval
+			updateIn = if @updateInterval > @timeLeft then @timeLeft else @updateInterval
 
 		if updateIn is 0
 			@delegateOnOver()
@@ -30,7 +36,7 @@ class exports.CountdownHelper
 			, updateIn
 
 	resume: ->
-		return @start() if not startAt?
+		return @start(@updateInterval) if not @startAt?
 		diffSinceLastPause = if @pauseAt? then CountdownHelper.now() - @pauseAt else 0
 		@start(diffSinceLastPause)
 
@@ -47,10 +53,10 @@ class exports.CountdownHelper
 		clearTimeout(@timer) if @timer?
 
 	reset: ->
-		@timeLeft = @_timeLeft # reset timeLeft initial
-		@startAt = null
+		@timeLeft  = @_timeLeft # reset timeLeft initial
+		@startAt   = null
 		@updatedAt = null
-		@pauseAt = null
+		@pauseAt   = null
 
 	update: ->
 		diffTimeSinceLastUpdate = CountdownHelper.now() - @updatedAt

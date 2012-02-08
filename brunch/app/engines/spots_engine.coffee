@@ -1,178 +1,169 @@
 class exports.SpotsEngine
-  score            : 0
-  time             : 0
-  timeSinceLastSpot: 0
-  clueCount        : 0
-  errorCount       : 0
-  comboCount       : 0
-  differenceCount  : 0
-  differences      : []
-  mode             : null
-  delegate         : null
-  config           : {}
-  timer            : null
-  excludedProps    : ['mode', 'delegate', 'excludedProps', 'config']
+	differenceCount : 0
+	clueCount       : 0
+	differences     : null
+	mode            : null
+	delegate        : null
+	currentItemIndex: 0
+	gameOver        : false
+	config          : {}
+	excludedProps   : ['mode', 'delegate', 'excludedProps', 'config', 'differences', 'gameOver']
 
-  constructor: (@mode, @delegate, json) ->
-    @timer = new app.helpers.countdown @time, @
-    @reloadConfigForCurrentMode()
-    if json?
-      @fromJSON(json)
-    else
-      @reset()
+	constructor: (@mode, @delegate, json) ->
+		@reloadConfigForCurrentMode()
+		if json?
+			@fromJSON(json)
+		else
+			@reset()
 
-  reloadConfigForCurrentMode: ->
-    @config = require('config/spots_engine_config').config[@mode]
+	reloadConfigForCurrentMode: ->
+		@config = require('config/spots_engine_config').config[@mode]
 
-  # reset counters while keeping the same game mode (ex: restart the game in the same mode)
-  reset: ->
-    @time              = 0
-    @score             = 0
-    @clueCount         = 0
-    @comboCount        = 0
-    @errorCount        = 0
-    @differences       = []
-    @differenceCount   = 0
-    @timeSinceLastSpot = 0
+	destroy: ->
+		config        = null
+		excludedProps = null
+		differences   = null
+		mode          = null
+		delegate      = null
 
-  # scheduled method (each second)
-  onTimeUpdate: (timeLeft) ->
-    #@time-- if @time > 0
-    @time = timeLeft
-    @delegateTimeDidChange()
-    @timeSinceLastSpot++ if @errorCount < 1
+	# reset counters while keeping the same game mode (ex: restart the game in the same mode)
+	reset: ->
+		@clueCount         = 0
+		@differences       = null
+		@differenceCount   = 0
 
-  onTimeOut: ->
-    @delegateTimeOut()
+	pause: ->
 
-  # unschedule timers
-  pause: ->
-    @timer.pause() if @timer?
+	resume: ->
 
-  # reschedule timers
-  resume: ->
-    @timer.resume() if @timer?
+	# differences
+	useClue: ->
+		if @clueCount > 0 and @differenceCount > 0
+			@clueCount--
+			@differenceCount--
+			for difference in @differences # get the first unfound difference
+				if not difference.isFound and not difference.isClued
+					difference.isClued = true
+					@delegateDidUseClue(difference)
+					@itemFinished() if @differenceCount < 1
+					break
 
-  # differences
-  useClue: ->
-    @timeSinceLastSpot = 0
-    @comboCount        = 0
-    if @clueCount > 0 and @differenceCount > 0
-      @clueCount--
-      @differenceCount--
-      for difference in @differences # get the first unfound difference
-        if not difference.isFound and not difference.isClued
-          difference.isClued = true
-          @delegateDidUseClue(difference)
-          @itemFinished() if @differenceCount < 1
-          break
+	findDifference: (spotCircle) ->
+		for difference in @differences
+			if not difference.isFound and not difference.isClued
+				if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
+					return @didFindDifference(difference)
+		@didNotFindDifference(spotCircle)
 
-  findDifference: (spotCircle) ->
-    for difference in @differences
-      if not difference.isFound and not difference.isClued
-        if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
-          return @didFindDifference(difference)
-    @didNotFindDifference(spotCircle)
+	didFindDifference: (difference) ->
+		difference.isFound = true
+		@delegateDidFindDifference(difference)
+		@differenceCount-- if @differenceCount > 0
+		@itemFinished() if @differenceCount < 1
 
-  didFindDifference: (difference) ->
-    @errorCount        = 0
-    difference.isFound = true
-    @delegateDidFindDifference(difference)
-    @differenceCount-- if @differenceCount > 0
-    @itemFinished() if @differenceCount < 1
+	didNotFindDifference: (spotCircle) ->
+		@delegateDidNotFindDifference(spotCircle)
 
-  didNotFindDifference: (spotCircle) ->
-    @errorCount++
-    @comboCount        = 0
-    @timeSinceLastSpot = 0
-    @delegateDidNotFindDifference(spotCircle)
+	# item
+	newItem: (differences) ->
+		@clueCount         = 0
+		for difference in differences
+			difference.isFound = false
+			difference.isClued = false
+		@differences       = differences
+		@differenceCount   = differences.length
 
-  # item
-  itemStarted: (differences) ->
-    @clueCount         = 0
-    @comboCount        = 0
-    @errorCount        = 0
-    @timeSinceLastSpot = 0
-    for difference in differences
-      difference.isFound = false
-      difference.isClued = false
-      app.helpers.polygoner.orderPoints(difference.differencePointsArray)
-    @differences       = differences
-    @differenceCount   = differences.length
+	itemFinished: ->
+		@delegateDidFinishItem()
 
-  itemFinished: ->
-    @delegateDidFinishItem()
+	isGameOver: ->
+		@gameOver
 
-  # delegate
-  ## time
-  delegateTimeDidChange: ->
-    @delegate.timeDidChange @time if @delegate? and @delegate.timeDidChange?
+	endGame: ->
+		@gameOver = true
 
-  delegateTimeBonus: (bonus) ->
-    @delegate.timeBonus(bonus, @time) if @delegate? and @delegate.timeBonus?
+	# delegate
+	## difference
+	delegateDidFindDifference: (difference) ->
+		@delegate.didFindDifference(difference, @differenceCount) if @delegate? and @delegate.didFindDifference?
 
-  delegateTimePenalty: (penalty) ->
-    @delegate.timePenalty(penalty, @time) if @delegate? and @delegate.timePenalty?
+	delegateDidNotFindDifference: (spotCircle) ->
+		@delegate.didNotFindDifference(spotCircle) if @delegate? and @delegate.didNotFindDifference?
 
-  ## score
-  delegateScoreDidChange: ->
-    @delegate.scoreDidChange @score if @delegate? and @delegate.scoreDidChange?
+	## clues
+	delegateDidUseClue: (difference) ->
+		@delegate.didUseClue(difference, @clueCount, @differenceCount) if @delegate? and @delegate.didUseClue?
 
-  delegateScoreBonus: (bonus) ->
-    @delegate.scoreBonus(bonus, @score) if @delegate? and @delegate.scoreBonus?
+	## game over
+	delegateDidFinishItem: ->
+		@delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
 
-  delegateScorePenalty: (penalty) ->
-    @delegate.scorePenalty(penalty, @score) if @delegate? and @delegate.scorePenalty?
+	# item navigation: by default loop through the items
+	## indexes
+	setCurrentItemIndex: (newIndex) ->
+		newIndex = parseInt(newIndex)
+		newIndex = 0 if isNaN(newIndex)
+		@currentItemIndex = newIndex
 
-  ## clues
-  delegateDidUseClue: (difference) ->
-    @delegate.didUseClue(difference, @clueCount, @differenceCount) if @delegate? and @delegate.didUseClue?
+	getCurrentItemIndex: ->
+		@currentItemIndex
 
-  ## difference
-  delegateDidFindDifference: (difference) ->
-    @delegate.didFindDifference(difference, @differenceCount) if @delegate? and @delegate.didFindDifference?
+	getNextItemIndex: (itemCount) ->
+		(@getCurrentItemIndex() + 1) % itemCount
 
-  delegateDidNotFindDifference: (spotCircle) ->
-    @delegate.didNotFindDifference(spotCircle) if @delegate? and @delegate.didNotFindDifference?
+	getPreviousItemIndex: (itemCount) ->
+		(@getCurrentItemIndex() + itemCount - 1) + itemCount
 
-  ## game over
-  delegateDidFinishItem: ->
-    @delegate.didFinishItem() if @delegate? and @delegate.didFinishItem?
+#	## identities
+#	getCurrentItemIdentity: ->
+#		@itemIdentities[@getCurrentItemIndex()]
+#
+#	getNextItemIdentity: ->
+#		nextIndex = @getNextItemIndex()
+#		return null if nextIndex == -1
+#		@itemIdentities[nextIndex]
+#
+#	getPreviousItemIdentity: ->
+#		prevIndex = @getPreviousItemIndex()
+#		return null if prevIndex == -1
+#		@itemIdentities[prevIndex]
 
-  delegateTimeOut: ->
-    @delegate.timeOut() if @delegate? and @delegate.timeOut?
+	# json
+	fromJSON: (json) ->
+		for prop, val of json
+			@[prop] = val if $.inArray(prop, @excludedProps) == -1
+		@differences    = json.differences if json.differences?
 
-  # config helper method
-  getClosestObjectInConfig: (config, someValue) ->
-    closestObject = null
-    difference = -1
+	toJSON: ->
+		filteredObject                = SpotsEngine.filterObject(@)
+		filteredObject.differences    = @differences
+		filteredObject
 
-    for value, object of config
-      if value <= someValue or difference < 0
-        tmpDifference = someValue - value
-        if tmpDifference < difference or difference < 0
-          difference    = tmpDifference
-          closestObject = object
-    closestObject
+	# static helper methods
+	## config helper
+	@getClosestObjectInConfig = (config, someValue) ->
+		closestObject = null
+		difference = -1
 
-  # json
-  fromJSON: (json) ->
-    object = JSON.parse json
-    for prop, val of object
-      @[prop] = val if $.inArray(prop, @excludedProps) == -1
+		for value, object of config
+			if value <= someValue or difference < 0
+				tmpDifference = someValue - value
+				if tmpDifference < difference or difference < 0
+					difference    = tmpDifference
+					closestObject = object
+		closestObject
 
-  filterObject: (object) ->
-    # todo: filter proto properties (ie: hasOwnProperty)
-    filtered = {}
-    for prop, val of object
-      continue if $.inArray(prop, @excludedProps) != -1
-      console.log prop
-      if typeof val is 'object'
-        filtered[prop] = @filterObject(val)
-      else if typeof val isnt 'function'
-         filtered[prop] = val
-    filtered
-
-  toJSON: ->
-    filteredObject = @filterObject(@)
-    JSON.stringify filteredObject
+	## filter helper
+	@filterObject = (object, excludedProps) ->
+		excludedProps = object.excludedProps if !excludedProps? and object.excludedProps?
+		filtered      = {}
+		for prop, val of object
+			if $.inArray(prop, excludedProps) == -1
+				if typeof val is 'object'# Entity (persistencejs)
+					if val.toJSON?
+						filtered[prop] = val.toJSON()
+					else
+						filtered[prop] = SpotsEngine.filterObject(val)
+				else if typeof val isnt 'function'
+					filtered[prop] = val
+		filtered

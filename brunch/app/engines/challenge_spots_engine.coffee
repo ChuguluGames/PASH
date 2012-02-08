@@ -1,4 +1,4 @@
-class exports.ChallengeSpotsEngine extends SpotsEngine
+class exports.ChallengeSpotsEngine extends ScoringSpotsEngine
   totalDifferencesToFind : 0
 
   constructor: (delegate, json) ->
@@ -10,12 +10,6 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
     @totalDifferencesToFind = @config.differences_to_find
     @timer.setTimeLeft @time
     @delegateTimeDidChange()
-
-  pause: ->
-    super
-
-  resume: ->
-    super
 
   useClue: ->
     super
@@ -34,14 +28,14 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
       @timeSinceLastSpot = 0
     else
       @comboCount = 0
-    bonus  = @getClosestObjectInConfig @config.spot_speed_bonus_multiplier, @comboCount
+    bonus  = ChallengeSpotsEngine.getClosestObjectInConfig @config.spot_speed_bonus_multiplier, @comboCount
     bonus  *= @config.points_per_difference
     @score += bonus
     @delegateScoreBonus(bonus)
 
   didNotFindDifference: ->
     super
-    penalty = @getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
+    penalty = ChallengeSpotsEngine.getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
     if @time >= penalty
       @time -= penalty
       @delegateTimePenalty(penalty)
@@ -49,14 +43,14 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
       @time = 0
     @timer.setTimeLeft @time
 
-  itemStarted: (differences) ->
+  newItem: (differences) ->
     super
     @timer.resume()
     @clueCount = differences.length
 
   itemFinished: ->
     @timer.pause()
-    bonusObject = @getClosestObjectInConfig @config.bonus_per_unused_clue, @clueCount
+    bonusObject = ChallengeSpotsEngine.getClosestObjectInConfig @config.bonus_per_unused_clue, @clueCount
     scoreBonus  = bonusObject.points
     if @totalDifferencesToFind < 1 # did finish the game
       scoreBonus += @config.final_score_time_left_multiplier * @time
@@ -67,6 +61,7 @@ class exports.ChallengeSpotsEngine extends SpotsEngine
     @delegateScoreDidChange()
     if @totalDifferencesToFind < 1
       @delegateDidFindAllDifferences()
+      @endGame()
     else
       super # if game is not over, call parent method which notifies delegate about finished item
 

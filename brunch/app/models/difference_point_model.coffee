@@ -23,6 +23,11 @@ DifferencePointDefinition::slopeTo = (point) ->
 	dY = point.y - self.y
 	dY / dX
 
+DifferencePointDefinition::getSimpleObject = ->
+	simple =
+		x: @x
+		y: @y
+
 # custom mapping
 DifferencePointDefinition.fromJSON = (json) ->
   new DifferencePointDefinition((if json.point_diff? then json.point_diff else json))

@@ -1,8 +1,7 @@
-class exports.SurvivalSpotsEngine extends SpotsEngine
+class exports.SurvivalSpotsEngine extends ScoringSpotsEngine
   level : 0
 
   constructor: (delegate, json) ->
-    console.log delegate
     super(app.helpers.config.getSpotsModes().SURVIVAL, delegate, json)
 
   reset: ->
@@ -11,15 +10,6 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
     @level = 0
     @timer.reset()
 
-  pause: ->
-    super
-
-  resume: ->
-    super
-
-  useClue: ->
-    super
-
   didFindDifference: (difference) ->
     super
     if @timeSinceLastSpot <= @config.spot_speed_bonus_time_delta
@@ -27,14 +17,14 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
       @timeSinceLastSpot = 0
     else
       @comboCount = 0
-    bonus  = @getClosestObjectInConfig @config.spot_speed_bonus_multiplier, @comboCount
+    bonus  = SurvivalSpotsEngine.getClosestObjectInConfig @config.spot_speed_bonus_multiplier, @comboCount
     bonus  *= @config.points_per_difference
     @score += bonus
     @delegateScoreBonus(bonus)
 
   didNotFindDifference: ->
     super
-    penalty = @getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
+    penalty = SurvivalSpotsEngine.getClosestObjectInConfig @config.time_penalty_per_error, @errorCount
     if @time >= penalty
       @time -= penalty
       @delegateTimePenalty(penalty)
@@ -42,10 +32,10 @@ class exports.SurvivalSpotsEngine extends SpotsEngine
       @time = 0
     @timer.setTimeLeft @time
 
-  itemStarted: (differences) ->
+  newItem: (differences) ->
     super
     @level++
-    limit      = @getClosestObjectInConfig @config.difficulty_per_item, @level
+    limit      = SurvivalSpotsEngine.getClosestObjectInConfig @config.difficulty_per_item, @level
     @clueCount = limit.clues
     @time      = limit.time
     @timer.setTimeLeft @time

@@ -32,6 +32,7 @@ modules = {
   controllers: [
     'home'
     'game'
+    'scoring_game'
     'challenge_game'
     'survival_game'
     'zen_game'
@@ -61,6 +62,7 @@ modules = {
   ]
   engines: [
     'spots'
+    'scoring_spots'
     'challenge_spots'
     'survival_spots'
     'zen_spots'

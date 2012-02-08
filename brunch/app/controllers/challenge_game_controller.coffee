@@ -1,4 +1,4 @@
-class exports.ChallengeGameController extends GameController
+class exports.ChallengeGameController extends ScoringGameController
 
 	initializeEngine: (lastGame) ->
 		self=@
@@ -7,6 +7,3 @@ class exports.ChallengeGameController extends GameController
 	## delegate
 	didFindAllDifferences: ->
 		console.log "found everything, a winner is you, kthx"
-
-	timeOut: -> console.log "timeOut"
-	## delegate

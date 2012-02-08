@@ -48,6 +48,7 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 		# remove last controller
 		if @currentController?
 			@currentController.destroy()
+			@currentController = null
 
 		# create the new one
 		newController = new controllerClass(view: viewClass)
@@ -88,9 +89,9 @@ exports.MainRouter = new Router(
 					classesName = @getGameClassesName(mode)
 
 					@changeController classesName.controller, classesName.view, ->
-						@start(mode)
+						@start()
 					, ->
-						@reset().start(mode)
+						@reset().start()
 
 			"/game/resume/:mode":
 				on: (locale, mode) ->
@@ -106,9 +107,9 @@ exports.MainRouter = new Router(
 					classesName = @getGameClassesName(mode)
 
 					@changeController classesName.controller, classesName.view, ->
-						@play(mode, itemIndex)
+						@play(itemIndex)
 					, ->
-						@reset().play(mode, itemIndex)
+						@reset().play(itemIndex)
 
 ).configure({ recurse: 'forward' }) # make the first function bind
 

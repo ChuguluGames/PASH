@@ -1,44 +1,3 @@
-
-	# 	# devices events
-	# 	"pause document": "onDevicePause"
-	# 	"resume document": "onDeviceResume"
-
-	# onDeviceResume: ->
-	# 	console.log "onDeviceResume"
-
-	# onDevicePause: ->
-	# 	console.log "onDevicePause"
-
-		# timer = new app.helpers.countdown(3000)
-
-		# timer.onUpdate = (timeLeft) ->
-		# 	console.log "time left: " + timeLeft
-
-		# timer.onOver = ->
-		# 	console.log "countdown over"
-
-		# timer.start()
-
-		# setTimeout ->
-		# 	console.log "timer pause"
-		# 	timer.pause()
-
-		# 	setTimeout ->
-		# 		console.log "timer resume"
-		# 		timer.resume()
-
-		# 		setTimeout ->
-		# 			console.log "timer stop"
-		# 			timer.stop()
-
-		# 			timer.start()
-
-		# 		, 320
-
-		# 	, 500
-
-		# , 788
-
 class exports.GameController extends Controller
 	# -- static --
 	@indicatorsDimensions =
@@ -50,31 +9,21 @@ class exports.GameController extends Controller
 	events:
 		"click a"                                      : "onClickLink"
 		"click .item .first-image .image-padding, .item .second-image .image-padding": "onClickItem"
+		"pause document"                               : "onDevicePause"
+		"resume document"                              : "onDeviceResume"
 
-	toleranceAccuracy     : 20
-	modes                 : ["zen", "survival", "challenge"]
-
-	loaded                : false
-	disabledClicks        : true
-
-	items                 : []
-	item                  : null
-	itemCurrent           : 0
-	itemNext              : false
-	itemNextRoute         : false
-	itemPrevious          : false
-	itemPreviousRoute     : false
-	mode                  : null
-	score                 : 0
-	differencesFoundNumber: 0
-	engine 								: null
+	toleranceAccuracy   : 20
+	loaded              : false
+	disabledClicks      : true
+	selectedItemIDs     : null
+	engine              : null
 
 	initialize: ->
 		self=@
 
 		# create the view
 		$("body").html self.view.render(
-			score: self.score
+			score: 0
 		).el
 
 		# initiate events
@@ -83,102 +32,117 @@ class exports.GameController extends Controller
 		self
 
 	onDestroy: ->
+		console.log "destroying game"
 		self=@
 		self.view.destroy() # destroy the view
-		# self.save()
+		self.save()
+		self.engine.destroy()
+		self.engine          = null
+		self.selectedItemIDs = null
 		self.reset()
 		self
 
+	onDeviceResume: ->
+		console.log "onDeviceResume"
+
+	onDevicePause: ->
+		console.log "onDevicePause"
+		@engine.pause()
+		@save()
+		app.router.setRoute(app.router.getOptionsRoute())
+
+	toJSON: ->
+		json =
+			engine          : @engine.toJSON()
+			selectedItemIDs : @selectedItemIDs
+
+	fromJSON: (json) ->
+		self=@
+		self.selectedItemIDs  = json.selectedItemIDs
+		# load engine from last game lastGame
+		self.initializeEngine(json.engine)
+		self.loaded = true
+
 	save: ->
 		self=@
-
 		console.log "saving game"
-
 		# save the engine data to localstorage
-		localStorage.setItem('game_' + self.mode, self.engine.toJSON())
+		if self.engine.isGameOver() || self.getNextItemIndex() == -1 # if gameover or no more items => remove old data
+			localStorage.removeItem('game_' + self.engine.mode)
+		else # save
+			localStorage.setItem('game_' + self.engine.mode, JSON.stringify(self.toJSON()))
 
-	load: (callback, itemsList, forceFetch) ->
+	load: (callback) ->
 		self=@
 
-		if not self.loaded or (forceFetch? and forceFetch)
-			if not itemsList? or itemsList.length == 0
-				ItemModel.fetchSelected (items) ->
-					self.items = items
-					self.loaded = true
-					callback()
-
-			else
-				ItemModel.fetchFromList itemsList, (items) ->
-					self.items = items
-					self.loaded = true
-					callback()
-
-		else callback()
+		if not self.loaded and (not itemsList? or itemsList.length == 0)
+			ItemModel.fetchSelectedIdentities (itemIdentities) ->
+				self.selectedItemIDs  = itemIdentities
+				self.loaded           = true
+				callback() if callback?
+		else if callback?
+			callback()
 		self
 
 	# start a new game
-	start: (mode) ->
+	start: ->
 		self=@
-		self.initializeEngine()
-		console.log(self.engine)
-		app.router.setRoute app.router.getItemRoute mode, 0
+		self.load ->
+			self.initializeEngine()
+			app.router.setRoute app.router.getItemRoute self.engine.mode, self.engine.getCurrentItemIndex()
 
 	reset: ->
 		self=@
-
 		self.view.reset() # reset visuals
 		self.disabledClicks = true # disable clicks
-		self.differencesFoundNumber = 0
 		self
 
 	# play a game
-	play: (mode, itemIndex) ->
+	play: (itemIndex, resumedGame) ->
 		self=@
+
+		if !(itemIdentity = self.selectedItemIDs[self.engine.getCurrentItemIndex()])?
+			alert "error, no item at " + self.engine.getCurrentItemIndex()
+			return false
 
 		self.initializeEngine() if not self.engine?
 
-		self.mode = mode
-		self.itemCurrent = parseInt(itemIndex)
+		#self.mode = mode
+		#self.engine.setCurrentItemIndex(parseInt(itemIndex))
 
 		self.reset()
 
 		self.view.topbar.disableButtons() # add disabled style on links
 		self.view.item.showLoading()  # show loading
 
-		self.load ->
-			if self.items[self.itemCurrent]?
-				self.item = self.items[self.itemCurrent]
-			else
-				alert "error, no item at " + self.itemCurrent
-				return false
+		# load the item
+		ItemModel.fetchFullItemForIdentity itemIdentity, (item) ->
+			# prealoding the images
+			new app.helpers.preloader().load (images) ->
+				# update the view
+				self.view.update(
+					first_image : images[0]
+					second_image: images[1]
+					next        : "#" + self.getNextItemRoute() 	# update the next link
+				)
+				self.view.item.hideLoading() # hide the loading indicator
+				self.view.topbar.enableButtons() # enable links
 
-			# get prev/next item
-			self.getPreviousAndNextItems()
+				if resumedGame
+					self.engine.resume()
+				else
+					self.engine.newItem(item.differencesArray)
 
-			# load the item
-			self.item.fetchAll ->
+				self.view.topbar.initializeDifferenceCounter(self.engine.differences) # initialize difference indicator
+				self.showDifferenceIndicators(self.engine.differences)
 
-				self.engine.itemStarted(self.item.differencesArray)
-				# prealoding the images
-				new app.helpers.preloader().load (images) ->
-					# update the view
-					self.view.update(
-						first_image : images[0]
-						second_image: images[1]
-						next        : "#" + self.itemNextRoute 	# update the next link
-					)
-					self.view.item.hideLoading() # hide the loading indicator
-					self.view.topbar.enableButtons() # enable links
-					self.view.topbar.initializeDifferencesIndicator(self.item.differencesArray) # initialize difference indicator
+				self.disabledClicks = false # enable clicks
+			, (error) ->
+				alert error
+				# load next item
+				self.loadNextItem()
 
-					self.disabledClicks = false # enable clicks
-
-				, (error) ->
-					alert error
-					# load next item
-					self.loadNextItem()
-
-				, self.item.first_image.getSrc(), self.item.second_image.getSrc()
+			, item.first_image.getSrc(), item.second_image.getSrc()
 
 	# resume a game
 	resume: (mode) ->
@@ -187,88 +151,53 @@ class exports.GameController extends Controller
 		console.log "resume"
 
 		# get last game from local storage
-		lastGame = localStorage.getItem('game_' + mode)
+		lastGame = JSON.parse localStorage.getItem('game_' + mode)
 
 		if lastGame?
-			# load engine from last game lastGame
-			self.initializeEngine(lastGame)
+			self.fromJSON lastGame
+			self.play(self.engine.getCurrentItemIndex(), true)
 
-			# load the items
-			self.load ->
+		else self.start()
 
-				# find the item index
-				for index, item in self.items
-					if item.id is lastGame.itemCurrentID
-						self.play(mode, index)
-						self.showCurrentIndicators(item.differencesArray)
-						break
-
-				self.play(mode, 0) # not found, start from scratch
-
-			, lastGame.items, true
-
-		else self.start(mode)
-
-	showCurrentIndicators: (differences) ->
+	showDifferenceIndicators: (differences) ->
 		self=@
 
-		self.view.topbar.updateDifferencesIndicator(differences) # update indicators
 		for difference in differences
 			if difference.isFound? and difference.isFound
-				className = "found"
+				indicatorType = "found"
 			else if difference.isClued? and difference.isClued
-				className = "clued"
+				indicatorType = "clue"
 			else continue
 
-			self.activateDifferenceIndicator className, difference
+			self.activateDifferenceIndicator indicatorType, difference
 
-	validateItemID: (itemCurrent) ->
-		self=@
-		if not app.helpers.formater.isInt itemCurrent
-			console.log "Invalid itemID format"
-			return false
+	getNextItemRoute: ->
+		nextIndex = @getNextItemIndex()
+		return null if nextIndex == -1
+		app.router.getItemRoute(@engine.mode, nextIndex)
 
-		true
+	getPreviousItemRoute: ->
+		prevIndex = @getPreviousItemIndex()
+		return null if prevIndex == -1
+		app.router.getItemRoute(@engine.mode, prevIndex)
 
-	validateMode: (mode) ->
-		self=@
+	getNextItemIndex: ->
+		@engine.getNextItemIndex(@selectedItemIDs.length)
 
-		# can't find the mode in the config array
-		if $.inArray(mode, self.modes) is -1
-			app.helpers.log.error "unknown mode: " + mode, self.tag
-			return false
-
-		true
-
-	getPreviousAndNextItems: ->
-		self=@
-		self.getNextItem()
-		self.getPreviousItem()
-
-	getNextItem: ->
-		self=@
-		# get index
-		self.itemNext = if self.itemCurrent + 1 < self.items.length then self.itemCurrent + 1 else -1
-
-		self.itemNextRoute = if self.itemNext isnt -1 then app.router.getItemRoute(self.mode, self.itemNext) else null
-		self.itemNext
-
-	getPreviousItem: ->
-		self=@
-		# get index
-		self.itemPrevious = if self.itemCurrent > 0 then self.itemCurrent - 1 else self.itemPrevious = -1
-		# get the route
-		self.itemPreviousRoute = if self.itemPrevious isnt -1 then app.router.getItemRoute(self.mode, self.itemPrevious) else null
-		self.itemPrevious
+	getPreviousItemIndex: ->
+		@engine.getPreviousItemIndex(@selectedItemIDs.length)
 
 	loadNextItem: ->
 		self=@
 
+		nextIndex = self.getNextItemIndex()
 		# no more item
-		if self.itemNext is no and self.getNextItem() is no # check again just in case
+		if nextIndex == -1
 			# else load the end game
 		# change the route
-		else app.router.setRoute self.itemNextRoute
+		else
+			app.router.setRoute self.getNextItemRoute()
+			self.engine.setCurrentItemIndex(nextIndex)
 
 	onClickLink: (event) ->
 		self=@
@@ -318,33 +247,21 @@ class exports.GameController extends Controller
 	## difference
 	didFindDifference: (difference, differenceCount) ->
 		@activateDifferenceIndicator "found", difference
+		@view.topbar.updateDifferenceCounterWithDifference difference
 
-	didNotFindDifference: (spotCircle) -> @activateDifferenceIndicator "error", spotCircle.relativePosition
+	didNotFindDifference: (spotCircle) ->
+		@activateDifferenceIndicator "error", spotCircle.relativePosition
 
-	## time
-	timeDidChange: (time) -> @view.topbar.timer.update(timeLeft: time)
-
-	timeBonus: (bonus, time) -> @view.topbar.timer.update(timeLeft: time)
-
-	timePenalty: (penalty, time) -> @view.topbar.timer.update(timeLeft: time)
-
-	## score
-	scoreDidChange: (score) -> @view.topbar.score.update(scoreValue: score)
-
-	scoreBonus: (bonus, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: bonus)
-
-	scorePenalty: (penalty, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: penalty)
+	## clues
+	didUseClue: (difference, clueCount, differenceCount) ->
+		@activateDifferenceIndicator "clue", difference
+		@view.topbar.updateDifferenceCounterWithDifference difference
 
 	## game over
 	didFinishItem: ->
 		setTimeout =>
 			@loadNextItem()
 		, 1000 # temporize the loading of the next item
-
-	## clues
-	didUseClue: (difference, clueCount, differenceCount) ->
-		self=@
-		self.activateDifferenceIndicator "clue", difference
 
 	## delegate
 
@@ -355,8 +272,6 @@ class exports.GameController extends Controller
 			errorBounds = app.helpers.polygoner.rectangleFromPoint difference, GameController.indicatorsDimensions.error
 			self.view.item.showIndicator "error", errorBounds
 			return self
-
-		self.view.topbar.updateDifferenceIndicator difference # update the difference indicator
 
 		if not target?
 			target = self.view.item.elements.firstImage
