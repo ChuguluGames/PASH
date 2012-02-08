@@ -31,11 +31,24 @@ ItemDefinition::fetchAll = (callback) ->
 										callback(self) if callback?
 
 # custom methods
+ItemDefinition.fetchFullItemForIdentity = (identity, callback) ->
+	ItemDefinition.findBy 'identity', identity, (item) ->
+		item.fetchAll callback
+
 ItemDefinition.fetchSelected = (callback) ->
 	PackModel.fetchSelected().list (packs) ->
 		packIds = []
 		packIds.push pack.id for pack in packs
 		ItemDefinition.all().filter("pack", 'in', packIds).list callback
+
+ItemDefinition.fetchSelectedIdentities = (callback) ->
+	PackModel.fetchSelected().list (packs) ->
+		packIds = []
+		packIds.push pack.id for pack in packs
+		ItemDefinition.all().filter("pack", 'in', packIds).list (items) ->
+			itemIdentities = []
+			itemIdentities.push item.identity for item in items
+			callback(itemIdentities) if callback?
 
 # custom mapping
 ItemDefinition.fromJSON = (json) ->

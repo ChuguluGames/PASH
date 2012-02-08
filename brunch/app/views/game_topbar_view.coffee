@@ -55,53 +55,46 @@ class exports.GameTopbarView extends View
 		self.timer.reset() if self.timer
 		self.score.reset() if self.score
 
-	initializeDifferencesIndicator: (differences) ->
+	getDifferenceClassName: (difference) ->
+		if difference.isFound? and difference.isFound
+			return "found"
+		if difference.isClued? and difference.isClued
+			return "clued"
+		null
+
+	initializeDifferenceCounter: (differences) ->
 		self=@
 
 		return if not differences?
 
-		indicator = self.elements.differencesIndicator.empty() # empty the indicator container
+		indicator = self.elements.differencesIndicator.empty() # empty the counter container
 
 		fadeInLi = (li, delay) ->
 			setTimeout ->
 				li.fadeIn(self.differencesIndicator.fadeInSpeed)
 			, delay
 
-		for index, difference in differences
+		for difference, index in differences
 			li = $("<li />").appendTo(indicator)
-			if difference.isFound
-				li.addClass("found")
-			else if difference.isClued
-				li.addClass("clued")
-
+			li.addClass(className) if (className = self.getDifferenceClassName difference)?
 			fadeInLi(li, index * self.differencesIndicator.delayBetweenAppearance)
 
-	updateDifferencesIndicator: (differences) ->
+	updateDifferenceCounterWithDifferences: (differences) ->
 		self=@
 
 		return if not differences?
 
-		resetLi = (li) ->
-			li.removeClass("found clued")
-
-		for index, difference in differences
-			li = $("li:eq(" + index + ")", self.elements.differencesIndicator)
-			if difference.isFound
-				li.addClass("found")
-			else if difference.isClued
-				li.addClass("clued")
+		for difference, index in differences
+			if (className = self.getDifferenceClassName difference)?
+				li = $("li:eq(" + index + ")", self.elements.differencesIndicator)
+				li.removeClass("found clued")
+				li.addClass(className)
 		self
 
-	updateDifferenceIndicator: (difference) ->
+	updateDifferenceCounterWithDifference: (difference) ->
 		self=@
-
-		if difference.isFound? and difference.isFound
-			className = "found"
-		else if difference.isClued? and difference.isClued
-			className = "clued"
-		else return
-
-		$("li:not(.found,.clued):first", self.elements.differencesIndicator).addClass(className)
+		if (className = self.getDifferenceClassName difference)?
+			$("li:not(.found,.clued):first", self.elements.differencesIndicator).addClass(className)
 
 	resetDifferencesIndicator: ->
 		self=@
