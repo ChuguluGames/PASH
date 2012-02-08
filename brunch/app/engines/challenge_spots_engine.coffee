@@ -61,6 +61,7 @@ class exports.ChallengeSpotsEngine extends ScoringSpotsEngine
     @delegateScoreDidChange()
     if @totalDifferencesToFind < 1
       @delegateDidFindAllDifferences()
+      @endGame()
     else
       super # if game is not over, call parent method which notifies delegate about finished item
 
