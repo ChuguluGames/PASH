@@ -48,6 +48,7 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 		# remove last controller
 		if @currentController?
 			@currentController.destroy()
+			@currentController = null
 
 		# create the new one
 		newController = new controllerClass(view: viewClass)

@@ -40,11 +40,12 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 
 	# unschedule timers
 	pause: ->
-		@timer.pause() if @timer?
+		@timer.pause()
 
 	# reschedule timers
 	resume: ->
-		@timer.resume() if @timer?
+		@timer.setTimeLeft @time
+		@timer.resume()
 
 	useClue: ->
 		@timeSinceLastSpot = 0

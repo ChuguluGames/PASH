@@ -88,6 +88,7 @@ class exports.GameController extends Controller
 
 	onDevicePause: ->
 		console.log "onDevicePause"
+		@engine.pause()
 		@save()
 		app.router.setRoute(app.router.getOptionsRoute())
 
@@ -298,7 +299,6 @@ class exports.GameController extends Controller
 
 	## game over
 	didFinishItem: ->
-		console.log "finished item"
 		setTimeout =>
 			@loadNextItem()
 		, 1000 # temporize the loading of the next item
