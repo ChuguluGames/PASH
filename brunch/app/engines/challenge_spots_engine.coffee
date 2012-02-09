@@ -2,7 +2,7 @@ class exports.ChallengeSpotsEngine extends ScoringSpotsEngine
   totalDifferencesToFind : 0
 
   constructor: (delegate, json) ->
-    super(app.helpers.config.getSpotsModes().CHALLENGE, delegate, json)
+    super(ConfigHelper.getSpotsModes().CHALLENGE, delegate, json)
 
   reset: ->
     super

@@ -11,20 +11,18 @@ DifferencePointDefinition = persistence.define 'difference_point',
 
 	# get the squared distance between points
 DifferencePointDefinition::distanceTo = (point) ->
-	self=@
-	dX = point.x - self.x
-	dY = point.y - self.y
+	dX = point.x - @x
+	dY = point.y - @y
 	Math.sqrt(dX * dX + dY * dY)
 
 	# get the slope between point
 DifferencePointDefinition::slopeTo = (point) ->
-	self=@
-	dX = point.x - self.x
-	dY = point.y - self.y
+	dX = point.x - @x
+	dY = point.y - @y
 	dY / dX
 
 DifferencePointDefinition::getSimpleObject = ->
-	simple =
+	new Object
 		x: @x
 		y: @y
 

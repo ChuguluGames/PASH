@@ -1,4 +1,10 @@
 class exports.CountdownHelper
+	# -- static --
+	@tag = "CountdownHelper"
+	@now = ->
+		Date.now()
+	# -- static --
+
 	timer         : null
 	updateInterval: 1000 # in ms
 	_timeLeft     : 0
@@ -85,7 +91,3 @@ class exports.CountdownHelper
 
 	delegateOnOver: ->
 		@delegate.onTimeOut() if @delegate? and @delegate.onTimeOut?
-
-	# statics methods
-	@now = ->
-		new Date().getTime()

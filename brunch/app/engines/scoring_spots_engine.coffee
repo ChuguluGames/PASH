@@ -8,7 +8,7 @@ class exports.ScoringSpotsEngine extends SpotsEngine
 
 	constructor: (@mode, @delegate, json) ->
 		@excludedProps.push 'timer'
-		@timer = new app.helpers.countdown @time, @
+		@timer = new CountdownHelper @time, @
 		super
 		if json?
 			@delegateTimeDidChange()

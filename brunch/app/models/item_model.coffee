@@ -14,26 +14,27 @@ ItemDefinition.index ['identity'], {unique: true}
 
 ItemDefinition::differencesArray = null
 
-ItemDefinition::fetchAll = (callback) ->
-	self=@
-	self.fetch 'first_image', (firstImage) ->
-			self.fetch 'second_image', (secondImage) ->
-					self.differences.list (differences) ->
-						pointFetchCount = differences.length
-						alert "no differences for item " + self.identity if pointFetchCount == 0
-						callback(self) if callback? and pointFetchCount == 0
-						self.differencesArray = []
-						for difference in differences
-							do (difference) ->
-								difference.fetchPoints (points) ->
-									self.differencesArray.push difference.getSimpleObject()
-									if (--pointFetchCount == 0)
-										callback(self) if callback?
+ItemDefinition::fetchDifferences = (callback) ->
+	@differences.list (differences) =>
+		differencesCount = differences.length
+		return alert("no differences for item " + @identity) if differencesCount == 0
+
+		@differencesArray = []
+		for difference in differences
+			do (difference) => # keep difference context
+				difference.fetchPoints (points) =>
+					@differencesArray.push difference.getSimpleObject()
+					if (--differencesCount == 0)
+						callback @ if callback?
 
 # custom methods
-ItemDefinition.fetchFullItemForIdentity = (identity, callback) ->
+ItemDefinition.fetchFullItemForIdentity = (identity, fetchDifferences, callback) ->
 	ItemDefinition.findBy 'identity', identity, (item) ->
-		item.fetchAll callback
+		# prefetch images
+		item.selectJSON ['first_image.*', 'second_image.*'], ->
+			if fetchDifferences
+				item.fetchDifferences callback
+			else callback item
 
 ItemDefinition.fetchSelected = (callback) ->
 	PackModel.fetchSelected().list (packs) ->

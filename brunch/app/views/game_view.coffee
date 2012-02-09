@@ -15,28 +15,22 @@ class exports.GameView extends View
 	item  : null
 
 	initialize: ->
-		self=@
-		self.topbar = new GameTopbarView(self.configuration)
-		self.item   = new GameItemView()
+		@topbar = new GameTopbarView(@configuration)
+		@item   = new GameItemView()
 
 	render: (data) ->
-		self=@
+		$(@el).append @topbar.render().el
+		$(@el).append @item.render().el
 
-		$(self.el).append self.topbar.render().el
-		$(self.el).append self.item.render().el
-
-		self.update data
-
-		self
+		@update data
+		@
 
 	update: (data) ->
-		self=@
-		self.topbar.update(data)
-		self.item.update(data)
-		self
+		@topbar.update(data)
+		@item.update(data)
+		@
 
 	reset: ->
-		self=@
-		self.topbar.reset()
-		self.item.reset()
-		self
+		@topbar.reset()
+		@item.reset()
+		@

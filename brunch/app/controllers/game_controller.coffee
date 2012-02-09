@@ -1,5 +1,6 @@
 class exports.GameController extends Controller
 	# -- static --
+	GameController.tag = "GameController"
 	@indicatorsDimensions =
 		found: {width: 64, height: 64}
 		error: {width: 36, height: 36}
@@ -19,34 +20,33 @@ class exports.GameController extends Controller
 	engine              : null
 
 	initialize: ->
-		self=@
-
 		# create the view
-		$("body").html self.view.render(
+		$("body").html @view.render(
 			score: 0
 		).el
 
 		# initiate events
-		self.delegateEvents()
+		@delegateEvents()
 
-		self
+		@
 
 	onDestroy: ->
-		console.log "destroying game"
-		self=@
-		self.view.destroy() # destroy the view
-		self.save()
-		self.engine.destroy()
-		self.engine          = null
-		self.selectedItemIDs = null
-		self.reset()
-		self
+		LogHelper.info "destroying game", GameController.tag
+
+		@view.destroy() # destroy the view
+		@save()
+		@engine.destroy()
+		@engine          = null
+		@selectedItemIDs = null
+		@reset()
+		@
 
 	onDeviceResume: ->
-		console.log "onDeviceResume"
+		LogHelper.info "on device resume", GameController.tag
 
 	onDevicePause: ->
-		console.log "onDevicePause"
+		LogHelper.info "on device pause", GameController.tag
+
 		@engine.pause()
 		@save()
 		app.router.setRoute(app.router.getOptionsRoute())
@@ -57,111 +57,115 @@ class exports.GameController extends Controller
 			selectedItemIDs : @selectedItemIDs
 
 	fromJSON: (json) ->
-		self=@
-		self.selectedItemIDs  = json.selectedItemIDs
+		@selectedItemIDs  = json.selectedItemIDs
 		# load engine from last game lastGame
-		self.initializeEngine(json.engine)
-		self.loaded = true
+		@initializeEngine(json.engine)
+		@loaded = true
 
 	save: ->
-		self=@
-		console.log "saving game"
+		LogHelper.info "saving game", GameController.tag
+
 		# save the engine data to localstorage
-		if self.engine.isGameOver() || self.getNextItemIndex() == -1 # if gameover or no more items => remove old data
-			localStorage.removeItem('game_' + self.engine.mode)
+		if @engine.isGameOver() || @getNextItemIndex() == -1 # if gameover or no more items => remove old data
+			localStorage.removeItem('game_' + @engine.mode)
 		else # save
-			localStorage.setItem('game_' + self.engine.mode, JSON.stringify(self.toJSON()))
+			localStorage.setItem('game_' + @engine.mode, JSON.stringify(@toJSON()))
 
 	load: (callback) ->
-		self=@
-
-		if not self.loaded and (not itemsList? or itemsList.length == 0)
-			ItemModel.fetchSelectedIdentities (itemIdentities) ->
-				self.selectedItemIDs  = itemIdentities
-				self.loaded           = true
+		if not @loaded and (not itemsList? or itemsList.length == 0)
+			ItemModel.fetchSelectedIdentities (itemIdentities) =>
+				@selectedItemIDs  = itemIdentities
+				@loaded           = true
 				callback() if callback?
 		else if callback?
 			callback()
-		self
+		@
 
 	# start a new game
 	start: ->
-		self=@
-		self.load ->
-			self.initializeEngine()
-			app.router.setRoute app.router.getItemRoute self.engine.mode, self.engine.getCurrentItemIndex()
+		LogHelper.info "start game", GameController.tag
+		@load =>
+			@initializeEngine()
+			app.router.setRoute app.router.getItemRoute @engine.mode, @engine.getCurrentItemIndex()
 
 	reset: ->
-		self=@
-		self.view.reset() # reset visuals
-		self.disabledClicks = true # disable clicks
-		self
+		@view.reset() # reset visuals
+		@disabledClicks = true # disable clicks
+		@
 
 	# play a game
 	play: (itemIndex, resumedGame) ->
-		self=@
 
-		if !(itemIdentity = self.selectedItemIDs[self.engine.getCurrentItemIndex()])?
-			alert "error, no item at " + self.engine.getCurrentItemIndex()
+		# not yet loaded? => need for development
+		if not @loaded
+			args = arguments
+			@load =>
+				@play.apply @, args
+			return
+
+		@initializeEngine() if not @engine?
+
+		@engine.setCurrentItemIndex itemIndex
+
+		if !(itemIdentity = @selectedItemIDs[@engine.getCurrentItemIndex()])?
+			alert "error, no item at " + @engine.getCurrentItemIndex()
 			return false
 
-		self.initializeEngine() if not self.engine?
+		#@mode = mode
+		#@engine.setCurrentItemIndex(parseInt(itemIndex))
 
-		#self.mode = mode
-		#self.engine.setCurrentItemIndex(parseInt(itemIndex))
+		@reset()
 
-		self.reset()
-
-		self.view.topbar.disableButtons() # add disabled style on links
-		self.view.item.showLoading()  # show loading
+		@view.topbar.disableButtons() # add disabled style on links
+		@view.item.showLoading()  # show loading
 
 		# load the item
-		ItemModel.fetchFullItemForIdentity itemIdentity, (item) ->
-			# prealoding the images
-			new app.helpers.preloader().load (images) ->
+		ItemModel.fetchFullItemForIdentity itemIdentity, !resumedGame, (item) =>
+
+			# preloading the images
+			new PreloadHelper().load (images) =>
+
 				# update the view
-				self.view.update(
+				@view.update(
 					first_image : images[0]
 					second_image: images[1]
-					next        : "#" + self.getNextItemRoute() 	# update the next link
+					next        : "#" + @getNextItemRoute() 	# update the next link
 				)
-				self.view.item.hideLoading() # hide the loading indicator
-				self.view.topbar.enableButtons() # enable links
+				@view.item.hideLoading() # hide the loading indicator
+				@view.topbar.enableButtons() # enable links
 
 				if resumedGame
-					self.engine.resume()
+					@engine.resume()
 				else
-					self.engine.newItem(item.differencesArray)
+					@engine.newItem(item.differencesArray)
 
-				self.view.topbar.initializeDifferenceCounter(self.engine.differences) # initialize difference indicator
-				self.showDifferenceIndicators(self.engine.differences)
+				@view.topbar.initializeDifferenceCounter(@engine.differences) # initialize difference indicator
+				@showDifferenceIndicators(@engine.differences)
 
-				self.disabledClicks = false # enable clicks
+				@disabledClicks = false # enable clicks
+
+				# preloading errors
 			, (error) ->
 				alert error
 				# load next item
-				self.loadNextItem()
+				@loadNextItem()
 
 			, item.first_image.getSrc(), item.second_image.getSrc()
 
 	# resume a game
 	resume: (mode) ->
-		self=@
-
-		console.log "resume"
+		LogHelper.info "resume game", GameController.tag
 
 		# get last game from local storage
 		lastGame = JSON.parse localStorage.getItem('game_' + mode)
 
 		if lastGame?
-			self.fromJSON lastGame
-			self.play(self.engine.getCurrentItemIndex(), true)
+			@fromJSON lastGame
+			@play(@engine.getCurrentItemIndex(), true)
 
-		else self.start()
+		else @start()
 
 	showDifferenceIndicators: (differences) ->
-		self=@
-
 		for difference in differences
 			if difference.isFound? and difference.isFound
 				indicatorType = "found"
@@ -169,7 +173,7 @@ class exports.GameController extends Controller
 				indicatorType = "clue"
 			else continue
 
-			self.activateDifferenceIndicator indicatorType, difference
+			@activateDifferenceIndicator indicatorType, difference
 
 	getNextItemRoute: ->
 		nextIndex = @getNextItemIndex()
@@ -188,35 +192,29 @@ class exports.GameController extends Controller
 		@engine.getPreviousItemIndex(@selectedItemIDs.length)
 
 	loadNextItem: ->
-		self=@
-
-		nextIndex = self.getNextItemIndex()
+		nextIndex = @getNextItemIndex()
 		# no more item
 		if nextIndex == -1
 			# else load the end game
 		# change the route
 		else
-			app.router.setRoute self.getNextItemRoute()
-			self.engine.setCurrentItemIndex(nextIndex)
+			app.router.setRoute @getNextItemRoute()
+			@engine.setCurrentItemIndex(nextIndex)
 
 	onClickLink: (event) ->
-		self=@
-
-		if self.disabledClicks
+		if @disabledClicks
 			event.preventDefault()
 			return false
 
 		if $(event.target).hasClass("action-showClue")
-			self.engine.useClue()
+			@engine.useClue()
 			return false
 
 		super
 
 	# when the user click on the first image or the second
 	onClickItem: (event) ->
-		self=@
-
-		if self.disabledClicks
+		if @disabledClicks
 			event.preventDefault()
 			return false
 
@@ -225,7 +223,7 @@ class exports.GameController extends Controller
 			y: event.pageY
 
 		# make the position relative to the item
-		relativePosition = app.helpers.positioner.getRelativePosition event.currentTarget, position
+		relativePosition = PositionHelper.getRelativePosition event.currentTarget, position
 
 		# make the position adapt the used scale
 		scaledPosition = ScaleHelper.scalePositionTo relativePosition, 2 / DynamicScreenHelper.itemScale
@@ -236,7 +234,7 @@ class exports.GameController extends Controller
 		circle =
 			relativePosition: relativePosition # needed for activateDifferenceIndicator difference center
 			center          : scaledPosition
-			radius          : self.toleranceAccuracy
+			radius          : @toleranceAccuracy # do we need to adapt the tolerance wth the scale?
 
 		@engine.findDifference(circle)
 
@@ -266,26 +264,26 @@ class exports.GameController extends Controller
 	## delegate
 
 	activateDifferenceIndicator: (type, difference, target) ->
-		self=@
-
 		if type is "error"
-			errorBounds = app.helpers.polygoner.rectangleFromPoint difference, GameController.indicatorsDimensions.error
-			self.view.item.showIndicator "error", errorBounds
-			return self
+			errorBounds = PolygonHelper.rectangleFromPoint difference, GameController.indicatorsDimensions.error
+			@view.item.showIndicator "error", errorBounds
+			return @
 
 		if not target?
-			target = self.view.item.elements.firstImage
+			target = @view.item.elements.firstImage
 
 		# create the rectangle that wrap the polygon
-		unscaledRectangle = app.helpers.polygoner.polygonToRectangle difference.differencePointsArray
-		scaledRectangle = ScaleHelper.scaleRectangleTo unscaledRectangle, 1 / (2 / DynamicScreenHelper.itemScale)
+		unscaledRectangle = PolygonHelper.polygonToRectangle difference.differencePointsArray
 
 		# find the center point of the rectangle
-		rectangleCenter = app.helpers.polygoner.getRectangleCenter scaledRectangle
+		unscaledRectangleCenter = PolygonHelper.getRectangleCenter unscaledRectangle
+
+		# scale the rectangle center
+		scaledRectangleCenter = ScaleHelper.scalePositionTo unscaledRectangleCenter, 1 / (2 / DynamicScreenHelper.itemScale)
 
 		# create the difference
-		differenceRectangle = app.helpers.polygoner.rectangleFromPoint rectangleCenter, GameController.indicatorsDimensions[type]
+		differenceRectangle = PolygonHelper.rectangleFromPoint scaledRectangleCenter, GameController.indicatorsDimensions[type]
 
-		self.view.item.showIndicator type, differenceRectangle # display the difference position
+		@view.item.showIndicator type, differenceRectangle # display the difference position
 
-		self
+		@

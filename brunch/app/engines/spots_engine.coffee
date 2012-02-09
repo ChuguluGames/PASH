@@ -51,7 +51,7 @@ class exports.SpotsEngine
 	findDifference: (spotCircle) ->
 		for difference in @differences
 			if not difference.isFound and not difference.isClued
-				if app.helpers.collision.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
+				if CollisionHelper.circleCollisionToPolygon(spotCircle, difference.differencePointsArray)
 					return @didFindDifference(difference)
 		@didNotFindDifference(spotCircle)
 

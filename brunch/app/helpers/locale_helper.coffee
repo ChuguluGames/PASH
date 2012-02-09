@@ -1,27 +1,26 @@
 class exports.LocaleHelper
-	self=@
+	@tag     = "LocaleHelper"
+	@locales = null
+	@locale  = null
+	@strings = {}
 
-	self.locales = null
-	self.locale = null
-	self.strings = {}
+	@setConfig = (config) ->
+		@setLocales(config.accepted)
+		@setLocale(config.default)
+		@
 
-	self.setConfig = (config) ->
-		self.setLocales(config.accepted)
-		self.setLocale(config.default)
-		self
+	@setLocales = (locales) ->
+		@locales = locales
 
-	self.setLocales = (locales) ->
-		self.locales = locales
+	@setLocale = (locale) ->
+		if @locale isnt locale and $.inArray(locale, @locales) isnt -1
+			@locale = locale
+			@strings = ConfigHelper.getLocaleStrings(locale)
 
-	self.setLocale = (locale) ->
-		if self.locale isnt locale and $.inArray(locale, self.locales) isnt -1
-			self.locale = locale
-			self.strings = app.helpers.config.getLocaleStrings(locale)
+		@locale
 
-		self.locale
+	@getLocale = ->
+	  @locale
 
-	self.getLocale = ->
-	  self.locale
-
-	self.getStrings = ->
-		self.strings
+	@getStrings = ->
+		@strings

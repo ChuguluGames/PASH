@@ -22,37 +22,30 @@ class exports.GameItemView extends View
 	errorElementHideAfter: 500
 
 	render: ->
-		self=@
-
-		$(self.el).html app.helpers.template.generate self.template, {padding: DynamicScreenHelper.itemPadding}
-		self.initializeElements()
-		app.helpers.android_loading.setLoading(self.elements.loading) if app.helpers.device.isAndroid()
-		self
+		$(@el).html TemplateHelper.generate @template, {padding: DynamicScreenHelper.itemPadding}
+		@initializeElements()
+		AndroidLoadingHelper.setLoading(@elements.loading) if DeviceHelper.isAndroid()
+		@
 
 	initializeElements: ->
-		self=@
-		self.elements.item        = $(".item", self.el)
-		self.elements.firstImage  = $(".first-image", self.el)
-		self.elements.secondImage = $(".second-image", self.el)
-		self.elements.loading     = $(".item-loading", self.el)
+		@elements.item        = $(".item", @el)
+		@elements.firstImage  = $(".first-image", @el)
+		@elements.secondImage = $(".second-image", @el)
+		@elements.loading     = $(".item-loading", @el)
 
 	update: (data) ->
-		self=@
-		$(".img", self.elements.firstImage).html(data.first_image)
-		$(".img", self.elements.secondImage).html(data.second_image)
-		self
+		$(".img", @elements.firstImage).html(data.first_image)
+		$(".img", @elements.secondImage).html(data.second_image)
+		@
 
 	reset: ->
-		self=@
-		self.elements.firstImage.find(".img, .founds, .errors, .clues").empty()
-		self.elements.secondImage.find(".img, .founds, .errors, .clues").empty()
+		@elements.firstImage.find(".img, .founds, .errors, .clues").empty()
+		@elements.secondImage.find(".img, .founds, .errors, .clues").empty()
 
 	showIndicator: (type, rectangle) ->
-		self=@
+		return @showIndicatorError(rectangle) if type is "error"
 
-		return self.showIndicatorError(rectangle) if type is "error"
-
-		$indicators = self.createIndicatorElement type, rectangle
+		$indicators = @createIndicatorElement type, rectangle
 
 		finalCSSProperties =
 			opacity: 1
@@ -68,37 +61,27 @@ class exports.GameItemView extends View
 			$indicators.addClass('indicator_popout')
 		else
 			$indicators.css finalCSSProperties
-
-		self
+		@
 
 	showIndicatorError: (rectangle) ->
-		self=@
-
-		$indicators = self.createIndicatorElement "error", rectangle
+		$indicators = @createIndicatorElement "error", rectangle
 
 		timeoutCallback = ->
 			$indicators.remove()
-			# $indicators.css({left: "100%"}) # put the left the errors
-			# # remove them after a little while... IOS 4.2<= bug
-			# setTimeout(->
-			# 	$indicators.remove()
-			# , 10)
 
 		if DeviceHelper.canPerformAnimation()
 			$indicators.css
 				"-webkit-transform": "scale(" + DynamicScreenHelper.itemScale + ")"
 
-			setTimeout(->
+			setTimeout(=>
 				$indicators.first().on 'webkitAnimationEnd', timeoutCallback
 				$indicators.addClass("indicator_error_fadeout")
-			, self.errorElementHideAfter)
+			, @errorElementHideAfter)
 		else
-			setTimeout(timeoutCallback, self.errorElementHideAfter)
-
-		self
+			setTimeout(timeoutCallback, @errorElementHideAfter)
+		@
 
 	createIndicatorElement: (type, rectangle) ->
-		self=@
 		containerClass = type + "s"
 
 		differenceElement = $("<div />").css(
@@ -106,28 +89,22 @@ class exports.GameItemView extends View
 			top   : rectangle.position.y + "px"
 			width : rectangle.dimensions.width + "px"
 			height: rectangle.dimensions.height + "px"
-		).appendTo($("." + containerClass, self.elements.firstImage))
+		).appendTo($("." + containerClass, @elements.firstImage))
 
-		differenceElementClone = differenceElement.clone().appendTo($("." + containerClass, self.elements.secondImage))
+		differenceElementClone = differenceElement.clone().appendTo($("." + containerClass, @elements.secondImage))
 
 		differenceElement.add(differenceElementClone)
 
-	removeDifferencesAndErrorsElements: ->
-		self=@
-		# self.elements.firstImage.find(".found, .error").remove()
-		# self.elements.secondImage.find(".found, .error").remove()
-
 	hideLoading: ->
-		self=@
-		app.helpers.android_loading.stop() if app.helpers.device.isAndroid()
-		self.elements.loading.hide()
-		self.elements.item.show()
-		self
+		AndroidLoadingHelper.stop() if DeviceHelper.isAndroid()
+		@elements.loading.hide()
+		@elements.item.show()
+		@
 
 	showLoading: ->
-		self=@
-		app.helpers.android_loading.start() if app.helpers.device.isAndroid()
-		self.elements.loading.show()
-		self.elements.item.hide()
-		self
+
+		AndroidLoadingHelper.start() if DeviceHelper.isAndroid()
+		@elements.loading.show()
+		@elements.item.hide()
+		@
 

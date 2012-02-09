@@ -1,8 +1,7 @@
 class exports.ChallengeGameController extends ScoringGameController
 
 	initializeEngine: (lastGame) ->
-		self=@
-		self.engine = new ChallengeSpotsEngine(self, lastGame)
+		@engine = new ChallengeSpotsEngine(@, lastGame)
 
 	## delegate
 	didFindAllDifferences: ->

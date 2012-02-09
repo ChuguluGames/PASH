@@ -1,31 +1,33 @@
-helper = {}
+class exports.SeedHelper
+  # dependencies: FileSystemHelper, ModelDownloadHelper
 
-helper.shouldSeed = (callback) ->
-  TagModel.all().count (tagCount) ->
-    return callback(false) if tagCount > 0
-    PackModel.all().count (packCount) ->
-      return callback(false) if packCount > 0
-      callback(true)
+  @tag = "SeedHelper"
 
-helper.moveImages = (success, fail) ->
-  app.helpers.fs.getContentDownloadPath (destinationEntry) ->
-    return (success() if success?) if destinationEntry.fullPath == ''
-    app.helpers.fs.getSeedItemImagesPath (itemEntry) ->
-      itemEntry.copyTo destinationEntry, null, ->
-        app.helpers.fs.getSeedPackImagesPath (packEntry) ->
-          packEntry.copyTo destinationEntry, null, ->
-            success() if success?
-          , fail #packEntry.copyTo
-        , fail #getSeedPackImagesPath
-      , fail #itemEntry.copyTo
-    , fail #getSeedItemImagesPath
-  , fail #getContentDownloadPath
+  @shouldSeed = (callback) ->
+    TagModel.all().count (tagCount) =>
+      return callback(false) if tagCount > 0
+      PackModel.all().count (packCount) ->
+        return callback(false) if packCount > 0
+        callback(true)
 
-helper.seed = (success, fail) ->
-  helper.shouldSeed (should) ->
-    return success() if not should
-    app.helpers.model_downloader.getLocalAll ->
-      success() if success?
-      #helper.moveImages success, fail
+  @moveImages = (success, fail) ->
+    FileSystemHelper.getContentDownloadPath (destinationEntry) ->
+      return (success() if success?) if destinationEntry.fullPath == ''
+      FileSystemHelper.getSeedItemImagesPath (itemEntry) ->
+        itemEntry.copyTo destinationEntry, null, ->
+          FileSystemHelper.getSeedPackImagesPath (packEntry) ->
+            packEntry.copyTo destinationEntry, null, ->
+              success() if success?
+            , fail #packEntry.copyTo
+          , fail #getSeedPackImagesPath
+        , fail #itemEntry.copyTo
+      , fail #getSeedItemImagesPath
+    , fail #getContentDownloadPath
 
-exports.SeedHelper = helper
+  @seed = (success, fail) ->
+    @shouldSeed (should) =>
+      return success(should) if not should
+      LogHelper.info "should seed", @tag
+      ModelDownloadHelper.getLocalAll =>
+        success(should) if success?
+        #@moveImages success, fail

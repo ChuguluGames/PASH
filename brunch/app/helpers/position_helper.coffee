@@ -1,14 +1,14 @@
 class exports.PositionHelper
-	self=@
+	# dependencies: LogHelper
 
-	self.tag = "PositionHelper"
+	@tag = "PositionHelper"
 
-	self.getRelativePosition = (element, absolutePosition) ->
+	@getRelativePosition = (element, absolutePosition) ->
 		offset = $(element).offset(); # from jquery
-		relativePosition=
+		relativePosition =
 			x: absolutePosition.x - offset.left
 			y: absolutePosition.y - offset.top
 
-		app.helpers.log.info relativePosition, self.tag
+		LogHelper.info relativePosition, @tag
 
 		relativePosition

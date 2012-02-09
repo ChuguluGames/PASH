@@ -1,6 +1,11 @@
 class exports.PreloadHelper
-	tag            : "PreloadHelper"
-	timeout        : 40000
+	# dependencies: LogHelper, CountdownHelper
+
+	# -- static --
+	@tag     = "PreloadHelper"
+	@timeout = 4000
+	# -- static --
+
 	timeoutTimer   : null
 	callbackSuccess: null
 	callbackError  : null
@@ -12,10 +17,9 @@ class exports.PreloadHelper
 	imagesCache    : null
 
 	constructor: ->
-		self=@
-		self.imagesCache = []
-		self.currentImage = null
-		self
+		@imagesCache = []
+		@currentImage = null
+		@
 
 	load: ->
 		if not arguments? || arguments.length <= 1
@@ -28,63 +32,57 @@ class exports.PreloadHelper
 		@loadAll() # start the preloading
 
 	loadAll: ->
-		self=@
-		if self.images.length == 0
-			self.callbackSuccess.call(self, self.imagesCache)
+		if @images.length == 0
+			@callbackSuccess.call(@, @imagesCache)
 
 		else
-			self.loadOne self.images.shift()
+			@loadOne @images.shift()
 
 	loadOne: (path) ->
-		self=@
-
-		self.startTimeoutChecker()
+		@startTimeoutChecker()
 
 		image = document.createElement('img')
-		self.imagesCache.push(image)
-		self.currentImage = image
+		@imagesCache.push(image)
+		@currentImage = image
+
+		self=@
 
 		$(image).load(->
-			app.helpers.log.info "loaded in " + (new Date().getTime() - self.startLoadingAt), self.tag
+			LogHelper.info "loaded in " + (CountdownHelper.now() - self.startLoadingAt), self.tag
 			self.stopTimeoutChecker()
-			app.helpers.log.info "preload: \"" + @src + "\"", self.tag
+			LogHelper.info "preload: \"" + @src + "\"", PreloadHelper.tag
 			self.loadAll() # load the next one
 
 		# bind a possible 404 error
 		).error(->
 			self.stopTimeoutChecker()
 			errorMessage = "Unable to load: \"" + @src + "\""
-			app.helpers.log.info errorMessage, self.tag
+			LogHelper.info errorMessage, PreloadHelper.tag
 			self.callbackError(errorMessage) # throw error
 
 		).attr("src", path)
 
 	startTimeoutChecker: ->
-		self=@
-		self.startLoadingAt = new Date().getTime()
+		@startLoadingAt = CountdownHelper.now()
 		console.log "start timer"
-		self.timeoutTimer = setInterval ->
-			self.checkTimeout()
+		@timeoutTimer = setInterval =>
+			@checkTimeout()
 		, 10
 
 	stopTimeoutChecker: ->
-		self=@
-		self.startLoadingAt = null
+		@startLoadingAt = null
 		console.log "stop timer"
-		clearInterval self.timeoutTimer if self.timeoutTimer?
+		clearInterval @timeoutTimer if @timeoutTimer?
 
 	checkTimeout: ->
-		self=@
-		if new Date().getTime() - self.startLoadingAt > self.timeout
-			self.stopTimeoutChecker() # stop timer
-			path = $(self.currentImage).attr("src")
-			$(self.currentImage).remove() # remove the image
-			self.callbackError("Timeout during loading " + path) # throw error
+		if CountdownHelper.now() - @startLoadingAt > PreloadHelper.timeout
+			@stopTimeoutChecker() # stop timer
+			path = $(@currentImage).attr("src")
+			$(@currentImage).remove() # remove the image
+			@callbackError("Timeout during loading " + path) # throw error
 
 	cleanCache: ->
-		self=@
-
-		$(image).remove() for image in self.imagesCache
-		self.imagesCache = null
-		$(self.currentImage).remove()
-		self.currentImage = null
+		$(image).remove() for image in @imagesCache
+		@imagesCache = null
+		$(@currentImage).remove()
+		@currentImage = null

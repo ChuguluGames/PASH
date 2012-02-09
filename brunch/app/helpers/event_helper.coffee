@@ -1,5 +1,5 @@
 class exports.EventHelper
-	self=@
+	@tag = "EventHelper"
 
-	self.disableScroll = ->
+	@disableScroll = ->
 		document.ontouchstart = (e) -> e.preventDefault()
