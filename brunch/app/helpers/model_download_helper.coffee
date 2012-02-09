@@ -33,19 +33,19 @@ class exports.ModelDownloadHelper
         tagModel = TagModel.fromJSON(tag)
         tags.push tagModel
         DbHelper.save tagModel, ->
-            count++
-            progress(count / total) if progress?
-            done(tags) if (count == total) and done?
+          count++
+          progress(count / total) if progress?
+          done(tags) if (count == total) and done?
 
   # remote seeding
   @getTags = (done, progress) ->
     @download ConfigHelper.getTagsUrl(), null, (data) =>
-        @saveTags data, done, progress
+      @saveTags data, done, progress
 
   # local seeding
   @getLocalTags = (done, progress) ->
     @localDownload ConfigHelper.getTagsLocalSeedUrl(), (data) =>
-        @saveTags data, done, progress
+      @saveTags data, done, progress
   # end Tags
 
   # Packs
@@ -70,12 +70,12 @@ class exports.ModelDownloadHelper
   # remote seeding
   @getPacks = (done, progress) ->
     @download ConfigHelper.getPacksUrl(), null, (data) ->
-        @savePacks data, done, progress
+      @savePacks data, done, progress
 
   # local seeding
   @getLocalPacks = (done, progress) ->
     @localDownload ConfigHelper.getPacksLocalSeedUrl(), (data) =>
-        @savePacks data, done, progress, true
+      @savePacks data, done, progress, true
 
   # end Packs
 
@@ -120,12 +120,12 @@ class exports.ModelDownloadHelper
     return (done(null) if done?) if !pack?
     pack.state = PackModel.STATE_INCOMPLETE
     DbHelper.save pack, =>
-        @localDownload ConfigHelper.getItemsLocalSeedUrlForPack(pack), (data) =>
-          @saveItemsForPack pack, data, done, progress, true
+      @localDownload ConfigHelper.getItemsLocalSeedUrlForPack(pack), (data) =>
+        @saveItemsForPack pack, data, done, progress, true
 
   @getLocalItemsForPackIdentity = (packIdentity, done, progress) =>
     PackModel.findBy 'identity', packIdentity, (pack) =>
-        @getLocalItemsForPack pack, done, progress
+      @getLocalItemsForPack pack, done, progress
 
   # end Items
 
@@ -141,14 +141,15 @@ class exports.ModelDownloadHelper
 
   @getLocalAll = (done) ->
     @getLocalTags (tags) =>
-        @getLocalPacks (packs) =>
-          basePackIds = ConfigHelper.getBasePackIds()
-          count = 0
-          total = packs.length
-          baseTotal = basePackIds.length
-          for pack in packs
-            do (pack) =>
-              if $.inArray(pack.identity, basePackIds) != -1
-                #console.log "pack " + pack.identity + " is base pack"
-                @getLocalItemsForPack pack, (items) ->
-                    done() if (++count == total || count == baseTotal) and done?
+      @getLocalPacks (packs) =>
+        basePackIds = ConfigHelper.getBasePackIds()
+        count = 0
+        total = packs.length
+        baseTotal = basePackIds.length
+        for pack in packs
+          do (pack) =>
+            console.log "pack"
+            if $.inArray(pack.identity, basePackIds) != -1
+              #console.log "pack " + pack.identity + " is base pack"
+              @getLocalItemsForPack pack, (items) ->
+                done() if (++count == total || count == baseTotal) and done?
