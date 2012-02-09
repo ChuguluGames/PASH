@@ -18,7 +18,6 @@ modules = {
     'position'
     'polygon'
     'preload'
-    'retina'
     'model_download'
     'event'
     'collision'
@@ -109,8 +108,9 @@ class exports.Application
     ImageDownloadHelper: true
     PreloadHelper      : true
     PolygonHelper      : true
-    RetinaHelper       : true
     EventHelper        : true
+    GameController: true
+    SeedHelper: true
 
   tag        : "Application"
   config     : require('config/config').config
@@ -121,95 +121,66 @@ class exports.Application
   views      : {}
 
   constructor: ->
-    self=@
-
-    self.helpers.device      = DeviceHelper
-    self.helpers.log         = LogHelper
-    self.helpers.log.verbose = self.verbose
-
-    self.waitForDeviceReadyEvent()
+    @waitForDeviceReadyEvent()
 
   waitForDeviceReadyEvent: ->
-    self=@
-    $(window).load ->
+    $(window).load =>
       # device ready already fired
       if PhoneGap? and PhoneGap.onDeviceReady? && PhoneGap.onDeviceReady.fired == true
-        self.helpers.log.info "device ready already fired", self.tag
-        self.initialize()
+        LogHelper.info "device ready already fired", @tag
+        @initialize()
       else
-        self.helpers.log.info "waiting for device response", self.tag
-        document.addEventListener "deviceready", ->
-          self.onDeviceReady()
+        LogHelper.info "waiting for device response", @tag
+        document.addEventListener "deviceready", =>
+          @onDeviceReady()
         , false
 
   onDeviceReady: ->
-    self=@
-    self.helpers.log.info "on device ready", self.tag
+    LogHelper.info "on device ready", @tag
     $ =>
-      self.helpers.log.info "on dom ready", self.tag
-      self.initialize()
+      LogHelper.info "on dom ready", @tag
+      @initialize()
 
   onDatabaseReady: ->
     if window.onDatabaseReady?
       return window.onDatabaseReady()
-    self=@
 
-    self.helpers.log.info "on database ready", self.tag
+    LogHelper.info "on database ready", @tag
 
-    self.helpers.fs.init ->
-      self.helpers.seeder.seed ->
+    FileSystemHelper.init =>
+      LogHelper.info "on filesystem init success", @tag
+
+      SeedHelper.seed (seeded) =>
+        LogHelper.info("on seed complete", @tag) if seeded
+
         # temp workaround for dismissing splash once the home is loaded
         if navigator? and navigator.splashscreen?
-          MainRouter.onFirstRoute = ->
+          @router.onFirstRoute = ->
             setTimeout ->
               navigator.splashscreen.hide()
             , 2000
+
         # router
-        self.router.init()
+        @router.init()
         # fix for .init("/home") ("#/home" fired twice)\
-        self.router.setRoute(self.router.getHomeRoute()) if self.router.getRoute()[0] is ""
-      , ->
-        console.log "seed fail"
+        @router.setRoute(@router.getHomeRoute()) if @router.getRoute()[0] is ""
+      , =>
+        LogHelper.info "on seed fail", @tag
     , ->
-      console.log "init fs fail"
+      LogHelper.info "on filesystem init fail", @tag
 
   initialize: ->
-    self=@
+    LocaleHelper.setConfig(ConfigHelper.getLocales())
+      .setLocale(DeviceHelper.getLocalization()) # override default locale by user localization setting
 
-    # helpers
-    self.helpers.android_loading  = AndroidLoadingHelper
-    self.helpers.benchmark        = BenchmarkHelper
-    self.helpers.config           = ConfigHelper
-    self.helpers.countdown        = CountdownHelper
-    self.helpers.db               = DbHelper
-    self.helpers.dynamic_screen   = DynamicScreenHelper
-    self.helpers.fs               = FileSystemHelper
-    self.helpers.downloader       = DownloadHelper
-    self.helpers.image_downloader = ImageDownloadHelper
-    self.helpers.positioner       = PositionHelper
-    self.helpers.formater         = FormatHelper
-    self.helpers.preloader        = PreloadHelper
-    self.helpers.polygoner        = PolygonHelper
-    self.helpers.retina           = RetinaHelper
-    self.helpers.event            = EventHelper
-    self.helpers.seeder           = SeedHelper
-    self.helpers.collision        = CollisionHelper
-    self.helpers.template         = TemplateHelper
-    self.helpers.locale           = LocaleHelper
+    DynamicScreenHelper.initialize ConfigHelper.getDynamicScreen()
 
-    self.helpers.locale.setConfig(self.helpers.config.getLocales())
-      .setLocale(self.helpers.device.getLocalization()) # override default locale by user localization setting
-
-    self.helpers.dynamic_screen.initialize self.helpers.config.getDynamicScreen()
-
-    if self.helpers.device.isMobile()
+    if DeviceHelper.isMobile()
       activateFastClicks()
-      self.helpers.event.disableScroll()
+      EventHelper.disableScroll()
 
-    self.helpers.model_downloader = ModelDownloadHelper
-
-    self.helpers.device.getAnimationGrade ->
+    DeviceHelper.getAnimationGrade =>
       # wait for database
-      self.helpers.db.createPASHDatabase -> self.onDatabaseReady()
+      DbHelper.createPASHDatabase => @onDatabaseReady()
 
 window.app = new exports.Application()

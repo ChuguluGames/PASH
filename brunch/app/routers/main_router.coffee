@@ -7,7 +7,7 @@ Router::getRoutes = ->
 	modeRoutes =
 		start : {}
 		resume: {}
-	modes = app.helpers.config.getSpotsModes()
+	modes = ConfigHelper.getSpotsModes()
 	for key,mode of modes
 		modeRoutes.start[mode]  = @getGameStartRoute(mode)
 		modeRoutes.resume[mode] = @getGameResumeRoute(mode)
@@ -18,7 +18,7 @@ Router::getRoutes = ->
 	}
 
 Router::getBaseRoute = ->
-	"/" + app.helpers.locale.getLocale()
+	"/" + LocaleHelper.getLocale()
 
 Router::getGameRoute = ->
 	return @getBaseRoute() + "/game"
@@ -73,7 +73,7 @@ exports.MainRouter = new Router(
 
 		"/:locale":
 			on: (locale) ->
-				app.helpers.locale.setLocale locale
+				LocaleHelper.setLocale locale
 			"/home":
 				on: ->
 					@changeController HomeController, HomeView, -> @show()

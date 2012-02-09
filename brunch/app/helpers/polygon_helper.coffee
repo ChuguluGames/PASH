@@ -1,10 +1,10 @@
 class exports.PolygonHelper
-	self=@
+	# dependencies: LogHelper
 
-	self.tag = "PolygonHelper"
+	@tag = "PolygonHelper"
 
 	# check if the point is in the polygon
-	self.isPointInPolygon = (point, polygon) ->
+	@isPointInPolygon = (point, polygon) ->
 		inPolygon = false
 		i = 0
 		j = polygon.length - 1
@@ -13,12 +13,12 @@ class exports.PolygonHelper
 			inPolygon = not inPolygon  if (polygon[i].y > point.y) isnt (polygon[j].y > point.y) and (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)
 			j = i++
 
-		app.helpers.log.info "the point", point, "is in the polygon", self.tag if inPolygon
+		LogHelper.info "the point", point, "is in the polygon", @tag if inPolygon
 
 		inPolygon
 
 	# get the extremity of the polygon and return a rectangle
-	self.polygonToRectangle = (polygon) ->
+	@polygonToRectangle = (polygon) ->
 		bounds =
 			x: null
 			y: null
@@ -37,7 +37,7 @@ class exports.PolygonHelper
 
 			i++
 
-		app.helpers.log.info "the bounds of polygon are ", bounds, self.tag
+		LogHelper.info "the bounds of polygon are ", bounds, @tag
 
 		return {
 			dimensions:
@@ -48,7 +48,7 @@ class exports.PolygonHelper
 				y: bounds.y
 		}
 
-	self.getRectangleCenter = (rectangle) ->
+	@getRectangleCenter = (rectangle) ->
 		center = {
 			x: rectangle.dimensions.width / 2 + rectangle.position.x
 			y: rectangle.dimensions.height / 2 + rectangle.position.y
@@ -57,7 +57,7 @@ class exports.PolygonHelper
 		center
 
 	# create a rectangle bound to the target and center relativly to the point
-	self.rectangleFromPoint = (point, dimensions) ->
+	@rectangleFromPoint = (point, dimensions) ->
 		center =
 			x: point.x - dimensions.width / 2
 			y: point.y - dimensions.height / 2
@@ -66,13 +66,13 @@ class exports.PolygonHelper
 			dimensions: dimensions
 			position: center
 
-		app.helpers.log.info "the rectangle generated is ", rectangle, self.tag
+		LogHelper.info "the rectangle generated is ", rectangle, @tag
 
 		rectangle
 
 	# order the polygon point clockwise
-	self.orderPoints = (points) ->
-		upperPoint = self.getUpperLeftPoint(points)
+	@orderPoints = (points) ->
+		upperPoint = @getUpperLeftPoint(points)
 
 		# custom array sort function
 		sortPoints = (pointA, pointB) ->
@@ -94,7 +94,7 @@ class exports.PolygonHelper
 		points.sort(sortPoints)
 
 	# get the upper left point of a polygon
-	self.getUpperLeftPoint = (points) ->
+	@getUpperLeftPoint = (points) ->
 		top = points[0]
 		i = 1
 

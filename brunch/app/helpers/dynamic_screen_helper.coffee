@@ -1,6 +1,7 @@
 class exports.DynamicScreenHelper
-	# depenencies: DeviceHelper
+	# dependencies: DeviceHelper
 
+	@tag              = "DynamicScreenHelper"
 	@baseWindowSize   = {}
 	@baseItemSize     = {}
 	@scaleFontSize    = 1
@@ -28,10 +29,12 @@ class exports.DynamicScreenHelper
 	@generateItemPaddingStyle = ->
 		bodySize = @getElementSize $('body')
 
+		paddingItemImage = 2
+
 		# TODO: find a way to not use that
 		itemPaddingElementDefaultSize =
-			width : bodySize.width * .50 - 4 # 2 * 2px padding
-			height: bodySize.height * .85 - 4 # 2 * 2px padding
+			width : bodySize.width * .50 - 2 * paddingItemImage
+			height: bodySize.height * .85 - 2 * paddingItemImage
 
 		proportionalSize = @getProportionalSize itemPaddingElementDefaultSize, @baseItemSize
 
@@ -41,8 +44,8 @@ class exports.DynamicScreenHelper
 		differenceHeight = itemPaddingElementDefaultSize.height - proportionalSize.height
 
 		position =
-			left: 2
-			top : 2
+			left: paddingItemImage
+			top : paddingItemImage
 
 		position.left += differenceWidth / 2 if differenceWidth > 0
 		position.top  += differenceHeight / 2 if differenceHeight > 0
@@ -61,13 +64,13 @@ class exports.DynamicScreenHelper
 		proportionalSize = baseSize
 
 		if ratioHeight > ratioWidth
-			proportionalSize.width = size.width
+			proportionalSize.width  = size.width
 			proportionalSize.height *= ratioWidth
-			proportionalSize.ratio = ratioWidth
+			proportionalSize.ratio  = ratioWidth
 		else
 			proportionalSize.height = size.height
-			proportionalSize.width *= ratioHeight
-			proportionalSize.ratio = ratioHeight
+			proportionalSize.width  *= ratioHeight
+			proportionalSize.ratio  = ratioHeight
 
 		proportionalSize
 

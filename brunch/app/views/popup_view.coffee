@@ -11,14 +11,14 @@ class exports.PopupView extends View
 			content      : true
 			pop          : true
 			fade         : false
-			animated     : app.helpers.device.canPerformAnimation()
+			animated     : DeviceHelper.canPerformAnimation()
 			buttons      : {}
 
 		# override defaults
 		@settings = $.extend settings, attributes.options
 
 		# check locale
-		strings = app.helpers.locale.getStrings()
+		strings = LocaleHelper.getStrings()
 		if not strings.popups[@settings.name]?
 			@settings.title = false if @settings.title is true
 			@settings.content = false if @settings.content is true
@@ -30,7 +30,7 @@ class exports.PopupView extends View
 		@make().render()
 
 	render: ->
-		$(@el).html(app.helpers.template.generate(@template, @settings)).appendTo($("body"))
+		$(@el).html(TemplateHelper.generate(@template, @settings)).appendTo($("body"))
 
 		# cache some elements
 		@elements =
@@ -105,7 +105,7 @@ class exports.PopupView extends View
 			callback()
 
 	center: ->
-		windowSize = app.helpers.device.getWindowSize()
+		windowSize = DeviceHelper.getWindowSize()
 
 		@elements.background.css
 			left: (windowSize.width / 2 - @elements.background.width() / 2) + "px"

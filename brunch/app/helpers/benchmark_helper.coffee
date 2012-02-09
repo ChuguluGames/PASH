@@ -1,44 +1,43 @@
-root=@
-
 class exports.BenchmarkHelper
-	self=@
+	# dependencies: CountdownHelper
 
-	self.frequence = 10
-	self.finished = false
-	self.tests = [
+	@tag = "BenchmarkHelper"
+	@frequence = 10
+	@finished = false
+	@tests = [
 		'move'
 		'move_resize'
 		'fade'
 		'pop'
 	]
-	self.currentTest = 0
-	self.updates = []
-	self.onOver = null
+	@currentTest = 0
+	@updates = []
+	@onOver = null
 
-	self.test = (callback) ->
+	@test = (callback) ->
 		@onOver = callback if callback?
 		@update()
 		@startTest()
 
-	self.startTest = ->
+	@startTest = ->
 		testName = ("benchmark_test_" + @tests[@currentTest]).toPascalCase()
 		test = new (eval(testName))()
 		test.onFinish = => @endTest()
 		test.start()
 
-	self.endTest = ->
+	@endTest = ->
 		if @currentTest >= @tests.length - 1
-			self.finish()
+			@finish()
 		else
 			@currentTest++
-			self.startTest()
+			@startTest()
 
-	self.update = ->
+	@update = ->
 		if not @finished
-			@updates.push app.helpers.countdown.now()
+			@updates.push CountdownHelper.now()
 			setTimeout((=> @update()), @frequence)
 
-	self.finish = ->
+	@finish = ->
 		total = 0
 		@finished = true
 

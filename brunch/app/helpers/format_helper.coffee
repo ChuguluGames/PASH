@@ -1,11 +1,9 @@
 class exports.FormatHelper
-	self=@
+	@tag = "FormatHelper"
 
-	self.tag = "FormatHelper"
+	@isInt = (input) ->
+		@validate input, /^[0-9]+$/
 
-	self.isInt = (input) ->
-		self.validate input, /^[0-9]+$/
-
-	self.validate = (input, regex) ->
+	@validate = (input, regex) ->
 		regexp = new RegExp regex
 		regexp.test input

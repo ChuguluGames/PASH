@@ -3,6 +3,5 @@ class exports.OptionsView extends View
 	template: require 'templates/options'
 
 	render: ->
-		self=@
-		$(self.el).html app.helpers.template.generate self.template
-		self
+		$(@el).html TemplateHelper.generate @template
+		@

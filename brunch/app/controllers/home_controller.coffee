@@ -3,7 +3,6 @@ class exports.HomeController extends Controller
 		"click a": "onClickLink"
 
 	show: ->
-		self=@
-		$("body").html self.view.render().el
-		self.delegateEvents()
-		self
+		$("body").html @view.render().el
+		@delegateEvents()
+		@

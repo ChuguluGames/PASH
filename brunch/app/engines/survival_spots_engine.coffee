@@ -2,7 +2,7 @@ class exports.SurvivalSpotsEngine extends ScoringSpotsEngine
   level : 0
 
   constructor: (delegate, json) ->
-    super(app.helpers.config.getSpotsModes().SURVIVAL, delegate, json)
+    super(ConfigHelper.getSpotsModes().SURVIVAL, delegate, json)
 
   reset: ->
     super

@@ -1,15 +1,15 @@
 class exports.LogHelper
-	self=@
+	# dependencies: DeviceHelper
 
-	self.verbose = {}
+	@verbose = {}
 
-	self.isVerbose = (tag) ->
-		self.verbose[tag]? && self.verbose[tag]
+	@isVerbose = (tag) ->
+		@verbose[tag]? && @verbose[tag]
 
-	self.argumentsToArray = (args) ->
+	@argumentsToArray = (args) ->
 		Array.prototype.slice.call(args)
 
-	self.printObjects = (array) ->
+	@printObjects = (array) ->
 		newArray = []
 		for item in array
 			do (item) ->
@@ -29,8 +29,8 @@ class exports.LogHelper
 				newArray.push item
 		newArray
 
-	self.log = (type, args) ->
-		args = self.argumentsToArray(args)
+	@log = (type, args) ->
+		args = @argumentsToArray(args)
 
 		tag = args.pop()
 
@@ -38,12 +38,12 @@ class exports.LogHelper
 		args.unshift "[" + tag + "] "
 
 		# can log
-		if args? && args.length >= 1 && self.isVerbose tag
+		if args? && args.length >= 1 && @isVerbose tag
 			type = "log" if (typeof console[type] == "undefined" or console[type] == null)
 			# android version
-			if app.helpers.device.isMobile()
+			if DeviceHelper.isMobile()
 				# goto print the object of the mother
-				args = self.printObjects args
+				args = @printObjects args
 
 				console[type](args.join(""))
 			else
@@ -51,11 +51,11 @@ class exports.LogHelper
 
 		true
 
-	self.error = ->
-		self.log "error", arguments
+	@error = ->
+		@log "error", arguments
 
-	self.warn = ->
-		self.log "warn", arguments
+	@warn = ->
+		@log "warn", arguments
 
-	self.info = ->
-		self.log "info", arguments
+	@info = ->
+		@log "info", arguments

@@ -1,10 +1,11 @@
 class exports.TemplateHelper
-	self=@
+	# dependencies: LocaleHelper
+	@tag = "SeedHelper"
 
-	self.generate = (template, data) ->
+	@generate = (template, data) ->
 		templateVars = {
 			routes : app.router.getRoutes()
-			strings: app.helpers.locale.getStrings()
+			strings: LocaleHelper.getStrings()
 		}
 
 		data = if typeof data isnt "undefined" then $.extend(templateVars, data) else templateVars

@@ -11,16 +11,16 @@ DifferenceDefinition = persistence.define 'difference', {}
 DifferenceDefinition::differencePointsArray = null
 
 DifferenceDefinition::fetchPoints = (callback) ->
-	self=@
-	self.difference_points.list (points) ->
-		app.helpers.polygoner.orderPoints points
-		self.differencePointsArray = []
+	@difference_points.list (points) =>
+		PolygonHelper.orderPoints points
+		@differencePointsArray = []
 		for point in points
-			self.differencePointsArray.push point.getSimpleObject()
-		callback(self.differencePointsArray) if callback?
+			@differencePointsArray.push point.getSimpleObject()
+
+		callback(@differencePointsArray) if callback?
 
 DifferenceDefinition::getSimpleObject = ->
-	simple =
+	new Object
 		isClued              : false
 		isFound              : false
 		differencePointsArray: @differencePointsArray

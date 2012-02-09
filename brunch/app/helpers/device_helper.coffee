@@ -1,77 +1,77 @@
 class exports.DeviceHelper
-	self=@
+	# dependencies: BenchmarkHelper
 
-	self.tag            = "DeviceHelper"
-	self._userAgent      = null
-	self._windowSize     = null
-	self._isMobile       = null
-	self._isAndroid      = null
-	self._isIOS          = null
-	self._isIpad         = null
-	self._isIPhone       = null
-	self._isIPod         = null
-	self._isRetina       = null
-	self._resolution     = null
-	self._localization   = null
-	self._animationGrade = null
+	@tag             = "DeviceHelper"
+	@_userAgent      = null
+	@_windowSize     = null
+	@_isMobile       = null
+	@_isAndroid      = null
+	@_isIOS          = null
+	@_isIpad         = null
+	@_isIPhone       = null
+	@_isIPod         = null
+	@_isRetina       = null
+	@_resolution     = null
+	@_localization   = null
+	@_animationGrade = null
 
-	self.getWindowSize = ->
-		self._windowSize ?= {width : $(window).width(), height: $(window).height()}
+	@getWindowSize = ->
+		@_windowSize ?= {width : $(window).width(), height: $(window).height()}
 
-	self.isMobile = ->
-		self._isMobile ?= self.isAndroid() or self.isIOS()
+	@isMobile = ->
+		@_isMobile ?= @isAndroid() or @isIOS()
 
-	self.isAndroid = ->
-		self._isAndroid ?= self.userAgentMatch "android"
+	@isAndroid = ->
+		@_isAndroid ?= @userAgentMatch "android"
 
-	self.isIOS = ->
-		self._isIOS ?= self.isIpad() or self.isIPhone() or self.isIPod()
+	@isIOS = ->
+		@_isIOS ?= @isIpad() or @isIPhone() or @isIPod()
 
-	self.isIpad = ->
-		self._isIpad ?= self.userAgentMatch "ipad"
+	@isIpad = ->
+		@_isIpad ?= @userAgentMatch "ipad"
 
-	self.isIPhone = ->
-		self._isIPhone ?= self.userAgentMatch "iphone"
+	@isIPhone = ->
+		@_isIPhone ?= @userAgentMatch "iphone"
 
-	self.isIPod = ->
-		self._isIPod ?= self.userAgentMatch "ipod"
+	@isIPod = ->
+		@_isIPod ?= @userAgentMatch "ipod"
 
-	self.isIOS = ->
-		self._isIOS ?= self.isIpad() or self.isIPhone() or self.isIPod()
+	@isIOS = ->
+		@_isIOS ?= @isIpad() or @isIPhone() or @isIPod()
 
-	self.isRetina = ->
-		self._isRetina ?= self.getResolution() == 2
+	@isRetina = ->
+		@_isRetina ?= @getResolution() == 2
 
-	self.getResolution = ->
-		self._resolution ?= window.devicePixelRatio or 1
+	@getResolution = ->
+		@_resolution ?= window.devicePixelRatio or 1
 
-	self.getLocalization = ->
+	@getLocalization = ->
 		if navigator.language?
-			self._localization ?= navigator.language.substr(0, 2)
+			@_localization ?= navigator.language.substr(0, 2)
 		else if navigator.browserLanguage?
-			self._localization ?= navigator.browserLanguage.substr(0, 2)
-		self._localization
+			@_localization ?= navigator.browserLanguage.substr(0, 2)
+		@_localization
 
-	self.userAgentMatch = (string) ->
-		self.getUserAgent().indexOf(string) > -1
+	@userAgentMatch = (string) ->
+		@getUserAgent().indexOf(string) > -1
 
-	self.getUserAgent = ->
-		self._userAgent ?= navigator.userAgent.toLowerCase()
+	@getUserAgent = ->
+		@_userAgent ?= navigator.userAgent.toLowerCase()
 
-	self.getAnimationGrade = (callback) ->
-		if not self._animationGrade?
+	@getAnimationGrade = (callback) ->
+		if not @_animationGrade?
 			# check local storage
 			_restoreGrade = localStorage.getItem('device_animation_grade')
 			if not _restoreGrade?
-				return app.helpers.benchmark.test (grade) ->
-					self._animationGrade = grade
+				return BenchmarkHelper.test (grade) =>
+					@_animationGrade = grade
 					localStorage.setItem('device_animation_grade', grade)
-					callback(self._animationGrade) if typeof callback isnt "undefined"
+					callback(@_animationGrade) if typeof callback isnt "undefined"
 			else
-				self._animationGrade = _restoreGrade
+				@_animationGrade = _restoreGrade
 
-		callback(self._animationGrade) if typeof callback isnt "undefined"
-		self._animationGrade
+		callback(@_animationGrade) if typeof callback isnt "undefined"
+		@_animationGrade
 
-	self.canPerformAnimation = ->
-		self._animationGrade < 2
+	@canPerformAnimation = ->
+		@_animationGrade < 2

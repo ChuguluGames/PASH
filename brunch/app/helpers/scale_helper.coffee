@@ -1,4 +1,5 @@
 class exports.ScaleHelper
+	@tag = "ScaleHelper"
 
 	@scalePositionTo = (position, scale) ->
 		new Object

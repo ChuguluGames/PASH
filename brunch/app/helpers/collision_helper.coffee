@@ -1,12 +1,14 @@
 class exports.CollisionHelper
-	self=@
+	# dependencies: PolygonHelper
+
+	@tag = "CollisionHelper"
 
 	# check if a circle is in a polygon (polygon pints sould be ordered first)
-	self.circleCollisionToPolygon = (circle, polygon) ->
+	@circleCollisionToPolygon = (circle, polygon) ->
 		circleInPolygon = false
 
 		# center of the circle is in the polygon
-		return true if app.helpers.polygoner.isPointInPolygon circle.center, polygon
+		return true if PolygonHelper.isPointInPolygon circle.center, polygon
 
 		l = polygon.length
 		i = 0
@@ -32,7 +34,7 @@ class exports.CollisionHelper
 		false
 
 	# source: http://coding.pressbin.com/65/PHP-Find-shortest-distance-from-point-to-line-segment
-	self.getDistanceBetweenPointAndSegment = (point, segment) ->
+	@getDistanceBetweenPointAndSegment = (point, segment) ->
 		segmentEndSegmentStartX = segment.end.x - segment.start.x
 		segmentEndSegmentStartY = segment.end.y - segment.start.y
 		pointSegmentStartX = point.x - segment.start.x
