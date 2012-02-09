@@ -63,15 +63,17 @@ class exports.GameTopbarView extends View
 		indicator = @elements.differencesIndicator.empty() # empty the counter container
 
 		fadeInLi = (li, delay) =>
-			# TODO: create a callback function (faster than creating x anonymous function)
 			setTimeout =>
-				li.fadeIn(@differencesIndicator.fadeInSpeed)
+				li.addClass 'fadein'
 			, delay
 
 		for difference, index in differences
 			li = $("<li />").appendTo(indicator)
 			li.addClass(className) if (className = @getDifferenceClassName difference)?
-			fadeInLi(li, index * @differencesIndicator.delayBetweenAppearance)
+
+			if DeviceHelper.canPerformAnimation()
+				fadeInLi li, index * @differencesIndicator.delayBetweenAppearance
+			else li.css 'opacity', '1'
 
 	updateDifferenceCounterWithDifferences: (differences) ->
 		return if not differences?

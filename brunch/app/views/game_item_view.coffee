@@ -95,11 +95,13 @@ class exports.GameItemView extends View
 		differenceElement.add(differenceElementClone)
 
 	hideLoading: ->
+		@elements.loading.remove('rotate') if DeviceHelper.canPerformAnimation()
 		@elements.loading.hide()
 		@elements.item.show()
 		@
 
 	showLoading: ->
+		@elements.loading.addClass('rotate') if DeviceHelper.canPerformAnimation()
 		@elements.loading.show()
 		@elements.item.hide()
 		@

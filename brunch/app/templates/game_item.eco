@@ -1,6 +1,5 @@
 <div class="item-loading vcenterw">
 	<div class="loading-image vcenter"></div>
-	<div class="loading-text"><span class="points">...</span></div>
 </div>
 <div class="item">
 	<div class="first-image">
