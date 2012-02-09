@@ -2,7 +2,6 @@ window.app = {}
 
 modules = {
   helpers: [
-    'android_loading'
     'benchmark'
     'config'
     'countdown'
@@ -111,6 +110,7 @@ class exports.Application
     EventHelper        : true
     GameController     : true
     SeedHelper         : true
+    BenchmarkHelper    : true
 
   tag        : "Application"
   config     : require('config/config').config
@@ -148,14 +148,18 @@ class exports.Application
       LogHelper.info "on filesystem init success", @tag
 
       SeedHelper.seed (seeded) =>
-        LogHelper.info("on seed complete", @tag) if seeded
+        message = if seeded then "on seed complete" else "didn't need to seed"
+        LogHelper.info(message, @tag)
 
         # temp workaround for dismissing splash once the home is loaded
         if navigator? and navigator.splashscreen?
-          @router.onFirstRoute = ->
-            setTimeout ->
+          @router.onFirstRoute = =>
+            setTimeout =>
+              LogHelper.info "hide splashscreen", @tag
               navigator.splashscreen.hide()
             , 2000
+
+        LogHelper.info "initialize router", @tag
 
         # router
         @router.init()
@@ -177,6 +181,7 @@ class exports.Application
       EventHelper.disableScroll()
 
     DeviceHelper.getAnimationGrade =>
+
       # wait for database
       DbHelper.createPASHDatabase => @onDatabaseReady()
 
