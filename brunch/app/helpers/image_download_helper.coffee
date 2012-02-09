@@ -30,7 +30,7 @@ class exports.ImageDownloadHelper
 
         object[imgName] = new ImageModel({url: url, path: path})
         DbHelper.save object, ->
-            callback(object[imgName]) if callback?
+          callback(object[imgName]) if callback?
       else
         LogHelper.info "downloading for real", @tag
 

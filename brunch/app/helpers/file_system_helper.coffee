@@ -11,10 +11,10 @@ class exports.FileSystemHelper
       @filesystem = {}
       return (success() if success?)
     window.requestFileSystem LocalFileSystem.PERSISTENT, 0
-    , (fs) ->
+    , (fs) =>
       @filesystem = fs
       success() if success?
-    , (evt) ->
+    , (evt) =>
       fail(evt) if fail?
 
   @getAssetsPath = (success, fail) ->
@@ -40,25 +40,25 @@ class exports.FileSystemHelper
 
   @getSeedPath = (success, fail) ->
     return success(@emptyEntry) if !LocalFileSystem?
-    @getAssetsPath (entry) ->
+    @getAssetsPath (entry) =>
       @getSubdirInDirectoryEntry entry, '/seed', success, fail
     , fail
 
   @getSeedImagesPath = (success, fail) ->
     return success(@emptyEntry) if !LocalFileSystem?
-    @getSeedPath (entry) ->
+    @getSeedPath (entry) =>
       @getSubdirInDirectoryEntry entry, '/images', success, fail
     , fail
 
   @getSeedPackImagesPath = (success, fail) ->
     return success(@emptyEntry) if !LocalFileSystem?
-    @getSeedImagesPath (entry) ->
+    @getSeedImagesPath (entry) =>
       @getSubdirInDirectoryEntry '/pack', success, fail
     , fail
 
   @getSeedItemImagesPath = (success, fail) ->
     return success(@emptyEntry) if !LocalFileSystem?
-    @getSeedImagesPath (entry) ->
+    @getSeedImagesPath (entry) =>
       @getSubdirInDirectoryEntry '/item', success, fail
     , fail
 

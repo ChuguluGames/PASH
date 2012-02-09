@@ -61,9 +61,10 @@ class exports.BenchmarkHelper
 				2
 			else 3
 
-		console.log "benchmark result: " + average
 		grade = getGrade(average)
-		console.log "animation grade received: " + grade
+
+		LogHelper.info "benchmark result: " + average, @tag
+		LogHelper.info "animation grade received: " + grade, @tag
 
 		@onOver(grade) if @onOver?
 

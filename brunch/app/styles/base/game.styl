@@ -77,7 +77,11 @@
 			-webkit-background-size cover
 			background-position 50% 50%
 			background-repeat no-repeat
-			background-image url(path ingame/item_spinner.gif)
+			background-color red
+			-webkit-animation-name rotate_loading_image
+			-webkit-animation-duration 5s
+			-webkit-animation-iteration-count infinite
+			-webkit-animation-timing-function linear
 
 		&.android
 			height auto
@@ -165,6 +169,16 @@
 		from {
 		} to {
 			opacity: 0;
+		}
+	}
+}
+
+@css {
+	@-webkit-keyframes rotate_loading_image {
+		from {
+			-webkit-transform: rotate(0deg);
+		} to {
+			-webkit-transform: rotate(360deg);
 		}
 	}
 }

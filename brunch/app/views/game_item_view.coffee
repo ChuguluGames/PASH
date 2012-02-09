@@ -24,7 +24,6 @@ class exports.GameItemView extends View
 	render: ->
 		$(@el).html TemplateHelper.generate @template, {padding: DynamicScreenHelper.itemPadding}
 		@initializeElements()
-		AndroidLoadingHelper.setLoading(@elements.loading) if DeviceHelper.isAndroid()
 		@
 
 	initializeElements: ->
@@ -96,14 +95,11 @@ class exports.GameItemView extends View
 		differenceElement.add(differenceElementClone)
 
 	hideLoading: ->
-		AndroidLoadingHelper.stop() if DeviceHelper.isAndroid()
 		@elements.loading.hide()
 		@elements.item.show()
 		@
 
 	showLoading: ->
-
-		AndroidLoadingHelper.start() if DeviceHelper.isAndroid()
 		@elements.loading.show()
 		@elements.item.hide()
 		@

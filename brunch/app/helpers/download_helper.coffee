@@ -7,9 +7,9 @@ class SequentialDownloader
 		return if !(nextFile = @queue.pop())?
 		fileTransfer = new FileTransfer()
 		fileTransfer.download nextFile.url, nextFile.path,
-				(entry) =>
-					nextFile.success nextFile.url, entry.fullPath if nextFile.success?
-					@downloadNextFile()
+			(entry) =>
+				nextFile.success nextFile.url, entry.fullPath if nextFile.success?
+				@downloadNextFile()
 			, nextFile.fail
 
 	# when static download method is used the downloads are queued (LIFO stack)
