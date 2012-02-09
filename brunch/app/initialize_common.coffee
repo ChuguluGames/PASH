@@ -109,18 +109,15 @@ class exports.Application
     PreloadHelper      : true
     PolygonHelper      : true
     EventHelper        : true
-    GameController: true
-    SeedHelper: true
+    GameController     : true
+    SeedHelper         : true
 
   tag        : "Application"
   config     : require('config/config').config
   router     : MainRouter
-  helpers    : {}
-  models     : {}
-  controllers: {}
-  views      : {}
 
   constructor: ->
+    LogHelper.verbose = @verbose
     @waitForDeviceReadyEvent()
 
   waitForDeviceReadyEvent: ->
