@@ -1,11 +1,6 @@
 function Controller(attributes) {
 	var self = this;
 
-	if (attributes.view != "undefined") {
-		self.view = new attributes.view()
-		delete attributes.view
-	}
-
 	// add the new properties
 	for (var prop in attributes) {
 		self[prop] = attributes[prop];
