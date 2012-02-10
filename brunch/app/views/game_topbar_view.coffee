@@ -36,13 +36,17 @@ class exports.GameTopbarView extends View
 	initializeElements: ->
 		@elements.differencesIndicator = $(".indicators ul", @el)
 		@elements.next = $(".button-next-item", @el) if @next
-		@elements.clues = $(".button-clues", @el) if @clues
+
+		if @clues
+			@elements.clues = $(".button-clues a", @el)
+			@elements.cluesCount = $("span", @elements.clues)
 
 	update: (data) ->
 		@updateDifferencesIndicator(data.differences) if data.differences?
 		@timer.update(data.timer) if @timer and data.timer?
 		@score.update(data.score) if @score and data.score?
 		@updateNext(data.next) if @next and data.next?
+		@updateCluesCount(data.cluesCount) if @cluesCount and data.cluesCount?
 		@
 
 	reset: ->
@@ -94,6 +98,10 @@ class exports.GameTopbarView extends View
 
 	updateNext: (nextRoute) ->
 		$("a", @elements.next).attr("href", nextRoute)
+
+	updateCluesCount: (cluesCount) ->
+		@elements.clues[(if cluesCount is 0 then "addClass" else "removeClass")]("disabled")
+		@elements.cluesCount.html("X" + cluesCount)
 
 	disableButtons: ->
 		$(".button, .button a", @el).addClass("disabled")

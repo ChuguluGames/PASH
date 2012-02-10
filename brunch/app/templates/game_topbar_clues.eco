@@ -1,5 +1,5 @@
 <div class="button button-clues">
 	<a href="#" class="action-showClue vcenterw">
-		<span class="vcenter"><%= @strings.ingame.button_clues %></span>
+		<span class="vcenter"></span>
 	</a>
 </div>

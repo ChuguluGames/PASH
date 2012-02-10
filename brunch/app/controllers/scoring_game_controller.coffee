@@ -25,7 +25,25 @@ class exports.ScoringGameController extends GameController
 	## game over
 	timeOut: -> PopupTimeoutFactory.create @engine.mode
 
+	## clues
+	didUseClue: (difference, clueCount, differenceCount) ->
+		@activateDifferenceIndicator "clue", difference
+		@view.topbar.updateDifferenceCounterWithDifference difference
+		@view.topbar.updateCluesCount clueCount
+
 	## delegate
+
+	onClickLink: (event) ->
+		super
+
+		if @engine.clueCount > 0 and $(event.delegateTarget).hasClass("action-showClue")
+			@engine.useClue()
+			return false
+
+	# @override
+	activateDifferencesIndicator: ->
+		super
+		@view.topbar.updateCluesCount @engine.clueCount
 
 	onGameOver: ->
 		PopupFinishFactory.create @engine.mode, =>
