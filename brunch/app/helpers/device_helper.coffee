@@ -61,7 +61,7 @@ class exports.DeviceHelper
 	@getAnimationGrade = (callback) ->
 		if not @_animationGrade?
 			# check local storage
-			_restoreGrade = localStorage.getItem('device_animation_grade')
+			_restoreGrade = parseInt(localStorage.getItem('device_animation_grade'))
 			if not _restoreGrade?
 				return BenchmarkHelper.test (grade) =>
 					@_animationGrade = grade
