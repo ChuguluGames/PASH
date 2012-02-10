@@ -40,7 +40,6 @@ class exports.SurvivalSpotsEngine extends ScoringSpotsEngine
     @time      = limit.time
     @timer.setTimeLeft @time
     @delegateTimeDidChange()
-    @timer.resume()
 
   itemFinished: ->
     @timer.pause()
@@ -48,3 +47,4 @@ class exports.SurvivalSpotsEngine extends ScoringSpotsEngine
     @score += bonus
     @delegateScoreDidChange()
     super
+
