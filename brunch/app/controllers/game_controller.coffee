@@ -74,8 +74,8 @@ class exports.GameController extends Controller
 	load: (callback) ->
 		if not @loaded and (not itemsList? or itemsList.length == 0)
 			ItemModel.fetchSelectedIdentities (itemIdentities) =>
-				@selectedItemIDs  = itemIdentities
-				@loaded           = true
+				@selectedItemIDs = itemIdentities
+				@loaded          = true
 				callback() if callback?
 		else if callback?
 			callback()
@@ -90,9 +90,7 @@ class exports.GameController extends Controller
 			@play @engine.getCurrentItemIndex(), @onStart
 
 	onStart: ->
-		PopupTutoFactory.create @engine.mode, "start", =>
-			@engine.resume()
-			@view.topbar.initializeDifferenceCounter(@engine.differences) # initialize difference indicator
+		PopupTutoFactory.create @engine.mode, "start", => @onPlay(false)
 
 	# resume a game
 	resume: (mode) ->
@@ -108,15 +106,7 @@ class exports.GameController extends Controller
 		else @start()
 
 	onResume: ->
-		PopupTutoFactory.create @engine.mode, "resume", =>
-			@engine.resume()
-			@view.topbar.initializeDifferenceCounter(@engine.differences) # initialize difference indicator
-			@activateDifferencesIndicator(@engine.differences)
-
-	reset: ->
-		@view.reset() # reset visuals
-		@disabledClicks = true # disable clicks
-		@
+		PopupTutoFactory.create @engine.mode, "resume", => @onPlay(true)
 
 	# play a game
 	play: (itemIndex, callback, isResume = false) ->
@@ -124,22 +114,19 @@ class exports.GameController extends Controller
 		# not yet loaded? => need for development
 		if not @loaded
 			args = arguments
-			@load =>
-				@play.apply @, args
+			@load => @play.apply @, args
 			return
 
-		@initializeEngine() if not @engine?
-
-		@engine.setCurrentItemIndex itemIndex
-
-		if !(itemIdentity = @selectedItemIDs[@engine.getCurrentItemIndex()])?
-			alert "error, no item at " + @engine.getCurrentItemIndex()
+		if !(itemIdentity = @selectedItemIDs[itemIndex])?
+			alert "error, no item at " + itemIndex
 			return false
+
+		@initializeEngine() if not @engine?
+		@engine.setCurrentItemIndex itemIndex
 
 		@reset()
 
-		@view.topbar.disableButtons() # add disabled style on links
-		@view.item.showLoading()  # show loading
+		@activateLoadingMode()
 
 		# load the item
 		ItemModel.fetchFullItemForIdentity itemIdentity, !isResume, (item) =>
@@ -147,25 +134,20 @@ class exports.GameController extends Controller
 			# preloading the images
 			new PreloadHelper().load (images) =>
 
+				@desactivateLoadingMode()
+
 				# update the view
 				@view.update(
 					first_image : images[0]
 					second_image: images[1]
 					next        : "#" + @getNextItemRoute() 	# update the next link
 				)
-				@view.item.hideLoading() # hide the loading indicator
-				@view.topbar.enableButtons() # enable links
 
-				if not isResume
-					@engine.newItem(item.differencesArray)
+				@engine.newItem(item.differencesArray) if not isResume
 
 				if callback?
 					callback.call(@)
-				else
-					@engine.resume()
-					@view.topbar.initializeDifferenceCounter(@engine.differences) # initialize difference indicator
-
-				@disabledClicks = false # enable clicks
+				else @onPlay()
 
 				# preloading errors
 			, (error) ->
@@ -174,6 +156,15 @@ class exports.GameController extends Controller
 				@loadNextItem()
 
 			, item.first_image.getSrc(), item.second_image.getSrc()
+
+	onPlay: (isResume = false) ->
+		@engine.resume()
+		@activateDifferencesIndicator @engine.differences, isResume
+
+	reset: ->
+		@view.reset() # reset visuals
+		@disabledClicks = true # disable clicks
+		@
 
 	getNextItemRoute: ->
 		nextIndex = @getNextItemIndex()
@@ -206,14 +197,6 @@ class exports.GameController extends Controller
 			event.preventDefault()
 			return false
 
-		if $(event.target).hasClass("action-showClue")
-			@engine.useClue()
-			return false
-
-		if $(event.target).hasClass("button-next-item")
-			# disable links until next item is loaded
-			@disabledClicks = true
-
 		super
 
 	# when the user click on the first image or the second
@@ -244,15 +227,18 @@ class exports.GameController extends Controller
 
 		return false
 
-	activateDifferencesIndicator: (differences) ->
-		for difference in differences
-			if difference.isFound? and difference.isFound
-				indicatorType = "found"
-			else if difference.isClued? and difference.isClued
-				indicatorType = "clue"
-			else continue
+	activateDifferencesIndicator: (differences, isResume = false) ->
+		@view.topbar.initializeDifferenceCounter(differences) # initialize difference indicator
 
-			@activateDifferenceIndicator indicatorType, difference
+		if isResume
+			for difference in differences
+				if difference.isFound? and difference.isFound
+					indicatorType = "found"
+				else if difference.isClued? and difference.isClued
+					indicatorType = "clue"
+				else continue
+
+				@activateDifferenceIndicator indicatorType, difference
 
 	activateDifferenceIndicator: (type, difference, target) ->
 		if type is "error"
@@ -279,6 +265,16 @@ class exports.GameController extends Controller
 
 		@
 
+	activateLoadingMode: ->
+		@view.topbar.disableButtons() # add disabled style on links
+		@view.item.showLoading()  # show loading
+		@disabledClicks = true # disable clicks
+
+	desactivateLoadingMode: ->
+		@view.item.hideLoading() # hide the loading indicator
+		@view.topbar.enableButtons() # enable links
+		@disabledClicks = false # enble clicks
+
 	## delegate
 
 	## difference
@@ -288,11 +284,6 @@ class exports.GameController extends Controller
 
 	didNotFindDifference: (spotCircle) ->
 		@activateDifferenceIndicator "error", spotCircle.relativePosition
-
-	## clues
-	didUseClue: (difference, clueCount, differenceCount) ->
-		@activateDifferenceIndicator "clue", difference
-		@view.topbar.updateDifferenceCounterWithDifference difference
 
 	## game over
 	didFinishItem: ->
