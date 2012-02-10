@@ -51,7 +51,7 @@ Router::changeController = (controllerClass, viewClass, onCreate, onResume) ->
 			@currentController = null
 
 		# create the new one
-		newController = new controllerClass(view: viewClass)
+		newController = new controllerClass(view: new viewClass)
 		newController.initialize()
 		onCreate.apply(newController)
 

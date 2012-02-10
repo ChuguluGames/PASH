@@ -15,7 +15,18 @@ class exports.ScoringGameController extends GameController
 
 	scorePenalty: (penalty, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: penalty)
 
+	## game over
+	didFinishItem: ->
+		if @engine.isGameOver() || @getNextItemIndex() is -1
+			@disabledClicks = true # disable links until next item is loaded
+			@onGameOver()
+		else super
 
 	## game over
-	timeOut: -> console.log "timeOut"
+	timeOut: -> PopupTimeoutFactory.create @engine.mode
+
 	## delegate
+
+	onGameOver: ->
+		PopupFinishFactory.create @engine.mode, =>
+			# save the score or some shit like that

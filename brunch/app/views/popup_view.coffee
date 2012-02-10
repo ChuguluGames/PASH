@@ -1,72 +1,31 @@
 class exports.PopupView extends View
-	template: null
+	className: "popup"
+	template : require "templates/popup"
 
-	initialize: (attributes) ->
-		settings =
-			name         : "default"
-			onShow       : null
-			onClose      : null
-			activateClose: false
-			title        : true
-			content      : true
-			pop          : true
-			fade         : false
-			animated     : DeviceHelper.canPerformAnimation()
-			buttons      : {}
+	settings: {}
 
-		# override defaults
-		@settings = $.extend settings, attributes.options
+	constructor: (attributes) ->
+		super attributes
+		@settings = {}
 
-		# check locale
-		strings = LocaleHelper.getStrings()
-		if not strings.popups[@settings.name]?
-			@settings.title = false if @settings.title is true
-			@settings.content = false if @settings.content is true
+	configure: (@settings) ->
 
-		@settings.activateClose = true if @settings.onClose?
-
-		@className = "popup"
-		@template = require "templates/popup"
-		@make().render()
-
-	render: ->
-		$(@el).html(TemplateHelper.generate(@template, @settings)).appendTo($("body"))
+	render: () ->
+		$(@el).html(TemplateHelper.generate(@template, @settings))
+		$(@el).appendTo(@settings.container) if @settings.container?
 
 		# cache some elements
 		@elements =
-			overlay: $(".overlay", @el)
+			overlay   : $(".overlay", @el)
 			background: $(".background", @el)
 
 		# center the popup
 		@center()
 
-		# center the buttons
-		@centerButtons()
-
-		# close event
-		if @settings.activateClose
-			@addHandlerToButton $(".close.button a", @el), @settings.onClose
-			$(".close.button a", @el).on "click", => @settings.onClose()
-
-		# buttons custom events
-		for name, handler of @settings.buttons
-			@addHandlerToButton $("." + name + ".button a", @el), handler
-
-		$(".close.button a", @el).on "click", => @close()
-
-	addHandlerToButton: (button, handler) ->
-		button.on "click", handler
-
-	close: ->
-		@hide()
-		false
-
-	destroy: ->
-		$(@el).remove()
-
-	show: ->
+	show: (callback = null) ->
 		callbackOnShow = =>
-			@settings.onShow() if @settings.onShow?
+			@settings.events.onOpen.apply(@) if @settings.events.onOpen?
+			callback() if callback?
 
 		@showOverlay =>
 			if @settings.pop and @settings.animated
@@ -77,9 +36,13 @@ class exports.PopupView extends View
 				@elements.background.show()
 				callbackOnShow()
 
-	hide: ->
+	hide: (callback = null) ->
 		callbackOnHide = =>
-			@hideOverlay => @destroy()
+			@hideOverlay =>
+				@destroy() if @settings.destroyOnClose
+				@settings.events.onClose.apply(@) if @settings.events.onClose?
+				callback() if callback?
+
 		if @settings.pop and @settings.animated
 			@elements.background.popOut 400, callbackOnHide
 
@@ -89,6 +52,7 @@ class exports.PopupView extends View
 		else
 			@elements.background.hide()
 			callbackOnHide()
+		false
 
 	showOverlay: (callback) ->
 		if @settings.animated
@@ -111,10 +75,5 @@ class exports.PopupView extends View
 			left: (windowSize.width / 2 - @elements.background.width() / 2) + "px"
 			top: (windowSize.height / 2 - @elements.background.height() / 2) + "px"
 
-	centerButtons: ->
-		center = $(".footer .center", @el)
-		width = 0
-		center.find(".button").each ->
-			width += $(@).outerWidth(true)
-
-		center.width(width)
+	destroy: ->
+		$(@el).remove()

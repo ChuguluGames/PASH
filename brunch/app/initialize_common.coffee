@@ -1,6 +1,13 @@
 window.app = {}
 
 modules = {
+  factories: [
+    'popup'
+    'popup.tuto'
+    'popup.timeout'
+    'popup.pause'
+    'popup.finish'
+  ]
   helpers: [
     'benchmark'
     'config'
@@ -35,6 +42,7 @@ modules = {
     'survival_game'
     'zen_game'
     'options'
+    'popup'
   ]
   views: [
     'home'
@@ -70,11 +78,14 @@ modules = {
 # executes window.SomeType = require('types/some_type').SomeType for each class
 for type, list of modules
   typePath = type + "/"
-  typeOdd = type.slice(0, -1)
+
+  typeSingularized = type.singularize()
+
   for name in list
-    moduleFileName = name + "_" + typeOdd
+    splittedName = name.split "."
+    moduleFileName = splittedName[0] + "_" + typeSingularized
     modulePath = typePath + moduleFileName
-    moduleClass = moduleFileName.toPascalCase()
+    moduleClass = (splittedName.join("_") + "_" + typeSingularized).toPascalCase()
     window[moduleClass] = require(modulePath)[moduleClass]
 
 # relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
@@ -180,7 +191,9 @@ class exports.Application
       activateFastClicks()
       EventHelper.disableScroll()
 
-    DeviceHelper.getAnimationGrade =>
+    DeviceHelper.getAnimationGrade (grade) =>
+
+      LogHelper.info "animation grade received: " +  grade, @tag
 
       # wait for database
       DbHelper.createPASHDatabase => @onDatabaseReady()
