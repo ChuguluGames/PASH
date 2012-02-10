@@ -68,15 +68,8 @@ Controller.prototype.delegateEvent = function(selector, el, eventName, method, a
 
 Controller.prototype.onClickLink = function(event) {
 	event.preventDefault();
-	if (event.target.tagName != "A") {
-		var parent = $(event.target).parent()[0]
-		if (parent.tagName == "A") {
-			event.target = parent
-		} else {
-			return false;
-		}
-	}
-	var route = $(event.target).attr("href");
+
+	var route = $(event.delegateTarget).attr("href");
 
 	if (route.substr(0, 1) == "#" && route.length > 1) {
 		app.router.setRoute(route.substr(2)); // get ride of #/
