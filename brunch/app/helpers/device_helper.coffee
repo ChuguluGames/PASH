@@ -61,14 +61,14 @@ class exports.DeviceHelper
 	@getAnimationGrade = (callback) ->
 		if not @_animationGrade?
 			# check local storage
-			_restoreGrade = parseInt(localStorage.getItem('device_animation_grade'))
+			_restoreGrade = localStorage.getItem('device_animation_grade')
 			if not _restoreGrade?
 				return BenchmarkHelper.test (grade) =>
 					@_animationGrade = grade
 					localStorage.setItem('device_animation_grade', grade)
 					callback(@_animationGrade) if typeof callback isnt "undefined"
 			else
-				@_animationGrade = _restoreGrade
+				@_animationGrade = parseInt(_restoreGrade)
 
 		callback(@_animationGrade) if typeof callback isnt "undefined"
 		@_animationGrade
