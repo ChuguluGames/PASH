@@ -14,31 +14,31 @@ module.exports =
 	popups:
 		common:
 			buttons:
-				back   : "RETOUR"
-				start  : "COMMENCER"
+				back   : "BACK"
+				start  : "START"
 				resume : "CONTINUER"
-				restart: "RECOMMENCER"
+				restart: "RESTART"
 
 		timeout:
 			title  : "TIMEOUT"
-			content: "the time is out, fuckface"
+			content: "game is over, time out!"
 
 		finish:
 			title  : "FINISH"
-			content: "the game is finished, dickhead"
+			content: "the game is finished"
 
 		pause:
 			title  : "PAUSE"
-			content: "the game is paused, asshole"
+			content: "the game is paused"
 
 		tutoZen:
 			title  : "TUTO ZEN"
-			content: "this is how you do it, lubric cunt"
+			content: "this is how you do it. tuto zen mode"
 
 		tutoSurvival:
 			title  : "TUTO SURVIVAL"
-			content: "this is how you do it, lubric cunt"
+			content: "this is how you do it. tuto survival"
 
 		tutoChallenge:
 			title  : "TUTO CHALLENGE"
-			content: "this is how you do it, lubric cunt"
+			content: "this is how you do it. tuto challenge"

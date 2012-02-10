@@ -4,16 +4,16 @@ class exports.ScoringGameController extends GameController
 	## time
 	timeDidChange: (time) -> @view.topbar.timer.update(timeLeft: time)
 
-	timeBonus: (bonus, time) -> @view.topbar.timer.update(timeLeft: time)
+	timeBonus: (bonus, time) -> @view.topbar.timer.update(timeLeft: time, timeEvent: bonus)
 
-	timePenalty: (penalty, time) -> @view.topbar.timer.update(timeLeft: time)
+	timePenalty: (penalty, time) -> @view.topbar.timer.update(timeLeft: time, timeEvent: -penalty)
 
 	## score
 	scoreDidChange: (score) -> @view.topbar.score.update(scoreValue: score)
 
 	scoreBonus: (bonus, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: bonus)
 
-	scorePenalty: (penalty, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: penalty)
+	scorePenalty: (penalty, score) -> @view.topbar.score.update(scoreValue: score, scoreEvent: -penalty)
 
 	## game over
 	didFinishItem: ->
@@ -43,6 +43,7 @@ class exports.ScoringGameController extends GameController
 	# @override
 	activateDifferencesIndicator: ->
 		super
+		console.log @view.topbar
 		@view.topbar.updateCluesCount @engine.clueCount
 
 	onGameOver: ->

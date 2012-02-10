@@ -14,12 +14,27 @@ class exports.GameScoreView extends View
 
 	update: (data) ->
 		@updateScore(data.scoreValue) if data.scoreValue?
-		@addScoreEvent(data.timerEvent) if data.timerEvent?
+		@addScoreEvent(data.scoreEvent) if data.scoreEvent? and data.scoreEvent isnt 0
 
 	reset: ->
 
 	updateScore: (score) ->
 		@elements.value.html score
 
-	addScoreEvent: (event) ->
+	addScoreEvent: (eventValue) ->
 		self=@
+
+		eventElement = $("<div />").addClass("event")
+
+		eventElement.html((if eventValue > 0 then "+" else "") + eventValue)
+
+		eventElement.addClass (if eventValue > 0 then "positive" else "negative")
+
+		@elements.events.append eventElement
+
+		eventElement.on "webkitAnimationEnd", ->
+			$(@).remove()
+
+		eventElement.addClass "animate"
+
+		console.log event
