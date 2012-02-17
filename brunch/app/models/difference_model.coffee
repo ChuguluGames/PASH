@@ -1,12 +1,7 @@
 # table definition
 DifferenceDefinition = persistence.define 'difference', {}
 
-# relations
-# DifferenceDefinition.hasMany('difference_points', DifferencePointModel, 'difference')
-
-# custom methods
-# DifferenceDefinition.fetchSelected = ->
-#  DifferenceDefinition.all().filter("first_image_url", '=', 'lolo42.jpg')
+DifferenceDefinition.hasMany('difference_points', DifferencePointModel, 'difference')
 
 DifferenceDefinition::differencePointsArray = null
 
@@ -32,5 +27,4 @@ DifferenceDefinition.fromJSON = (json) ->
 	difference.difference_points.add(DifferencePointModel.fromJSON(diffPoint)) for diffPoint in json.point_diffs
 	difference
 
-# making it visible outside as Model
 exports.DifferenceModel = DifferenceDefinition
