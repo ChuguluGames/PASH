@@ -63,6 +63,21 @@ Router::getGameClassesName = (mode) ->
 		view      : window[(mode + "_game_view").toPascalCase()]
 	}
 
+Router::refresh = ->
+	@dispatch 'on', @getCurrentRoute()
+
+# keep the old prototype
+superSetRoute = Router::setRoute
+Router::setRoute = (route) ->
+	# same route, force binding
+	if @getCurrentRoute() is route
+		@refresh()
+	else
+		superSetRoute.apply @, arguments
+
+Router::getCurrentRoute = ->
+	"/" + @getRoute().join "/"
+
 exports.MainRouter = new Router(
 	routes:
 		"":
@@ -72,6 +87,7 @@ exports.MainRouter = new Router(
 					@onFirstRoute()
 
 		"/:locale":
+
 			on: (locale) ->
 				LocaleHelper.setLocale locale
 			"/home":
