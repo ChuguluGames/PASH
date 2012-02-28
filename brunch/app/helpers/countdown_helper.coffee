@@ -2,7 +2,7 @@ class exports.CountdownHelper
 	# -- static --
 	@tag = "CountdownHelper"
 	@now = ->
-		Date.now()
+		new Date().getTime()
 	# -- static --
 
 	timer         : null

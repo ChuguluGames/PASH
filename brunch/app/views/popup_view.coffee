@@ -1,5 +1,6 @@
 class exports.PopupView extends View
-	className: "popup"
+	attributes:
+		class: "popup"
 	template : require "templates/popup"
 
 	settings: {}

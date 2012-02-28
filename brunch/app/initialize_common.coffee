@@ -1,117 +1,93 @@
+window.requireModule = (type, name) ->
+  typePluralized = type.pluralize()
+  splittedName = name.split "."
+  moduleFileName = splittedName[0] + "_" + type
+  modulePath = typePluralized + "/" + moduleFileName
+  moduleClass = (splittedName.join("_") + "_" + type).toPascalCase()
+  window[moduleClass] = require(modulePath)[moduleClass]
+
 window.app = {}
 
-modules = {
-  factories: [
-    'popup'
-    'popup.tuto'
-    'popup.timeout'
-    'popup.pause'
-    'popup.finish'
-  ]
-  helpers: [
-    'benchmark'
-    'config'
-    'countdown'
-    'dynamic_screen'
-    'locale'
-    'device'
-    'log'
-    'db'
-    'file_system'
-    'download'
-    'image_download'
-    'format'
-    'position'
-    'polygon'
-    'preload'
-    'model_download'
-    'event'
-    'collision'
-    'scale'
-    'seed'
-    'template'
-  ]
-  routers: [
-    'main'
-  ]
-  controllers: [
-    'home'
-    'game'
-    'scoring_game'
-    'challenge_game'
-    'survival_game'
-    'zen_game'
-    'options'
-    'popup'
-  ]
-  views: [
-    'home'
-    'game'
-    'game_item'
-    'game_score'
-    'game_timer'
-    'game_topbar'
-    'challenge_game'
-    'popup'
-    'survival_game'
-    'zen_game'
-    'options'
-  ]
-  models: [
-    'player'
-    'tag'
-    'pack'
-    'item'
-    'difference'
-    'difference_point'
-    'image'
-  ]
-  engines: [
-    'spots'
-    'scoring_spots'
-    'challenge_spots'
-    'survival_spots'
-    'zen_spots'
-  ]
-}
-
-# executes window.SomeType = require('types/some_type').SomeType for each class
-for type, list of modules
-  typePath = type + "/"
-
-  typeSingularized = type.singularize()
-
-  for name in list
-    splittedName = name.split "."
-    moduleFileName = splittedName[0] + "_" + typeSingularized
-    modulePath = typePath + moduleFileName
-    moduleClass = (splittedName.join("_") + "_" + typeSingularized).toPascalCase()
-    window[moduleClass] = require(modulePath)[moduleClass]
-
-# relationships (has to be defined after models because of the definition order / dependencies in many-to-many cases)
-PlayerModel.hasMany('packs', PackModel, 'players')
-
-TagModel.hasMany('packs', PackModel, 'tags')
-
-PackModel.hasMany('tags', TagModel, 'packs')
-PackModel.hasMany('players', PlayerModel, 'packs')
-PackModel.hasMany('items', ItemModel, 'pack')
-PackModel.hasOne('preview_image', ImageModel, null)
-PackModel.hasOne('cover_image', ImageModel, null)
-
-ItemModel.hasMany('differences', DifferenceModel, 'item')
-ItemModel.hasOne('pack', PackModel, 'items')
-ItemModel.hasOne('first_image', ImageModel, null)
-ItemModel.hasOne('second_image', ImageModel, null)
-
-DifferenceModel.hasMany('difference_points', DifferencePointModel, 'difference')
-
 class exports.Application
+  modules:
+    factories: [
+      'popup'
+      'popup.tuto'
+      'popup.timeout'
+      'popup.pause'
+      'popup.finish'
+    ]
+    helpers: [
+      'benchmark'
+      'config'
+      'countdown'
+      'dynamic_screen'
+      'locale'
+      'device'
+      'log'
+      'db'
+      'file_system'
+      'download'
+      'image_download'
+      'format'
+      'position'
+      'polygon'
+      'preload'
+      'model_download'
+      'event'
+      'collision'
+      'scale'
+      'seed'
+      'template'
+    ]
+    routers: [
+      'main'
+    ]
+    controllers: [
+      'home'
+      'game'
+      'scoring_game'
+      'challenge_game'
+      'survival_game'
+      'zen_game'
+      'options'
+      'popup'
+    ]
+    views: [
+      'home'
+      'game'
+      'game_item'
+      'game_score'
+      'game_timer'
+      'game_topbar'
+      'challenge_game'
+      'popup'
+      'survival_game'
+      'zen_game'
+      'options'
+    ]
+    models: [
+      'image'
+      'player'
+      'tag'
+      'difference_point'
+      'difference'
+      'item'
+      'pack'
+    ]
+    engines: [
+      'spots'
+      'scoring_spots'
+      'challenge_spots'
+      'survival_spots'
+      'zen_spots'
+    ]
+
   verbose:
     Application        : true
     MainRouter         : true
     DeviceHelper       : true
-    DbHelper           : false
+    DbHelper           : true
     DownloadHelper     : true
     FormatHelper       : true
     PositionHelper     : true
@@ -125,11 +101,22 @@ class exports.Application
 
   tag        : "Application"
   config     : require('config/config').config
-  router     : MainRouter
+  router     : null
 
   constructor: ->
+    @loadModules()
+
     LogHelper.verbose = @verbose
+    @router = MainRouter
+
     @waitForDeviceReadyEvent()
+
+  loadModules: ->
+    for type, list of @modules
+      typeSingularized = type.singularize()
+
+      for name in list
+        requireModule typeSingularized, name
 
   waitForDeviceReadyEvent: ->
     $(window).load =>

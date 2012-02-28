@@ -1,5 +1,6 @@
 class exports.HomeView extends View
-	id      : 'home-view'
+	attributes:
+		id: 'home-view'
 	template: require 'templates/home'
 
 	render: ->

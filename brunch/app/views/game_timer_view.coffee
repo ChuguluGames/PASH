@@ -1,6 +1,7 @@
 class exports.GameTimerView extends View
 	template : require "templates/game_timer"
-	className: "timer"
+	attributes:
+		class: "timer"
 	elements : {}
 
 	render: ->

@@ -16,7 +16,10 @@ class exports.GameItemView extends View
 	# -- static --
 
 	template : require "templates/game_item"
-	className: "item-wrapper"
+
+	attributes:
+		class: 'item-wrapper'
+
 	elements : {}
 
 	errorElementHideAfter: 500

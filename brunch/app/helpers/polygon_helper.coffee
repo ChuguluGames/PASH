@@ -20,8 +20,8 @@ class exports.PolygonHelper
 	# get the extremity of the polygon and return a rectangle
 	@polygonToRectangle = (polygon) ->
 		bounds =
-			x: null
-			y: null
+			x : null
+			y : null
 			x2: null
 			y2: null
 
@@ -100,6 +100,6 @@ class exports.PolygonHelper
 
 		while i < points.length
 			temp = points[i]
-			top = temp if temp.y > top.y or (temp.y is top.y and temp.x < top.x)
+			top  = temp if temp.y > top.y or (temp.y is top.y and temp.x < top.x)
 			i++
 		top

@@ -1,7 +1,8 @@
 class exports.GameView extends View
-	id      : 'game-view'
 	elements: {}
-	className: 'vcenter'
+	attributes:
+		id   : 'game-view'
+		class: 'vcenter'
 
 	# default configuration
 	configuration:

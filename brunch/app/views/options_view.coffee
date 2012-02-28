@@ -1,5 +1,6 @@
 class exports.OptionsView extends View
-	id      : 'options-view'
+	attributes:
+		id: 'options-view'
 	template: require 'templates/options'
 
 	render: ->

@@ -1,6 +1,7 @@
 class exports.GameTopbarView extends View
 	template : require "templates/game_topbar"
-	className: "topbar-wrapper"
+	attributes:
+		class: "topbar-wrapper"
 	elements : {}
 
 	differencesIndicator:
