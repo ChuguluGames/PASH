@@ -7,11 +7,6 @@ ItemDefinition = persistence.define 'item',
 # indexes
 ItemDefinition.index ['identity'], {unique: true}
 
-# relations
-ItemDefinition.hasMany('differences', DifferenceModel, 'item')
-ItemDefinition.hasOne('first_image', ImageModel, null)
-ItemDefinition.hasOne('second_image', ImageModel, null)
-
 # custom methods
 ItemDefinition.fetchFullItemForIdentity = (identity, fetchDifferences, callback) ->
 	@findBy 'identity', identity, (item) ->
@@ -23,15 +18,11 @@ ItemDefinition.fetchFullItemForIdentity = (identity, fetchDifferences, callback)
 
 ItemDefinition.fetchSelected = (callback) ->
 	PackModel.fetchSelected().list (packs) ->
-		packIds = []
-		packIds.push pack.id for pack in packs
-		@all().filter("pack", 'in', packIds).list callback
+		@all().filter("pack", 'in', packs).list callback
 
 ItemDefinition.fetchSelectedIdentities = (callback) ->
 	PackModel.fetchSelected().list (packs) =>
-		packIds = []
-		packIds.push pack.id for pack in packs
-		@all().filter("pack", 'in', packIds).list (items) ->
+		@all().filter("pack", 'in', packs).list (items) ->
 			itemIdentities = []
 			itemIdentities.push item.identity for item in items
 			callback(itemIdentities) if callback?

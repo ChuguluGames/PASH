@@ -1,8 +1,6 @@
 # table definition
 DifferenceDefinition = persistence.define 'difference', {}
 
-DifferenceDefinition.hasMany('difference_points', DifferencePointModel, 'difference')
-
 DifferenceDefinition::differencePointsArray = null
 
 DifferenceDefinition::fetchPoints = (callback) ->
@@ -22,9 +20,10 @@ DifferenceDefinition::getSimpleObject = ->
 
 # custom mapping
 DifferenceDefinition.fromJSON = (json) ->
-	json = (if json.difference? then json.differece else json)
+	json = (if json.difference? then json.difference else json)
 	difference = new DifferenceDefinition(identity: json.identity)
-	difference.difference_points.add(DifferencePointModel.fromJSON(diffPoint)) for diffPoint in json.point_diffs
+	for diffPoint in json.point_diffs
+		difference.difference_points.add(DifferencePointModel.fromJSON(diffPoint))
 	difference
 
 exports.DifferenceModel = DifferenceDefinition

@@ -67,13 +67,13 @@ class exports.Application
       'options'
     ]
     models: [
+      'pack'
+      'item'
       'image'
+      'difference'
+      'difference_point'
       'player'
       'tag'
-      'difference_point'
-      'difference'
-      'item'
-      'pack'
     ]
     engines: [
       'spots'
@@ -105,6 +105,7 @@ class exports.Application
 
   constructor: ->
     @loadModules()
+    @loadModelsRelationships()
 
     LogHelper.verbose = @verbose
     @router = MainRouter
@@ -117,6 +118,10 @@ class exports.Application
 
       for name in list
         requireModule typeSingularized, name
+
+  loadModelsRelationships: ->
+    require('models/relationships')
+    @
 
   waitForDeviceReadyEvent: ->
     $(window).load =>
@@ -171,7 +176,6 @@ class exports.Application
   initialize: ->
     LocaleHelper.setConfig(ConfigHelper.getLocales())
       .setLocale(DeviceHelper.getLocalization()) # override default locale by user localization setting
-
     DynamicScreenHelper.initialize ConfigHelper.getDynamicScreen()
 
     if DeviceHelper.isMobile()

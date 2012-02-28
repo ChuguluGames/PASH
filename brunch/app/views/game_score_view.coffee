@@ -39,5 +39,3 @@ class exports.GameScoreView extends View
 			$(@).remove()
 
 		eventElement.addClass "animate"
-
-		console.log event

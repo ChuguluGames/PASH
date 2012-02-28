@@ -2,21 +2,14 @@
 PackDefinition = persistence.define 'pack',
   identity         : "INT"
   position         : "INT"
-  state            :    "INT"
-  name             :     "TEXT"
-  description_text :   "TEXT"
-  cover_image_url  :    "TEXT"
-  preview_image_url:  "TEXT"
-  purchase_date    :      "DATE"
+  state            : "INT"
+  name             : "TEXT"
+  description_text : "TEXT"
+  cover_image_url  : "TEXT"
+  preview_image_url: "TEXT"
+  purchase_date    : "DATE"
 
 PackDefinition.index ['identity'], {unique: true}
-
-# relations
-PackDefinition.hasMany('tags', TagModel, 'packs')
-PackDefinition.hasMany('players', PlayerModel, 'packs')
-PackDefinition.hasMany('items', ItemModel, 'pack')
-PackDefinition.hasOne('preview_image', ImageModel, null)
-PackDefinition.hasOne('cover_image', ImageModel, null)
 
 # custom mapping
 PackDefinition.fromJSON = (json, callback) ->
