@@ -1,6 +1,9 @@
 class exports.GameScoreView extends View
 	template : require "templates/game_score"
-	className: "score vcenter"
+
+	attributes:
+		class: 'score vcenter'
+
 	elements : {}
 
 	render: ->
