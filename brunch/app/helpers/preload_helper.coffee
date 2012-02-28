@@ -17,7 +17,7 @@ class exports.PreloadHelper
 	imagesCache    : null
 
 	constructor: ->
-		@imagesCache = []
+		@imagesCache  = []
 		@currentImage = null
 		@
 

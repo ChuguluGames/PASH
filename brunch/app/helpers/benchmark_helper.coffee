@@ -1,9 +1,9 @@
 class exports.BenchmarkHelper
 	# dependencies: CountdownHelper
 
-	@tag = "BenchmarkHelper"
+	@tag       = "BenchmarkHelper"
 	@frequence = 10
-	@finished = false
+	@finished  = false
 	@tests = [
 		'move'
 		'move_resize'
@@ -11,8 +11,8 @@ class exports.BenchmarkHelper
 		'pop'
 	]
 	@currentTest = 0
-	@updates = []
-	@onOver = null
+	@updates     = []
+	@onOver      = null
 
 	@test = (callback) ->
 		@onOver = callback if callback?
@@ -38,7 +38,7 @@ class exports.BenchmarkHelper
 			setTimeout((=> @update()), @frequence)
 
 	@finish = ->
-		total = 0
+		total     = 0
 		@finished = true
 
 		i = l = @updates.length - 1
@@ -47,7 +47,7 @@ class exports.BenchmarkHelper
 			total += dif - @frequence
 
 		# reset
-		@updates = []
+		@updates     = []
 		@currentTest = 0
 
 		# average of the time between frames
@@ -77,11 +77,11 @@ class BenchmarkTest
 class BenchmarkTestMove extends BenchmarkTest
 	start: ->
 		div = $("<div />").css({
-			width: "50px"
-			height: "50px"
+			width   : "50px"
+			height  : "50px"
 			position: "absolute"
-			top: 0
-			left: 0
+			top     : 0
+			left    : 0
 		})
 
 		div.appendTo("body").animate {
@@ -97,17 +97,17 @@ class BenchmarkTestMove extends BenchmarkTest
 class BenchmarkTestMoveResize extends BenchmarkTest
 	start: ->
 		div = $("<div />").css({
-			width: "50px"
-			height: "50px"
+			width   : "50px"
+			height  : "50px"
 			position: "absolute"
-			top: 0
-			left: 0
+			top     : 0
+			left    : 0
 		})
 
 		div.appendTo("body").animate {
-			left: "100%"
-			top: "100%"
-			width: "400px"
+			left  : "100%"
+			top   : "100%"
+			width : "400px"
 			height: "500px"
 		}, {
 			duration: 200
@@ -121,12 +121,12 @@ class BenchmarkTestMoveResize extends BenchmarkTest
 class BenchmarkTestFade extends BenchmarkTest
 	start: ->
 		div = $("<div />").css({
-			width: "50px"
-			height: "50px"
+			width   : "50px"
+			height  : "50px"
 			position: "absolute"
-			top: 0
-			left: 0
-			opacity: 0
+			top     : 0
+			left    : 0
+			opacity : 0
 		})
 
 		div.appendTo("body").fadeIn 50, =>
@@ -139,11 +139,11 @@ class BenchmarkTestFade extends BenchmarkTest
 class BenchmarkTestPop extends BenchmarkTest
 	start: ->
 		div = $("<div />").css({
-			width: "50px"
-			height: "50px"
+			width   : "50px"
+			height  : "50px"
 			position: "absolute"
-			top: "100px"
-			left: "100px"
+			top     : "100px"
+			left    : "100px"
 		})
 
 		div.appendTo("body").popIn 1000, =>
