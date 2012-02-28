@@ -46,8 +46,10 @@ class exports.LogHelper
 				args = @printObjects args
 
 				console[type](args.join(""))
-			else
+			else if console[type].apply?
 				console[type].apply(window.console, args)
+			else
+				console.log args
 
 		true
 
