@@ -15,6 +15,8 @@ class root.Controller extends root.Observable
 
 		@[property] = attributes[property] for property of attributes
 
+		@createHandlersEvents()
+
 	initialize: ->
 
 	destroy: ->
@@ -53,7 +55,7 @@ class root.Controller extends root.Observable
 
 		$el[action](eventName, handler)
 
-	# TODO: move that shit elsewhere (maybe create a appcontroller class)
+	# TODO: move this elsewhere (maybe create a appcontroller class)
 	onClickLink: (event) ->
 		event.preventDefault()
 
