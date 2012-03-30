@@ -128,7 +128,7 @@ class exports.Application
       # device ready already fired
       if PhoneGap? and PhoneGap.onDeviceReady? && PhoneGap.onDeviceReady.fired == true
         LogHelper.info "device ready already fired", @tag
-        @initialize()
+        @onDeviceReady()
       else
         LogHelper.info "waiting for device response", @tag
         document.addEventListener "deviceready", =>
@@ -140,6 +140,22 @@ class exports.Application
     $ =>
       LogHelper.info "on dom ready", @tag
       @initialize()
+
+  initialize: ->
+    LocaleHelper.setConfig(ConfigHelper.getLocales())
+      .setLocale(DeviceHelper.getLocalization()) # override default locale by user localization setting
+    DynamicScreenHelper.initialize ConfigHelper.getDynamicScreen()
+
+    if DeviceHelper.isMobile()
+      activateFastClicks()
+      EventHelper.disableScroll()
+
+    DeviceHelper.getAnimationGrade (grade) =>
+
+      LogHelper.info "animation grade received: " +  grade, @tag
+
+      # wait for database
+      DbHelper.createPASHDatabase => @onDatabaseReady()
 
   onDatabaseReady: ->
     if window.onDatabaseReady?
@@ -172,21 +188,5 @@ class exports.Application
         LogHelper.info "on seed fail", @tag
     , ->
       LogHelper.info "on filesystem init fail", @tag
-
-  initialize: ->
-    LocaleHelper.setConfig(ConfigHelper.getLocales())
-      .setLocale(DeviceHelper.getLocalization()) # override default locale by user localization setting
-    DynamicScreenHelper.initialize ConfigHelper.getDynamicScreen()
-
-    if DeviceHelper.isMobile()
-      activateFastClicks()
-      EventHelper.disableScroll()
-
-    DeviceHelper.getAnimationGrade (grade) =>
-
-      LogHelper.info "animation grade received: " +  grade, @tag
-
-      # wait for database
-      DbHelper.createPASHDatabase => @onDatabaseReady()
 
 window.app = new exports.Application()
